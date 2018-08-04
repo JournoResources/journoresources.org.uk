@@ -51,6 +51,7 @@ class JR_JobListings_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->register_acf_fields();
 
 	}
 
@@ -100,6 +101,11 @@ class JR_JobListings_Admin {
 
 	}
 
+	/**
+	 * Register the custom 'Jobs' post type
+	 *
+	 * @since    1.0.0
+	 */
 	public function add_custom_post_type()
 	{
 		$labels = array(
@@ -160,6 +166,139 @@ class JR_JobListings_Admin {
 			'rest_base'             => 'job',
 		);
 		register_post_type( 'jr_joblisting', $args );
+	}
+
+	/**
+	 * Configure the ACF settings path in order to bundle it
+	 *
+	 * @since    1.0.0
+	 */
+	public function get_acf_settings_path( $path )
+	{
+		$path = plugin_dir_path( __FILE__ ) . '../vendor/acf/';
+		return $path;
+	}
+	
+	/**
+	 * Configure the ACF settings directory in order to bundle it
+	 *
+	 * @since    1.0.0
+	 */
+	public function get_acf_settings_dir( $dir )
+	{
+		$dir = plugin_dir_path( __FILE__ ) . '../vendor/acf/';
+		return $dir;
+	}
+
+	/**
+	 * Register fields with ACF
+	 *
+	 * @since    1.0.0
+	 */
+	private function register_acf_fields()
+	{
+		if(function_exists("register_field_group"))
+		{
+			register_field_group(array (
+				'id' => 'acf_jobs',
+				'title' => 'Jobs',
+				'fields' => array (
+					array (
+						'key' => 'field_5b65c99d8f5b8',
+						'label' => 'Employer',
+						'name' => 'employer',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_5b65c9ac8f5b9',
+						'label' => 'Location',
+						'name' => 'location',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_5b65c9bf8f5ba',
+						'label' => 'Salary',
+						'name' => 'salary',
+						'type' => 'number',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'min' => '',
+						'max' => '',
+						'step' => '',
+					),
+					array (
+						'key' => 'field_5b65c9d38f5bb',
+						'label' => 'Expiry date',
+						'name' => 'expiry_date',
+						'type' => 'date_picker',
+						'required' => 1,
+						'date_format' => 'yymmdd',
+						'display_format' => 'dd/mm/yy',
+						'first_day' => 1,
+					),
+					array (
+						'key' => 'field_5b65ca008f5bc',
+						'label' => 'Listing URL',
+						'name' => 'listing_url',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+				),
+				'location' => array (
+					array (
+						array (
+							'param' => 'post_type',
+							'operator' => '==',
+							'value' => 'jr_joblisting',
+							'order_no' => 0,
+							'group_no' => 0,
+						),
+					),
+				),
+				'options' => array (
+					'position' => 'normal',
+					'layout' => 'no_box',
+					'hide_on_screen' => array (
+						0 => 'permalink',
+						1 => 'the_content',
+						2 => 'excerpt',
+						3 => 'custom_fields',
+						4 => 'discussion',
+						5 => 'comments',
+						6 => 'revisions',
+						7 => 'format',
+						8 => 'featured_image',
+						9 => 'categories',
+						10 => 'tags',
+						11 => 'send-trackbacks',
+					),
+				),
+				'menu_order' => 0,
+			));
+		}
 	}
 
 }

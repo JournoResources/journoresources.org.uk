@@ -72,6 +72,7 @@ class JR_JobListings {
 		}
 		$this->plugin_name = 'jr-joblistings';
 		$this->load_dependencies();
+		$this->load_vendor_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -118,7 +119,24 @@ class JR_JobListings {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-jr-joblistings-public.php';
 		
 		$this->loader = new JR_JobListings_Loader();
-    }
+	}
+	
+	/**
+	 * Load vendor dependencies, such as bundled plugins
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_vendor_dependencies()
+	{
+		/**
+		 * Advanced Custom Fields is bundled with this plugin
+		 */
+		$this->loader->add_filter( 'acf/settings/path', $plugin_admin, 'get_acf_settings_path' );
+		$this->loader->add_filter( 'acf/settings/dir', $plugin_admin, 'get_acf_settings_dir' );
+		define( 'ACF_LITE', false ); // Hide ACF UI
+		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf/acf.php' );
+	}
     
 	/**
 	 * Define the locale for this plugin for internationalization.
