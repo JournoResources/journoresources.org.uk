@@ -26,7 +26,8 @@ const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 
 // Note: defined here because it will be used more than once.
-const cssFilename = 'static/css/[name].[contenthash:8].css';
+// const cssFilename = 'static/css/[name].[contenthash:8].css';
+const cssFilename = 'static/css/[name].css';
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
@@ -81,7 +82,8 @@ module.exports = {
     pathinfo: true,
 
     // Generated JS files.
-    filename: 'static/js/[name].[chunkhash:8].js'
+    // filename: 'static/js/[name].[chunkhash:8].js'
+    filename: 'static/js/[name].js'
   },
 
   resolve: {
