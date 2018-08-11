@@ -1,10 +1,10 @@
-.jobs {
+#jr-joblistings .jobs {
   margin: 0;
   padding: 0;
   width: 100%;
 }
 
-.job {
+#jr-joblistings .job {
   margin-bottom: 2rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -13,6 +13,6 @@
   background-color: rgba(99, 198, 174, 0.2);
 }
 
-.job .title {
+#jr-joblistings .job .title {
   text-decoration: none;
 }

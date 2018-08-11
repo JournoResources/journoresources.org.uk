@@ -15,4 +15,4 @@
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <h1>JR Job Listings</h1>
 
-<div id="elm"></div>
+<div id="jr-joblistings"></div>
