@@ -136,6 +136,16 @@ class JR_JobListings {
 		$this->loader->add_filter( 'acf/settings/dir', $plugin_admin, 'get_acf_settings_dir' );
 		define( 'ACF_LITE', false ); // Hide ACF UI
 		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf/acf.php' );
+		
+		/**
+		 * ACF to Rest API is bundled with this plugin
+		 */
+		add_action( 'after_setup_theme', array( 'ACF_To_REST_API', 'init' ) );
+
+		// $this->loader->add_filter( 'acf/settings/path', $plugin_admin, 'get_acf_settings_path' );
+		// $this->loader->add_filter( 'acf/settings/dir', $plugin_admin, 'get_acf_settings_dir' );
+		// define( 'ACF_LITE', false ); // Hide ACF UI
+		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf-to-rest-api/class-acf-to-rest-api.php' );
 	}
     
 	/**

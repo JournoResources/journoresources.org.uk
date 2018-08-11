@@ -249,7 +249,7 @@ class JR_JobListings_Admin {
 						'name' => 'expiry_date',
 						'type' => 'date_picker',
 						'required' => 1,
-						'date_format' => 'yymmdd',
+						'date_format' => 'yy-mm-dd',
 						'display_format' => 'dd/mm/yy',
 						'first_day' => 1,
 					),

@@ -1,10 +1,12 @@
 module Main exposing (..)
 
-import Html exposing (Html, text,strong, a,div, ul, li)
-import Html.Attributes exposing (class, href)
+import Date exposing (Date)
+import Date.Format exposing (format)
+import Html exposing (Html, text, strong, a, div, ul, li)
+import Html.Attributes exposing (class, href, target)
 import Http
-import RemoteData as RD
 import Json.Decode as Json
+import RemoteData as RD
 
 
 ---- MODEL ----
@@ -19,8 +21,8 @@ type alias Job =
     { title : String
     , employer : String
     , location : String
-    , salary : Int
-    , expiry_date : String
+    , salary : Result String Int
+    , expiry_date : Result String Date
     , listing_url : String
     }
 
@@ -35,25 +37,37 @@ init =
 
 loadJobs : Cmd Msg
 loadJobs =
-    Http.get "/jobs.json" decodeJobs
+    Http.get "http://localhost:8000/wp-json/wp/v2/job" decodeJobs
         |> RD.sendRequest
         |> Cmd.map JobsLoaded
 
 
 decodeJobs : Json.Decoder (List Job)
 decodeJobs =
-    Json.field "jobs" <| Json.list decodeJob
+    Json.list decodeJob
 
 
 decodeJob : Json.Decoder Job
 decodeJob =
     Json.map6 Job
-        (Json.field "title" Json.string)
-        (Json.field "employer" Json.string)
-        (Json.field "location" Json.string)
-        (Json.field "salary" Json.int)
-        (Json.field "expiry_date" Json.string)
-        (Json.field "listing_url" Json.string)
+        (Json.at [ "title", "rendered" ] Json.string)
+        (Json.at [ "acf", "employer" ] Json.string)
+        (Json.at [ "acf", "location" ] Json.string)
+        (Json.at [ "acf", "salary" ] decodeSalary)
+        (Json.at [ "acf", "expiry_date" ] decodeDate)
+        (Json.at [ "acf", "listing_url" ] Json.string)
+
+
+decodeSalary : Json.Decoder (Result String Int)
+decodeSalary =
+    Json.string
+        |> Json.map String.toInt
+
+
+decodeDate : Json.Decoder (Result String Date)
+decodeDate =
+    Json.string
+        |> Json.map Date.fromString
 
 
 
@@ -95,31 +109,47 @@ viewJobs webdata =
             text ("There was a problem loading the jobs: " ++ toString e)
 
         RD.Success jobs ->
-            ul [class "jobs"] (List.map viewJob jobs)
+            ul [ class "jobs" ] (List.map viewJob jobs)
 
 
 viewJob : Job -> Html a
 viewJob { title, employer, location, salary, expiry_date, listing_url } =
-    let withLabel l t =
-        div []
-            [ strong [] [text (l ++ ": ")]
-            , text t
-            ]
-    in 
+    let
+        withLabel l t =
+            div []
+                [ strong [] [ text (l ++ ": ") ]
+                , text t
+                ]
 
-    li [ class "job" ]
-        [ div []
-            [ a [href listing_url, class "title"] [text title]
-            , div [] [text employer]
+        viewSalary =
+            case salary of
+                Ok s ->
+                    "£" ++ toString s
+
+                Err e ->
+                    e
+
+        viewExpiryDate =
+            case expiry_date of
+                Ok date ->
+                    format "%d/%m/%Y" date
+
+                Err e ->
+                    e
+    in
+        li [ class "job" ]
+            [ div []
+                [ a [ href listing_url, target "_blank", class "title" ] [ text title ]
+                , div [] [ text employer ]
+                ]
+            , div []
+                [ withLabel "Location" location
+                , withLabel "Salary" viewSalary
+                ]
+            , div []
+                [ withLabel "Expires on" viewExpiryDate
+                ]
             ]
-        , div []
-            [ withLabel "Location" location
-            , withLabel "Salary" (toString salary)
-            ]
-        , div []
-            [ withLabel "Expires on" location
-            ]
-        ]
 
 
 
