@@ -37,7 +37,7 @@ init =
 
 loadJobs : Cmd Msg
 loadJobs =
-    Http.get "http://localhost:8000/wp-json/wp/v2/job" decodeJobs
+    Http.get "/wp-json/wp/v2/job" decodeJobs
         |> RD.sendRequest
         |> Cmd.map JobsLoaded
 

@@ -67,4 +67,26 @@ class JR_JobListings_Public {
 	public function enqueue_scripts() {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'build/static/js/main.js', array(), $this->version, true );
 	}
+	
+	/**
+	 * Register shortcodes for the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function register_shortcodes() {
+		add_shortcode( 'jr_joblistings', array( $this, 'display_joblistings' ) );
+	}
+
+	/**
+	 *  Render the partial template when the plugin is included via a shortcode
+	 */
+	public function display_joblistings( $attrs = array() ) {
+		ob_start();
+
+		include('partials/jr-joblistings-public-display.php');
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
 }
