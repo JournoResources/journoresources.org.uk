@@ -65,12 +65,22 @@ class JR_JobListings {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
+
+		$host = $_SERVER['SERVER_NAME'];
+		switch ($host) {
+			case 'localhost':
+				define('WP_DEV', true);
+				break;
+		}
+		
 		if ( defined( 'JR_JOBLISTINGS_VERSION' ) ) {
 			$this->version = JR_JOBLISTINGS_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
+
 		$this->plugin_name = 'jr-joblistings';
+		
 		$this->load_dependencies();
 		$this->load_vendor_dependencies();
 		$this->set_locale();

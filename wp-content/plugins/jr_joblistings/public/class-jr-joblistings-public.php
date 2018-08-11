@@ -65,7 +65,14 @@ class JR_JobListings_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'build/static/js/main.js', array(), $this->version, true );
+
+		if (defined('WP_DEV')) {
+			$path = 'http://localhost:3001/static/js/bundle.js';
+		} else {
+			$path = plugin_dir_url( __FILE__ ) . 'build/static/js/main.js';
+		}
+
+		wp_enqueue_script( $this->plugin_name, $path, array(), $this->version, true );
 	}
 	
 	/**

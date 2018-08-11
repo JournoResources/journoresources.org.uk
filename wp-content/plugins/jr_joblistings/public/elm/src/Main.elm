@@ -12,9 +12,18 @@ import RemoteData as RD
 ---- MODEL ----
 
 
+type alias Flags =
+    { host : Url
+    }
+
+
 type alias Model =
     { jobsRequest : RD.WebData (List Job)
     }
+
+
+type alias Url =
+    String
 
 
 type alias Job =
@@ -23,21 +32,21 @@ type alias Job =
     , location : String
     , salary : Result String Int
     , expiry_date : Result String Date
-    , listing_url : String
+    , listing_url : Url
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     ( { jobsRequest = RD.NotAsked
       }
-    , loadJobs
+    , loadJobs flags.host
     )
 
 
-loadJobs : Cmd Msg
-loadJobs =
-    Http.get "/wp-json/wp/v2/job" decodeJobs
+loadJobs : Url -> Cmd Msg
+loadJobs host =
+    Http.get (host ++ "/wp-json/wp/v2/job") decodeJobs
         |> RD.sendRequest
         |> Cmd.map JobsLoaded
 
@@ -156,9 +165,9 @@ viewJob { title, employer, location, salary, expiry_date, listing_url } =
 ---- PROGRAM ----
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    Html.program
+    Html.programWithFlags
         { view = view
         , init = init
         , update = update
