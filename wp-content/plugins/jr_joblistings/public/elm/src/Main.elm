@@ -34,6 +34,7 @@ type alias Job =
     , salary : Result String Int
     , expiry_date : Result String Date
     , listing_url : Url
+    , job_page_url : Url
     , paid_promotion : Maybe PaidPromotion
     }
 
@@ -71,13 +72,14 @@ inAcf field =
 
 decodeJob : Json.Decoder Job
 decodeJob =
-    Json.map7 Job
+    Json.map8 Job
         (Json.at [ "title", "rendered" ] Json.string)
         (inAcf "employer" Json.string)
         (inAcf "location" Json.string)
         (inAcf "salary" decodeSalary)
         (inAcf "expiry_date" decodeDate)
         (inAcf "listing_url" Json.string)
+        (Json.field "link" Json.string)
         (inAcf "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
 
 
@@ -147,7 +149,7 @@ viewJobs webdata =
 
 
 viewJob : Job -> Html a
-viewJob { title, employer, location, salary, expiry_date, listing_url, paid_promotion } =
+viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } =
     let
         withLabel l t =
             div []
@@ -183,10 +185,18 @@ viewJob { title, employer, location, salary, expiry_date, listing_url, paid_prom
 
                 Nothing ->
                     []
+
+        linkUrl =
+            case paid_promotion of
+                Just _ ->
+                    job_page_url
+
+                Nothing ->
+                    listing_url
     in
         li [ class "job" ]
             [ div []
-                [ a [ href listing_url, target "_blank", class "title" ] [ text title ]
+                [ a [ href linkUrl, target "_blank", class "title" ] [ text title ]
                 , div [] [ text employer ]
                 ]
             , div []
