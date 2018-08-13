@@ -264,6 +264,57 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+					array (
+						'key' => 'field_5b71c19a7ae3c',
+						'label' => 'Paid promotion',
+						'name' => 'paid_promotion',
+						'type' => 'true_false',
+						'message' => '',
+						'default_value' => 0,
+					),
+					array (
+						'key' => 'field_5b71c1d77ae3d',
+						'label' => 'Job description',
+						'name' => 'job_description',
+						'type' => 'wysiwyg',
+						'required' => 1,
+						'conditional_logic' => array (
+							'status' => 1,
+							'rules' => array (
+								array (
+									'field' => 'field_5b71c19a7ae3c',
+									'operator' => '==',
+									'value' => '1',
+								),
+							),
+							'allorany' => 'all',
+						),
+						'default_value' => '',
+						'toolbar' => 'full',
+						'media_upload' => 'no',
+					),
+					array (
+						'key' => 'field_5b71c2267ae3e',
+						'label' => 'Company logo',
+						'name' => 'company_logo',
+						'type' => 'image',
+						'instructions' => 'The logo of the company paying to promote this job',
+						'required' => 1,
+						'conditional_logic' => array (
+							'status' => 1,
+							'rules' => array (
+								array (
+									'field' => 'field_5b71c19a7ae3c',
+									'operator' => '==',
+									'value' => '1',
+								),
+							),
+							'allorany' => 'all',
+						),
+						'save_format' => 'url',
+						'preview_size' => 'thumbnail',
+						'library' => 'all',
+					),
 				),
 				'location' => array (
 					array (

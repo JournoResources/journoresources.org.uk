@@ -2,8 +2,9 @@ module Main exposing (..)
 
 import Date exposing (Date)
 import Date.Format exposing (format)
-import Html exposing (Html, text, strong, a, div, ul, li)
-import Html.Attributes exposing (class, href, target)
+import Html exposing (Html, a, div, img, li, strong, text, ul)
+import Html.Attributes exposing (class, href, src, target)
+import Html.Attributes.Extra exposing (innerHtml)
 import Http
 import Json.Decode as Json
 import RemoteData as RD
@@ -33,6 +34,13 @@ type alias Job =
     , salary : Result String Int
     , expiry_date : Result String Date
     , listing_url : Url
+    , paid_promotion : Maybe PaidPromotion
+    }
+
+
+type alias PaidPromotion =
+    { description : String
+    , company_logo : Url
     }
 
 
@@ -56,15 +64,21 @@ decodeJobs =
     Json.list decodeJob
 
 
+inAcf : String -> Json.Decoder a -> Json.Decoder a
+inAcf field =
+    Json.at [ "acf", field ]
+
+
 decodeJob : Json.Decoder Job
 decodeJob =
-    Json.map6 Job
+    Json.map7 Job
         (Json.at [ "title", "rendered" ] Json.string)
-        (Json.at [ "acf", "employer" ] Json.string)
-        (Json.at [ "acf", "location" ] Json.string)
-        (Json.at [ "acf", "salary" ] decodeSalary)
-        (Json.at [ "acf", "expiry_date" ] decodeDate)
-        (Json.at [ "acf", "listing_url" ] Json.string)
+        (inAcf "employer" Json.string)
+        (inAcf "location" Json.string)
+        (inAcf "salary" decodeSalary)
+        (inAcf "expiry_date" decodeDate)
+        (inAcf "listing_url" Json.string)
+        (inAcf "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
 
 
 decodeSalary : Json.Decoder (Result String Int)
@@ -77,6 +91,17 @@ decodeDate : Json.Decoder (Result String Date)
 decodeDate =
     Json.string
         |> Json.map Date.fromString
+
+
+decodePaidPromotion : Bool -> Json.Decoder (Maybe PaidPromotion)
+decodePaidPromotion isPaid =
+    if isPaid then
+        Json.map2 PaidPromotion
+            (inAcf "job_description" Json.string)
+            (inAcf "company_logo" Json.string)
+            |> Json.map Just
+    else
+        Json.succeed Nothing
 
 
 
@@ -122,7 +147,7 @@ viewJobs webdata =
 
 
 viewJob : Job -> Html a
-viewJob { title, employer, location, salary, expiry_date, listing_url } =
+viewJob { title, employer, location, salary, expiry_date, listing_url, paid_promotion } =
     let
         withLabel l t =
             div []
@@ -145,6 +170,19 @@ viewJob { title, employer, location, salary, expiry_date, listing_url } =
 
                 Err e ->
                     e
+
+        viewPaidPromotion : List (Html a)
+        viewPaidPromotion =
+            case paid_promotion of
+                Just { description, company_logo } ->
+                    [ div [ innerHtml description ]
+                        []
+                    , img [ src company_logo ]
+                        []
+                    ]
+
+                Nothing ->
+                    []
     in
         li [ class "job" ]
             [ div []
@@ -158,6 +196,7 @@ viewJob { title, employer, location, salary, expiry_date, listing_url } =
             , div []
                 [ withLabel "Expires on" viewExpiryDate
                 ]
+            , div [] viewPaidPromotion
             ]
 
 
