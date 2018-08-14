@@ -14,6 +14,7 @@ import View exposing (view)
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { jobsRequest = RD.NotAsked
+      , searchText = ""
       }
     , loadJobs flags.host
     )
@@ -40,6 +41,9 @@ update msg model =
     case msg of
         JobsLoaded webdata ->
             ( { model | jobsRequest = webdata }, Cmd.none )
+
+        UpdateSearch text ->
+            ( { model | searchText = text }, Cmd.none )
 
 
 

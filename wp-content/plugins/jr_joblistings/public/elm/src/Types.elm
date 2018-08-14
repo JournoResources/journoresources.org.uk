@@ -6,11 +6,13 @@ import RemoteData as RD
 
 type alias Model =
     { jobsRequest : RD.WebData (List Job)
+    , searchText : String
     }
 
 
 type Msg
     = JobsLoaded (RD.WebData (List Job))
+    | UpdateSearch String
 
 
 type alias Url =

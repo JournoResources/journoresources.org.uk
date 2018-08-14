@@ -1,9 +1,10 @@
 module View exposing (view)
 
 import Date.Format exposing (format)
-import Html exposing (Html, a, div, img, li, strong, text, ul)
-import Html.Attributes exposing (class, href, src, target)
+import Html exposing (Html, a, div, img, input, li, strong, text, ul)
+import Html.Attributes exposing (class, href, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
+import Html.Events exposing (onInput)
 import RemoteData as RD
 import Types exposing (..)
 
@@ -11,12 +12,28 @@ import Types exposing (..)
 view : Model -> Html Msg
 view model =
     div []
-        [ viewJobs model.jobsRequest
+        [ searchField
+        , viewJobs model.searchText model.jobsRequest
         ]
 
 
-viewJobs : RD.WebData (List Job) -> Html msg
-viewJobs webdata =
+
+-- Search
+
+
+searchField : Html Msg
+searchField =
+    div []
+        [ input [ type_ "text", placeholder "Search jobs...", onInput UpdateSearch ] []
+        ]
+
+
+
+-- Jobs list
+
+
+viewJobs : String -> RD.WebData (List Job) -> Html msg
+viewJobs searchText webdata =
     case webdata of
         RD.NotAsked ->
             text "Not asked"
@@ -28,7 +45,34 @@ viewJobs webdata =
             text ("There was a problem loading the jobs: " ++ toString e)
 
         RD.Success jobs ->
-            ul [ class "jobs" ] (List.map viewJob jobs)
+            viewFilteredJobs searchText jobs
+
+
+jobMatchesSearch : String -> Job -> Bool
+jobMatchesSearch searchText { title, employer, location } =
+    let
+        -- @TODO filter for only alpha(numeric?) characters
+        clean =
+            String.trim << String.toLower
+
+        within =
+            String.contains <| clean searchText
+    in
+        List.foldr ((||) << within << clean) False [ title, employer, location ]
+
+
+viewFilteredJobs : String -> List Job -> Html a
+viewFilteredJobs searchText jobs =
+    let
+        filteredJobs =
+            List.filter (jobMatchesSearch searchText) jobs
+    in
+        if List.isEmpty filteredJobs then
+            div []
+                [ text "Sorry, we couldn't find any jobs for your search text"
+                ]
+        else
+            ul [ class "jobs" ] (List.map viewJob filteredJobs)
 
 
 viewJob : Job -> Html a
