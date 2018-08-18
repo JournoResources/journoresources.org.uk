@@ -15,6 +15,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { jobsRequest = RD.NotAsked
       , searchText = ""
+      , hideLondon = False
       }
     , loadJobs flags.host
     )
@@ -44,6 +45,9 @@ update msg model =
 
         UpdateSearch text ->
             ( { model | searchText = text }, Cmd.none )
+
+        ToggleLondon shouldHide ->
+            ( { model | hideLondon = shouldHide }, Cmd.none )
 
 
 

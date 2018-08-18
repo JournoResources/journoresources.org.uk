@@ -1,10 +1,10 @@
 module View exposing (view)
 
 import Date.Format exposing (format)
-import Html exposing (Html, a, div, img, input, li, strong, text, ul)
-import Html.Attributes exposing (class, href, placeholder, src, target, type_)
+import Html exposing (Html, a, div, img, input, label, li, strong, text, ul)
+import Html.Attributes exposing (class, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Types exposing (..)
 
@@ -12,13 +12,15 @@ import Types exposing (..)
 view : Model -> Html Msg
 view model =
     div []
-        [ searchField
-        , viewJobs model.searchText model.jobsRequest
+        [ div []
+            [ searchField
+            , londonVisibilityToggle
+            ]
+        , viewJobs model.searchText model.hideLondon model.jobsRequest
         ]
 
 
-
--- Search
+---- Search ----
 
 
 searchField : Html Msg
@@ -28,12 +30,26 @@ searchField =
         ]
 
 
+---- "Hide London" toggle ----
 
--- Jobs list
+
+londonVisibilityToggle : Html Msg
+londonVisibilityToggle =
+    let
+        fieldName =
+            "hideLondon"
+    in
+        div []
+            [ label [ for fieldName ] [ text "Hide London jobs" ]
+            , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
+            ]
 
 
-viewJobs : String -> RD.WebData (List Job) -> Html msg
-viewJobs searchText webdata =
+---- Jobs list ----
+
+
+viewJobs : String -> Bool -> RD.WebData (List Job) -> Html msg
+viewJobs searchText hideLondon webdata =
     case webdata of
         RD.NotAsked ->
             text "Not asked"
@@ -45,11 +61,11 @@ viewJobs searchText webdata =
             text ("There was a problem loading the jobs: " ++ toString e)
 
         RD.Success jobs ->
-            viewFilteredJobs searchText jobs
+            viewFilteredJobs searchText hideLondon jobs
 
 
-jobMatchesSearch : String -> Job -> Bool
-jobMatchesSearch searchText { title, employer, location } =
+jobMatchesCriteria : String -> Bool -> Job -> Bool
+jobMatchesCriteria searchText hideLondon { title, employer, location } =
     let
         -- @TODO filter for only alpha(numeric?) characters
         clean =
@@ -57,22 +73,44 @@ jobMatchesSearch searchText { title, employer, location } =
 
         within =
             String.contains <| clean searchText
+
+        matchesSearch =
+            List.foldr ((||) << within << clean) False [ title, employer, location ]
+
+        shouldHide =
+            hideLondon && clean location == "london"
+
     in
-        List.foldr ((||) << within << clean) False [ title, employer, location ]
+        matchesSearch && not shouldHide
 
 
-viewFilteredJobs : String -> List Job -> Html a
-viewFilteredJobs searchText jobs =
+viewFilteredJobs : String -> Bool -> List Job -> Html a
+viewFilteredJobs searchText hideLondon jobs =
     let
         filteredJobs =
-            List.filter (jobMatchesSearch searchText) jobs
+            List.filter (jobMatchesCriteria searchText hideLondon) jobs
     in
         if List.isEmpty filteredJobs then
-            div []
-                [ text "Sorry, we couldn't find any jobs for your search text"
-                ]
+            viewEmptyResults hideLondon
         else
             ul [ class "jobs" ] (List.map viewJob filteredJobs)
+
+
+viewEmptyResults : Bool -> Html a
+viewEmptyResults londonHidden =
+    let
+        copy =
+            if londonHidden then
+                """
+                Sorry, we couldn't find any jobs matching your criteria. Try searching for
+                something else, or unticking the checkbox to show jobs in London.
+                """
+            else
+                """
+                Sorry, we couldn't find any jobs matching your search.
+                """
+    in
+        div [] [ text copy ]
 
 
 viewJob : Job -> Html a
