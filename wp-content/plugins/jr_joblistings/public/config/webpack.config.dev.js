@@ -16,7 +16,7 @@ const publicPath = '';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
 // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-const publicUrl = 'http://192.168.99.100:8000';
+const publicUrl = 'http://localhost:8000';
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
 
