@@ -1,8 +1,9 @@
 module View exposing (view)
 
+import Date exposing (Date)
 import Date.Format exposing (format)
-import Html exposing (Html, a, div, img, input, label, li, strong, text, ul)
-import Html.Attributes exposing (class, for, href, name, placeholder, src, target, type_)
+import Html exposing (Html, a, div, h3, img, input, label, li, strong, text, ul)
+import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
@@ -12,7 +13,7 @@ import Types exposing (..)
 view : Model -> Html Msg
 view model =
     div []
-        [ div []
+        [ div [ class "filterOptions" ]
             [ searchField
             , londonVisibilityToggle
             ]
@@ -25,7 +26,7 @@ view model =
 
 searchField : Html Msg
 searchField =
-    div []
+    div [ class "filterOption search" ]
         [ input [ type_ "text", placeholder "Search jobs...", onInput UpdateSearch ] []
         ]
 
@@ -39,7 +40,7 @@ londonVisibilityToggle =
         fieldName =
             "hideLondon"
     in
-        div []
+        div [ class "filterOption londonVisibility" ]
             [ label [ for fieldName ] [ text "Hide London jobs" ]
             , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
             ]
@@ -113,63 +114,102 @@ viewEmptyResults londonHidden =
         div [] [ text copy ]
 
 
+---- Individual jobs ----
+
+
+viewTitle : String -> Url -> Html a
+viewTitle title linkUrl =
+    div [ class "title" ]
+        [ h3 []
+            [ a [ href linkUrl, target "_blank" ]
+                [ text title
+                ]
+            ]
+        ]
+
+
+viewEmployer : String -> Html a
+viewEmployer employer =
+    div [ class "employer" ]
+        [ text employer
+        ]
+
+
+viewLocation : String -> Html a
+viewLocation location =
+    div [ class "location" ]
+        [ text location ]
+
+
+viewSalary : Result String Int -> Html a
+viewSalary salary =
+    div [ class "salary" ]
+        [ text <| case salary of
+            Ok s ->
+                "£" ++ toString s
+
+            Err e ->
+                e
+        ]
+
+
+viewExpiryDate : Result String Date -> Html a
+viewExpiryDate expiry_date =
+    div [ class "expiryDate" ]
+        [ text <| case expiry_date of
+            Ok date ->
+                format "%d/%m/%Y" date
+
+            Err e ->
+                e
+        ]
+
+
+viewPaidPromotion : PaidPromotion -> Html a
+viewPaidPromotion { description, company_logo } =
+    div []
+        [ div [ class "description", innerHtml description ]
+            []
+        , div [ class "logo" ]
+            [ img [ src company_logo ]
+                []
+            ]
+        ]
+
+
 viewJob : Job -> Html a
 viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } =
     let
-        withLabel l t =
-            div []
-                [ strong [] [ text (l ++ ": ") ]
-                , text t
-                ]
-
-        viewSalary =
-            case salary of
-                Ok s ->
-                    "£" ++ toString s
-
-                Err e ->
-                    e
-
-        viewExpiryDate =
-            case expiry_date of
-                Ok date ->
-                    format "%d/%m/%Y" date
-
-                Err e ->
-                    e
-
-        viewPaidPromotion : List (Html a)
-        viewPaidPromotion =
-            case paid_promotion of
-                Just { description, company_logo } ->
-                    [ div [ innerHtml description ]
-                        []
-                    , img [ src company_logo ]
-                        []
-                    ]
-
-                Nothing ->
-                    []
-
-        linkUrl =
+        isPaid =
             case paid_promotion of
                 Just _ ->
-                    job_page_url
+                    True
+                
+                Nothing ->
+                    False
+
+        linkUrl =
+            if isPaid then
+                job_page_url
+            else
+                listing_url
+    in
+        li [ classList [("job", True), ("promotion", isPaid)] ]
+            [ div []
+                [ viewTitle title linkUrl
+                , viewEmployer employer
+                ]
+            , div []
+                [ viewLocation location
+                , viewSalary salary
+                ]
+            , div []
+                [ viewExpiryDate expiry_date
+                ]
+            , case paid_promotion of
+                Just data ->
+                    viewPaidPromotion data
 
                 Nothing ->
-                    listing_url
-    in
-        li [ class "job" ]
-            [ div []
-                [ a [ href linkUrl, target "_blank", class "title" ] [ text title ]
-                , div [] [ text employer ]
-                ]
-            , div []
-                [ withLabel "Location" location
-                , withLabel "Salary" viewSalary
-                ]
-            , div []
-                [ withLabel "Expires on" viewExpiryDate
-                ]
-            , div [] viewPaidPromotion
+                    text ""
             ]
