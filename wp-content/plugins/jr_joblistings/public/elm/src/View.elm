@@ -12,7 +12,7 @@ import Types exposing (..)
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ class "wrapper" ]
         [ div [ class "filterOptions" ]
             [ searchField
             , londonVisibilityToggle
