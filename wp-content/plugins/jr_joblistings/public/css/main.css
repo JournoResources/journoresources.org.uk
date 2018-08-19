@@ -2,12 +2,22 @@
 
 #jr-joblistings .filterOptions {
   display: flex;
+  align-items: center;
   padding: 1rem 0;
   margin-bottom: 2rem;
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px dashed lightgrey;
 }
+
 #jr-joblistings .filterOption {
   margin-right: 1rem;
+}
+
+#jr-joblistings .filterOption.londonVisibility {
+  display: flex;
+  align-items: center;
+}
+#jr-joblistings .filterOption.londonVisibility label {
+  margin-right: 0.2rem;
 }
 
 
@@ -25,7 +35,7 @@
 #jr-joblistings .job {
   margin-bottom: 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   grid-gap: 1rem;
   padding: 0.5rem;
   border: 1px solid lightgrey;
@@ -34,14 +44,15 @@
   background-color: rgba(99, 198, 174, 0.2);
 }
 
-#jr-joblistings .job .title h3 {
+#jr-joblistings .job .titleEmployer h3 {
   margin: 0;
 }
-#jr-joblistings .job .title a {
+#jr-joblistings .job .titleEmployer a {
   text-decoration: none;
 }
 
 #jr-joblistings .job .promotionDetails {
+  grid-column: 1 / span 2;
   display: flex;
 }
 

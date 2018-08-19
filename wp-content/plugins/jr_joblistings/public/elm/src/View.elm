@@ -117,46 +117,37 @@ viewEmptyResults londonHidden =
 ---- Individual jobs ----
 
 
-viewTitle : String -> Url -> Html a
-viewTitle title linkUrl =
-    div [ class "title" ]
+viewTitleEmployer : String -> String -> Url -> Html a
+viewTitleEmployer title employer linkUrl =
+    div [ class "titleEmployer" ]
         [ h3 []
             [ a [ href linkUrl, target "_blank" ]
-                [ text title
+                [ text <| title ++ ", " ++ employer
                 ]
             ]
         ]
 
 
-viewEmployer : String -> Html a
-viewEmployer employer =
-    div [ class "employer" ]
-        [ text employer
-        ]
+viewLocationSalary : String -> Result String Int -> Html a
+viewLocationSalary location salary =
+    let
+        salaryText =
+            case salary of
+                Ok s ->
+                    "£" ++ toString s
 
-
-viewLocation : String -> Html a
-viewLocation location =
-    div [ class "location" ]
-        [ text location ]
-
-
-viewSalary : Result String Int -> Html a
-viewSalary salary =
-    div [ class "salary" ]
-        [ text <| case salary of
-            Ok s ->
-                "£" ++ toString s
-
-            Err e ->
-                e
-        ]
+                Err e ->
+                    e
+    in
+        div [ class "locationSalary" ]
+            [ text <| location ++ " - " ++ salaryText
+            ]
 
 
 viewExpiryDate : Result String Date -> Html a
 viewExpiryDate expiry_date =
     div [ class "expiryDate" ]
-        [ text <| case expiry_date of
+        [ text <| "Closes " ++ case expiry_date of
             Ok date ->
                 format "%d/%m/%Y" date
 
@@ -167,7 +158,7 @@ viewExpiryDate expiry_date =
 
 viewPaidPromotion : PaidPromotion -> Html a
 viewPaidPromotion { description, company_logo } =
-    div []
+    div [ class "promotionDetails" ]
         [ div [ class "description", innerHtml description ]
             []
         , div [ class "logo" ]
@@ -196,12 +187,8 @@ viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_
     in
         li [ classList [("job", True), ("promotion", isPaid)] ]
             [ div []
-                [ viewTitle title linkUrl
-                , viewEmployer employer
-                ]
-            , div []
-                [ viewLocation location
-                , viewSalary salary
+                [ viewTitleEmployer title employer linkUrl
+                , viewLocationSalary location salary
                 ]
             , div []
                 [ viewExpiryDate expiry_date
