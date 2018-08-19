@@ -25,7 +25,7 @@ type alias Job =
     { title : String
     , employer : String
     , location : String
-    , salary : Result String Int
+    , salary : String
     , expiry_date : Result String Date
     , listing_url : Url
     , job_page_url : Url

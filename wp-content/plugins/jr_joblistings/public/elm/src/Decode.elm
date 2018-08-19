@@ -21,17 +21,11 @@ decodeJob =
         (Json.at [ "title", "rendered" ] Json.string)
         (inAcf "employer" Json.string)
         (inAcf "location" Json.string)
-        (inAcf "salary" decodeSalary)
+        (inAcf "salary" Json.string)
         (inAcf "expiry_date" decodeDate)
         (inAcf "listing_url" Json.string)
         (Json.field "link" Json.string)
         (inAcf "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
-
-
-decodeSalary : Json.Decoder (Result String Int)
-decodeSalary =
-    Json.string
-        |> Json.map String.toInt
 
 
 decodeDate : Json.Decoder (Result String Date)

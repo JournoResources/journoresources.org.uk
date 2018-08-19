@@ -128,20 +128,11 @@ viewTitleEmployer title employer linkUrl =
         ]
 
 
-viewLocationSalary : String -> Result String Int -> Html a
+viewLocationSalary : String -> String -> Html a
 viewLocationSalary location salary =
-    let
-        salaryText =
-            case salary of
-                Ok s ->
-                    "£" ++ toString s
-
-                Err e ->
-                    e
-    in
-        div [ class "locationSalary" ]
-            [ text <| location ++ " - " ++ salaryText
-            ]
+    div [ class "locationSalary" ]
+        [ text <| location ++ " - " ++ salary
+        ]
 
 
 viewExpiryDate : Result String Date -> Html a
