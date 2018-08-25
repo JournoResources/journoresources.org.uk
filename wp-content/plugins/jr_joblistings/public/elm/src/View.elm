@@ -8,7 +8,7 @@ import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Types exposing (..)
-import Utils exposing (formatDate, isPaidPromotion, isToday, orderDateResults)
+import Utils exposing (formatDate, isPaidPromotion, isToday, locationMatches, orderDateResults)
 
 
 view : Model -> Html Msg
@@ -72,17 +72,11 @@ viewJobs searchText hideLondon today webdata =
 jobMatchesCriteria : String -> Bool -> Job -> Bool
 jobMatchesCriteria searchText hideLondon { title, employer, location } =
     let
-        clean =
-            String.trim << String.toLower
-
-        within =
-            String.contains <| clean searchText
-
         matchesSearch =
-            List.foldr ((||) << within << clean) False [ title, employer, location ]
+            List.foldr ((||) << locationMatches searchText) False [ title, employer, location ]
 
         shouldHide =
-            hideLondon && clean location == "london"
+            hideLondon && locationMatches "london" location
     in
         matchesSearch && not shouldHide
 

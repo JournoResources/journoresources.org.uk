@@ -15,6 +15,15 @@ isPaidPromotion { paid_promotion } =
             False
 
 
+locationMatches : String -> String -> Bool
+locationMatches searchText location =
+    let
+        clean =
+            String.trim << String.toLower
+    in
+        String.contains (clean searchText) (clean location)
+
+
 formatDate : Date -> String
 formatDate date =
     toFormattedString "dd/MM/yyyy" date
