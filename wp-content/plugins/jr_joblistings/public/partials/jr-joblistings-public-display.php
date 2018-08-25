@@ -11,6 +11,4 @@
  * @subpackage JR_JobListings/public/partials
  */
 ?>
-
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div id="jr-joblistings"></div>

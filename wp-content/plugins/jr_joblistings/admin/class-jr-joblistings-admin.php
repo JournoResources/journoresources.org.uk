@@ -370,4 +370,60 @@ class JR_JobListings_Admin {
 		}
 	}
 
+	/**
+	 * Register custom /jr/v1/jobs REST endpoint
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_custom_rest_endpoint() {
+
+		$jr_jobs_endpoint = function ( $request_data ) {
+
+			// @TODO accept query parameters
+			$args = array(
+				'post_type' => 'jr_joblisting',
+			);
+
+			$jobsData = get_posts( $args );
+
+			$jobs = array();
+
+			foreach ( $jobsData as $key => $jobData ) {
+
+				$jobID = $jobData->ID;
+
+				$job = array(
+					'title' => $jobData->post_title,
+					'link' => get_permalink( $jobID ),
+				);
+
+				$customFieldsData = get_fields( $jobID );
+
+				$customFieldsToInclude = array(
+					'employer',
+					'location',
+					'salary',
+					'expiry_date',
+					'listing_url',
+					'paid_promotion',
+					'job_description_preview',
+					'company_logo',
+				);
+
+				foreach ( $customFieldsToInclude as $cf ) {
+					$job[$cf] = $customFieldsData[$cf];
+				};
+
+				$jobs[$key] = $job;
+			}
+
+			return $jobs;
+		};
+
+		register_rest_route( 'jr/v1', '/jobs/', array(
+			'methods' => 'GET',
+			'callback' => $jr_jobs_endpoint
+		));
+	}
+
 }

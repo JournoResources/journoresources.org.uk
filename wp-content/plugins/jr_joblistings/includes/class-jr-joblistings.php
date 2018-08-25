@@ -146,12 +146,6 @@ class JR_JobListings {
 		$this->loader->add_filter( 'acf/settings/dir', $plugin_admin, 'get_acf_settings_dir' );
 		define( 'ACF_LITE', false ); // Hide ACF UI
 		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf/acf.php' );
-		
-		/**
-		 * ACF to Rest API
-		 */
-		add_action( 'after_setup_theme', array( 'ACF_To_REST_API', 'init' ) );
-		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf-to-rest-api/class-acf-to-rest-api.php' );
 	}
     
 	/**
@@ -180,6 +174,7 @@ class JR_JobListings {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'init', $plugin_admin, 'add_custom_post_type' );
+		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'add_custom_rest_endpoint' );
 	}
 
     /**

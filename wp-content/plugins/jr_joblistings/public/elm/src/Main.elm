@@ -34,7 +34,7 @@ type alias Flags =
 
 loadJobs : Url -> Cmd Msg
 loadJobs host =
-    Http.get (host ++ "/wp-json/wp/v2/jobs") decodeJobs
+    Http.get (host ++ "/wp-json/jr/v1/jobs") decodeJobs
         |> RD.sendRequest
         |> Cmd.map JobsLoaded
 

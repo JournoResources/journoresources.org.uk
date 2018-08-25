@@ -10,22 +10,17 @@ decodeJobs =
     Json.list decodeJob
 
 
-inAcf : String -> Json.Decoder a -> Json.Decoder a
-inAcf field =
-    Json.at [ "acf", field ]
-
-
 decodeJob : Json.Decoder Job
 decodeJob =
     Json.map8 Job
-        (Json.at [ "title", "rendered" ] Json.string)
-        (inAcf "employer" Json.string)
-        (inAcf "location" Json.string)
-        (inAcf "salary" Json.string)
-        (inAcf "expiry_date" decodeDate)
-        (inAcf "listing_url" Json.string)
+        (Json.field "title" Json.string)
+        (Json.field "employer" Json.string)
+        (Json.field "location" Json.string)
+        (Json.field "salary" Json.string)
+        (Json.field "expiry_date" decodeDate)
+        (Json.field "listing_url" Json.string)
         (Json.field "link" Json.string)
-        (inAcf "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
+        (Json.field "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
 
 
 decodeDate : Json.Decoder (Result String Date)
@@ -38,8 +33,8 @@ decodePaidPromotion : Bool -> Json.Decoder (Maybe PaidPromotion)
 decodePaidPromotion isPaid =
     if isPaid then
         Json.map2 PaidPromotion
-            (inAcf "job_description_preview" Json.string)
-            (inAcf "company_logo" Json.string)
+            (Json.field "job_description_preview" Json.string)
+            (Json.field "company_logo" Json.string)
             |> Json.map Just
     else
         Json.succeed Nothing
