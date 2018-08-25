@@ -5,7 +5,8 @@ import RemoteData as RD
 
 
 type alias Model =
-    { jobsRequest : RD.WebData (List Job)
+    { host : Url
+    , jobsRequest : RD.WebData (List Job)
     , searchText : String
     , hideLondon : Bool
     , today : Maybe Date
@@ -13,10 +14,10 @@ type alias Model =
 
 
 type Msg
-    = JobsLoaded (RD.WebData (List Job))
+    = ReceiveTodaysDate Date
+    | JobsLoaded (RD.WebData (List Job))
     | UpdateSearch String
     | ToggleLondon Bool
-    | ReceiveTodaysDate Date
 
 
 type alias Url =

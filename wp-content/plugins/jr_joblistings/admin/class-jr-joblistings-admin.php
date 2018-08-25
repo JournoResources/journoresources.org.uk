@@ -61,20 +61,6 @@ class JR_JobListings_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in JR_JobListings_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The JR_JobListings_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		// wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/jr-joblistings-admin.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -83,20 +69,6 @@ class JR_JobListings_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in JR_JobListings_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The JR_JobListings_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/jr-joblistings-admin.js', array( 'jquery' ), $this->version, false );
 	}
 
 	/**
@@ -377,13 +349,28 @@ class JR_JobListings_Admin {
 	 */
 	public function add_custom_rest_endpoint() {
 
-		$jr_jobs_endpoint = function ( $request_data ) {
+		$jr_jobs_endpoint = function ( $request ) {
 
-			// @TODO accept query parameters
 			$args = array(
 				'post_type' => 'jr_joblisting',
 			);
 
+			// The user of the API may request only jobs that expire on or after a given date
+			$dateFilter = $request->get_param( 'expire_after' );
+
+			if ( isset( $dateFilter ) ) {
+				$args['meta_query'] = array(
+					'relation' => 'AND',
+					array(
+						'key' => 'expiry_date',
+						'value' => $dateFilter,
+						'type' => 'DATETIME',
+						'compare' => '>='
+					)
+				);
+			};
+
+			// The basic get_posts response includes lots of extra fields from WP...
 			$jobsData = get_posts( $args );
 
 			$jobs = array();
@@ -392,9 +379,11 @@ class JR_JobListings_Admin {
 
 				$jobID = $jobData->ID;
 
+				// ... so we pick the ones we want
 				$job = array(
 					'title' => $jobData->post_title,
 					'link' => get_permalink( $jobID ),
+					'params' => $params
 				);
 
 				$customFieldsData = get_fields( $jobID );

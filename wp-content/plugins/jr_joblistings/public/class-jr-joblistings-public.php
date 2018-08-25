@@ -89,7 +89,6 @@ class JR_JobListings_Public {
 	 */
 	public function display_joblistings( $attrs = array() ) {
 		ob_start();
-
 		include('partials/jr-joblistings-public-display.php');
 		$output = ob_get_contents();
 		ob_end_clean();
