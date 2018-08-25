@@ -1,13 +1,14 @@
 module View exposing (view)
 
 import Date exposing (Date)
+import Date.Extra as DE
 import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
 import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Types exposing (..)
-import Utils exposing (isPaidPromotion, formatDate, orderDateResults)
+import Utils exposing (formatDate, isPaidPromotion, isToday, orderDateResults)
 
 
 view : Model -> Html Msg
@@ -17,7 +18,7 @@ view model =
             [ searchField
             , londonVisibilityToggle
             ]
-        , viewJobs model.searchText model.hideLondon model.jobsRequest
+        , viewJobs model.searchText model.hideLondon model.today model.jobsRequest
         ]
 
 
@@ -52,8 +53,8 @@ londonVisibilityToggle =
 ---- Jobs list ----
 
 
-viewJobs : String -> Bool -> RD.WebData (List Job) -> Html msg
-viewJobs searchText hideLondon webdata =
+viewJobs : String -> Bool -> Maybe Date -> RD.WebData (List Job) -> Html msg
+viewJobs searchText hideLondon today webdata =
     case webdata of
         RD.NotAsked ->
             text "Not asked"
@@ -65,7 +66,7 @@ viewJobs searchText hideLondon webdata =
             text ("There was a problem loading the jobs: " ++ toString e)
 
         RD.Success jobs ->
-            viewFilteredJobs searchText hideLondon jobs
+            viewFilteredJobs searchText hideLondon today jobs
 
 
 jobMatchesCriteria : String -> Bool -> Job -> Bool
@@ -98,8 +99,8 @@ orderJobs jobs =
         (sort promotedJobs) ++ (sort regularJobs)
 
 
-viewFilteredJobs : String -> Bool -> List Job -> Html a
-viewFilteredJobs searchText hideLondon jobs =
+viewFilteredJobs : String -> Bool -> Maybe Date -> List Job -> Html a
+viewFilteredJobs searchText hideLondon today jobs =
     let
         filteredJobs =
             List.filter (jobMatchesCriteria searchText hideLondon) (orderJobs jobs)
@@ -107,7 +108,7 @@ viewFilteredJobs searchText hideLondon jobs =
         if List.isEmpty filteredJobs then
             viewEmptyResults hideLondon
         else
-            ul [ class "jobs" ] (List.map viewJob filteredJobs)
+            ul [ class "jobs" ] (List.map (viewJob today) filteredJobs)
 
 
 viewEmptyResults : Bool -> Html a
@@ -150,18 +151,26 @@ viewLocationSalary location salary =
         ]
 
 
-viewExpiryDate : Result String Date -> Html a
-viewExpiryDate expiry_date =
-    div [ class "expiryDate" ]
-        [ text <|
-            "Closes "
-                ++ case expiry_date of
-                    Ok date ->
-                        formatDate date
+viewExpiryDate : Maybe Date -> Result String Date -> Html a
+viewExpiryDate maybeToday expiry_date =
+    let
+        renderedDate =
+            case ( maybeToday, expiry_date ) of
+                ( Just today, Ok date ) ->
+                    if isToday today date then
+                        strong [] [ text "Closes today" ]
+                    else
+                        text <| "Closes " ++ formatDate date
 
-                    Err e ->
-                        e
-        ]
+                ( Nothing, Ok date ) ->
+                    text <| "Closes " ++ formatDate date
+
+                ( _, Err e ) ->
+                    text e
+    in
+        div [ class "expiryDate" ]
+            [ renderedDate
+            ]
 
 
 viewPaidPromotion : PaidPromotion -> Html a
@@ -176,8 +185,8 @@ viewPaidPromotion { description_preview, company_logo } =
         ]
 
 
-viewJob : Job -> Html a
-viewJob ({ title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
+viewJob : Maybe Date -> Job -> Html a
+viewJob today ({ title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
         linkUrl =
             if isPaidPromotion job then
@@ -191,7 +200,7 @@ viewJob ({ title, employer, location, salary, expiry_date, listing_url, job_page
                 , viewLocationSalary location salary
                 ]
             , div []
-                [ viewExpiryDate expiry_date
+                [ viewExpiryDate today expiry_date
                 ]
             , case paid_promotion of
                 Just data ->

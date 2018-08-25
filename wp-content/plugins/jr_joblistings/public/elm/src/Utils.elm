@@ -1,7 +1,7 @@
 module Utils exposing (..)
 
 import Date exposing (Date)
-import Date.Extra as DE
+import Date.Extra exposing (Interval(..), equalBy, toFormattedString)
 import Types exposing (..)
 
 
@@ -17,7 +17,16 @@ isPaidPromotion { paid_promotion } =
 
 formatDate : Date -> String
 formatDate date =
-    DE.toFormattedString "dd/MM/yyyy" date
+    toFormattedString "dd/MM/yyyy" date
+
+
+isToday : Date -> Date -> Bool
+isToday today date =
+    let
+        intervals =
+            [ Year, Month, Day ]
+    in
+        List.foldr (\interval acc -> acc && equalBy interval today date) True intervals
 
 
 orderDateResults : Result String Date -> Result String Date -> Order
@@ -26,7 +35,7 @@ orderDateResults dr1 dr2 =
         Ok d1 ->
             case dr2 of
                 Ok d2 ->
-                    DE.compare d2 d1
+                    Date.Extra.compare d1 d2
 
                 Err _ ->
                     GT

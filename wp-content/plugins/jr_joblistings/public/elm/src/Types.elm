@@ -8,6 +8,7 @@ type alias Model =
     { jobsRequest : RD.WebData (List Job)
     , searchText : String
     , hideLondon : Bool
+    , today : Maybe Date
     }
 
 
@@ -15,6 +16,7 @@ type Msg
     = JobsLoaded (RD.WebData (List Job))
     | UpdateSearch String
     | ToggleLondon Bool
+    | ReceiveTodaysDate Date
 
 
 type alias Url =

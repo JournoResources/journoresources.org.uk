@@ -1,10 +1,12 @@
 module Main exposing (..)
 
+import Date exposing (Date, now)
 import Decode exposing (decodeJobs)
 import Html
 import Http
-import Types exposing (..)
 import RemoteData as RD
+import Task
+import Types exposing (..)
 import View exposing (view)
 
 
@@ -16,8 +18,12 @@ init flags =
     ( { jobsRequest = RD.NotAsked
       , searchText = ""
       , hideLondon = False
+      , today = Nothing
       }
-    , loadJobs flags.host
+    , Cmd.batch
+        [ loadJobs flags.host
+        , getTodaysDate
+        ]
     )
 
 
@@ -31,6 +37,11 @@ loadJobs host =
     Http.get (host ++ "/wp-json/wp/v2/jobs") decodeJobs
         |> RD.sendRequest
         |> Cmd.map JobsLoaded
+
+
+getTodaysDate : Cmd Msg
+getTodaysDate =
+    Task.perform ReceiveTodaysDate now
 
 
 
@@ -48,6 +59,9 @@ update msg model =
 
         ToggleLondon shouldHide ->
             ( { model | hideLondon = shouldHide }, Cmd.none )
+
+        ReceiveTodaysDate date ->
+            ( { model | today = Just date }, Cmd.none )
 
 
 
