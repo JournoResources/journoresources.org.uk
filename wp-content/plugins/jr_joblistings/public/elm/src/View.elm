@@ -170,12 +170,12 @@ viewExpiryDate maybeToday expiry_date =
 viewPaidPromotion : PaidPromotion -> Html a
 viewPaidPromotion { description_preview, company_logo } =
     div [ class "promotionDetails" ]
-        [ div [ class "description", innerHtml description_preview ]
-            []
-        , div [ class "logo" ]
+        [ div [ class "logo" ]
             [ img [ src company_logo ]
                 []
             ]
+        , div [ class "description", innerHtml description_preview ]
+            []
         ]
 
 
