@@ -21,6 +21,41 @@ view model =
         ]
 
 
+isPaidPromotion : Job -> Bool
+isPaidPromotion { paid_promotion } =
+    case paid_promotion of
+        Just _ ->
+            True
+
+        Nothing ->
+            False
+
+
+formatDate : Date -> String
+formatDate date =
+    format "%d/%m/%Y" date
+
+
+orderDateResults : Result String Date -> Result String Date -> Order
+orderDateResults dr1 dr2 =
+    case dr1 of
+        Ok d1 ->
+            case dr2 of
+                Ok d2 ->
+                    compare (formatDate d2) (formatDate d1)
+
+                Err _ ->
+                    GT
+
+        Err _ ->
+            case dr2 of
+                Ok _ ->
+                    LT
+
+                Err _ ->
+                    EQ
+
+
 
 ---- Search ----
 
@@ -87,11 +122,23 @@ jobMatchesCriteria searchText hideLondon { title, employer, location } =
         matchesSearch && not shouldHide
 
 
+orderJobs : List Job -> List Job
+orderJobs jobs =
+    let
+        ( promotedJobs, regularJobs ) =
+            List.partition isPaidPromotion jobs
+
+        sort =
+            List.sortWith (\job1 job2 -> orderDateResults job1.expiry_date job2.expiry_date)
+    in
+        (sort promotedJobs) ++ (sort regularJobs)
+
+
 viewFilteredJobs : String -> Bool -> List Job -> Html a
 viewFilteredJobs searchText hideLondon jobs =
     let
         filteredJobs =
-            List.filter (jobMatchesCriteria searchText hideLondon) jobs
+            List.filter (jobMatchesCriteria searchText hideLondon) (orderJobs jobs)
     in
         if List.isEmpty filteredJobs then
             viewEmptyResults hideLondon
@@ -146,7 +193,7 @@ viewExpiryDate expiry_date =
             "Closes "
                 ++ case expiry_date of
                     Ok date ->
-                        format "%d/%m/%Y" date
+                        formatDate date
 
                     Err e ->
                         e
@@ -166,23 +213,15 @@ viewPaidPromotion { description_preview, company_logo } =
 
 
 viewJob : Job -> Html a
-viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } =
+viewJob ({ title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
-        isPaid =
-            case paid_promotion of
-                Just _ ->
-                    True
-
-                Nothing ->
-                    False
-
         linkUrl =
-            if isPaid then
+            if isPaidPromotion job then
                 job_page_url
             else
                 listing_url
     in
-        li [ classList [ ( "job", True ), ( "promotion", isPaid ) ] ]
+        li [ classList [ ( "job", True ), ( "promotion", isPaidPromotion job ) ] ]
             [ div []
                 [ viewTitleEmployer title employer linkUrl
                 , viewLocationSalary location salary
