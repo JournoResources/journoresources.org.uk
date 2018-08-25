@@ -2,7 +2,7 @@ module View exposing (view)
 
 import Date exposing (Date)
 import Date.Format exposing (format)
-import Html exposing (Html, a, div, h3, img, input, label, li, strong, text, ul)
+import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
 import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onCheck, onInput)
@@ -118,13 +118,18 @@ viewEmptyResults londonHidden =
 
 viewTitleEmployer : String -> String -> Url -> Html a
 viewTitleEmployer title employer linkUrl =
-    div [ class "titleEmployer" ]
-        [ h3 []
-            [ a [ href linkUrl, target "_blank" ]
-                [ text <| title ++ ", " ++ employer
+    let
+        renderedTitle =
+            span [ innerHtml title ] []
+    in
+        div [ class "titleEmployer" ]
+            [ h3 []
+                [ a [ href linkUrl, target "_blank" ]
+                    [ renderedTitle
+                    , text <| ", " ++ employer
+                    ]
                 ]
             ]
-        ]
 
 
 viewLocationSalary : String -> String -> Html a

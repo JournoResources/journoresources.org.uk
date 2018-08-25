@@ -161,7 +161,7 @@ class JR_JobListings_Admin {
 			'rewrite'               => $rewrite,
 			'capability_type'       => 'post',
 			'show_in_rest'          => true,
-			'rest_base'             => 'job',
+			'rest_base'             => 'jobs',
 		);
 		register_post_type( 'jr_joblisting', $args );
 	}
