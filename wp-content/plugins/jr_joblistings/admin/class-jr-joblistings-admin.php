@@ -273,8 +273,29 @@ class JR_JobListings_Admin {
 					),
 					array (
 						'key' => 'field_5b71c1d77ae3d',
-						'label' => 'Job description',
-						'name' => 'job_description',
+						'label' => 'Job description (preview)',
+						'name' => 'job_description_preview',
+						'type' => 'wysiwyg',
+						'required' => 1,
+						'conditional_logic' => array (
+							'status' => 1,
+							'rules' => array (
+								array (
+									'field' => 'field_5b71c19a7ae3c',
+									'operator' => '==',
+									'value' => '1',
+								),
+							),
+							'allorany' => 'all',
+						),
+						'default_value' => '',
+						'toolbar' => 'full',
+						'media_upload' => 'no',
+					),
+					array (
+						'key' => 'field_5b71c1d77ae3f',
+						'label' => 'Job description (full)',
+						'name' => 'job_description_full',
 						'type' => 'wysiwyg',
 						'required' => 1,
 						'conditional_logic' => array (

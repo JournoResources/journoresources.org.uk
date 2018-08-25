@@ -154,9 +154,9 @@ viewExpiryDate expiry_date =
 
 
 viewPaidPromotion : PaidPromotion -> Html a
-viewPaidPromotion { description, company_logo } =
+viewPaidPromotion { description_preview, company_logo } =
     div [ class "promotionDetails" ]
-        [ div [ class "description", innerHtml description ]
+        [ div [ class "description", innerHtml description_preview ]
             []
         , div [ class "logo" ]
             [ img [ src company_logo ]

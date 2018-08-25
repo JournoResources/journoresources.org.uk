@@ -36,6 +36,6 @@ type alias Job =
 
 
 type alias PaidPromotion =
-    { description : String
+    { description_preview : String
     , company_logo : Url
     }

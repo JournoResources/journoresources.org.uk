@@ -38,7 +38,7 @@ decodePaidPromotion : Bool -> Json.Decoder (Maybe PaidPromotion)
 decodePaidPromotion isPaid =
     if isPaid then
         Json.map2 PaidPromotion
-            (inAcf "job_description" Json.string)
+            (inAcf "job_description_preview" Json.string)
             (inAcf "company_logo" Json.string)
             |> Json.map Just
     else
