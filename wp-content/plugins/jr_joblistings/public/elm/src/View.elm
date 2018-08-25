@@ -1,13 +1,13 @@
 module View exposing (view)
 
 import Date exposing (Date)
-import Date.Format exposing (format)
 import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
 import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Types exposing (..)
+import Utils exposing (isPaidPromotion, formatDate, orderDateResults)
 
 
 view : Model -> Html Msg
@@ -19,41 +19,6 @@ view model =
             ]
         , viewJobs model.searchText model.hideLondon model.jobsRequest
         ]
-
-
-isPaidPromotion : Job -> Bool
-isPaidPromotion { paid_promotion } =
-    case paid_promotion of
-        Just _ ->
-            True
-
-        Nothing ->
-            False
-
-
-formatDate : Date -> String
-formatDate date =
-    format "%d/%m/%Y" date
-
-
-orderDateResults : Result String Date -> Result String Date -> Order
-orderDateResults dr1 dr2 =
-    case dr1 of
-        Ok d1 ->
-            case dr2 of
-                Ok d2 ->
-                    compare (formatDate d2) (formatDate d1)
-
-                Err _ ->
-                    GT
-
-        Err _ ->
-            case dr2 of
-                Ok _ ->
-                    LT
-
-                Err _ ->
-                    EQ
 
 
 
@@ -106,7 +71,6 @@ viewJobs searchText hideLondon webdata =
 jobMatchesCriteria : String -> Bool -> Job -> Bool
 jobMatchesCriteria searchText hideLondon { title, employer, location } =
     let
-        -- @TODO filter for only alpha(numeric?) characters
         clean =
             String.trim << String.toLower
 
