@@ -343,6 +343,47 @@ class JR_JobListings_Admin {
 	}
 
 	/**
+	 * Register custom columns for admin screen
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_custom_admin_columns( $columns ) {
+		return array(
+			'cb' => $columns['cb'],
+			'title' => $columns['title'],
+			'employer' =>  __( 'Employer' ),
+			'location' =>  __( 'Location' ),
+			'salary' =>  __( 'Salary' ),
+			'expiry_date' =>  __( 'Expiry date' ),
+			'date' =>  $columns['date'],
+		);
+	}
+
+	/**
+	 * Manage content of custom columns on admin screen
+	 *
+	 * @since    1.0.0
+	 */
+	public function manage_custom_admin_columns( $column, $post_id ) {
+		$fields = get_fields( $post_id );
+
+    switch ( $column ) {
+			case 'employer' :
+				echo $fields['employer'];
+				break;
+			case 'location' :
+				echo $fields['location'];
+				break;
+			case 'expiry_date' :
+				echo $fields['expiry_date'];
+				break;
+			case 'salary' :
+				echo $fields['salary'];
+				break;
+    }
+	}
+
+	/**
 	 * Register custom /jr/v1/jobs REST endpoint
 	 *
 	 * @since    1.0.0

@@ -88,7 +88,7 @@ class JR_JobListings {
 		$this->define_public_hooks();
 	}
     
-    /**
+  /**
 	 * Load the required dependencies for this plugin.
 	 *
 	 * Include the following files that make up the plugin:
@@ -162,7 +162,7 @@ class JR_JobListings {
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
-    /**
+  /**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
@@ -173,11 +173,14 @@ class JR_JobListings {
 		$plugin_admin = new JR_JobListings_Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
 		$this->loader->add_action( 'init', $plugin_admin, 'add_custom_post_type' );
-		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'add_custom_rest_endpoint' );
+		
+		$this->loader->add_filter( 'manage_jr_joblisting_posts_columns', $plugin_admin, 'add_custom_admin_columns' );
+		$this->loader->add_filter( 'manage_jr_joblisting_posts_custom_column', $plugin_admin, 'manage_custom_admin_columns', 10, 2 );
 	}
 
-    /**
+  /**
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *
@@ -188,6 +191,7 @@ class JR_JobListings {
 		$plugin_public = new JR_JobListings_Public( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
     }
     
