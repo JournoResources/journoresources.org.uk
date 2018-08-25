@@ -29,6 +29,7 @@ type alias Job =
     , expiry_date : Result String Date
     , listing_url : Url
     , job_page_url : Url
+
     -- TODO: Possibly better to model this using extensible records
     , paid_promotion : Maybe PaidPromotion
     }

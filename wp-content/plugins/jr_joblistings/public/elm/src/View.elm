@@ -21,6 +21,7 @@ view model =
         ]
 
 
+
 ---- Search ----
 
 
@@ -29,6 +30,7 @@ searchField =
     div [ class "filterOption search" ]
         [ input [ type_ "text", placeholder "Search jobs...", onInput UpdateSearch ] []
         ]
+
 
 
 ---- "Hide London" toggle ----
@@ -44,6 +46,7 @@ londonVisibilityToggle =
             [ label [ for fieldName ] [ text "Hide London jobs" ]
             , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
             ]
+
 
 
 ---- Jobs list ----
@@ -80,7 +83,6 @@ jobMatchesCriteria searchText hideLondon { title, employer, location } =
 
         shouldHide =
             hideLondon && clean location == "london"
-
     in
         matchesSearch && not shouldHide
 
@@ -100,18 +102,15 @@ viewFilteredJobs searchText hideLondon jobs =
 viewEmptyResults : Bool -> Html a
 viewEmptyResults londonHidden =
     let
-        copy =
-            if londonHidden then
-                """
-                Sorry, we couldn't find any jobs matching your criteria. Try searching for
-                something else, or unticking the checkbox to show jobs in London.
-                """
-            else
-                """
-                Sorry, we couldn't find any jobs matching your search.
-                """
+        newsletterUrl =
+            "https://journoresources.us14.list-manage.com/subscribe?u=9037ace2517242ddbf0100fad&id=867663be55"
     in
-        div [] [ text copy ]
+        div []
+            [ text "We couldn't find any jobs matching this search right now, but you can sign up to our A* newsletter "
+            , a [ href newsletterUrl ] [ text "here" ]
+            , text ", which might have what you're looking for. You can also try widening your search 😊"
+            ]
+
 
 
 ---- Individual jobs ----
@@ -138,12 +137,14 @@ viewLocationSalary location salary =
 viewExpiryDate : Result String Date -> Html a
 viewExpiryDate expiry_date =
     div [ class "expiryDate" ]
-        [ text <| "Closes " ++ case expiry_date of
-            Ok date ->
-                format "%d/%m/%Y" date
+        [ text <|
+            "Closes "
+                ++ case expiry_date of
+                    Ok date ->
+                        format "%d/%m/%Y" date
 
-            Err e ->
-                e
+                    Err e ->
+                        e
         ]
 
 
@@ -166,7 +167,7 @@ viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_
             case paid_promotion of
                 Just _ ->
                     True
-                
+
                 Nothing ->
                     False
 
@@ -176,7 +177,7 @@ viewJob { title, employer, location, salary, expiry_date, listing_url, job_page_
             else
                 listing_url
     in
-        li [ classList [("job", True), ("promotion", isPaid)] ]
+        li [ classList [ ( "job", True ), ( "promotion", isPaid ) ] ]
             [ div []
                 [ viewTitleEmployer title employer linkUrl
                 , viewLocationSalary location salary
