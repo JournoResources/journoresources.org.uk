@@ -43,7 +43,7 @@ londonVisibilityToggle =
             "hideLondon"
     in
         div [ class "filterOption londonVisibility" ]
-            [ label [ for fieldName ] [ text "Hide London jobs" ]
+            [ label [ for fieldName ] [ text "Show me jobs outside of London" ]
             , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
             ]
 
