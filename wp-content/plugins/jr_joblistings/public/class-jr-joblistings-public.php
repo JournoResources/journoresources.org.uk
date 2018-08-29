@@ -57,7 +57,7 @@ class JR_JobListings_Public {
 	 */
 	public function enqueue_styles() {
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'build/static/css/main.css', array(), $this->version, 'all' );
-    }
+  }
     
 	/**
 	 * Register the JavaScript for the public-facing side of the site.
@@ -94,5 +94,16 @@ class JR_JobListings_Public {
 		ob_end_clean();
 
 		return $output;
+	}
+
+	public function register_custom_post_template( $single_template ) {
+		global $post;
+
+		if ( $post->post_type === 'jr_joblisting' ) {
+			$single_template = dirname( __FILE__ ) . '/partials/default-jr_joblistings-single.php';
+
+		}
+
+		return $single_template;
 	}
 }
