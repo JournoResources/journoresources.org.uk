@@ -93,8 +93,8 @@
   </div>
 </div>
 
-<div class="secondary">
-  <!-- Sidebar -->
+<div id="secondary">
+  <?php get_sidebar( 'right' ); ?>
 </div>
 
 <?php get_footer(); ?>
