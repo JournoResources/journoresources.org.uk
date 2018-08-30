@@ -21,6 +21,12 @@
   $isToday = $formattedDate == $formattedToday;
 ?>
 
+<style>
+  .page-title {
+    display: none;
+  }
+</style>
+
 <div id="primary">
   <div id="content">
     <section class="jr_joblisting type-jr_joblisting">
