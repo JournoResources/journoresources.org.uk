@@ -394,6 +394,7 @@ class JR_JobListings_Admin {
 
 			$args = array(
 				'post_type' => 'jr_joblisting',
+				'posts_per_page' => -1,
 			);
 
 			// The user of the API may request only jobs that expire on or after a given date
