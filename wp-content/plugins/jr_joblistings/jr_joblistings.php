@@ -15,7 +15,7 @@
  * Plugin Name:       Journo Resources Job Listings
  * Plugin URI:        http://example.com/jr-joblistings-uri/
  * Description:       Description goes here
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Elliot Davies
  * Author URI:        http://example.com/
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version
  */
-define( 'JR_JOBLISTINGS_VERSION', '1.0.0' );
+define( 'JR_JOBLISTINGS_VERSION', '1.0.1' );
 
 /**
  * The code that runs during plugin activation.

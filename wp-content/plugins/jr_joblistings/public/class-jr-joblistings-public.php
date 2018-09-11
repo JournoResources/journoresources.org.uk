@@ -85,7 +85,9 @@ class JR_JobListings_Public {
 	}
 
 	/**
-	 *  Render the partial template when the plugin is included via a shortcode
+	 * Render the partial template when the plugin is included via a shortcode
+	 *
+	 * @since    1.0.0
 	 */
 	public function display_joblistings( $attrs = array() ) {
 		ob_start();
@@ -96,14 +98,32 @@ class JR_JobListings_Public {
 		return $output;
 	}
 
+	/**
+	 * Register a custom template for single job listing pages
+	 *
+	 * @since    1.0.0
+	 */
 	public function register_custom_post_template( $single_template ) {
 		global $post;
 
 		if ( $post->post_type === 'jr_joblisting' ) {
 			$single_template = dirname( __FILE__ ) . '/partials/default-jr_joblistings-single.php';
-
 		}
 
 		return $single_template;
+	}
+
+	/**
+	 * Add a meta tag to display the company logo for single job listing pages
+	 *
+	 * @since    1.0.1
+	 */
+	public function add_company_logo_meta() {
+		global $post;
+
+		if ( $post->post_type === 'jr_joblisting' ) {
+			$logo = get_field('company_logo', $post->ID);
+			echo '<meta property="og:image" content="' . $logo . '" />';
+		}
 	}
 }
