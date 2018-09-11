@@ -97,4 +97,12 @@
   <?php get_sidebar( 'right' ); ?>
 </div>
 
+<script type="text/javascript">
+  var h = document.querySelector('head');
+  var m = document.createElement('meta');
+  m.setAttribute('property', 'og:image');
+  m.setAttribute('content', '<?php echo $logo; ?>');
+  h.appendChild(m);
+</script>
+
 <?php get_footer(); ?>
