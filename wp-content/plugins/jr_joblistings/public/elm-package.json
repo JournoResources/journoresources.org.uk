@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Searchable list of jobs for the Journo Resources website",
-    "repository": "https://github.com/JournoResources/journoresources.org.uk",
+    "repository": "https://github.com/user/project.git",
     "license": "BSD3",
     "source-directories": [
         "elm/src"
