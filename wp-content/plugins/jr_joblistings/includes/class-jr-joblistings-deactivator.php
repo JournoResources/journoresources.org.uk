@@ -2,7 +2,6 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       http://example.com
  * @since      1.0.0
  *
  * @package    JR_JobListings
@@ -16,7 +15,7 @@
  * @since      1.0.0
  * @package    JR_JobListings
  * @subpackage JR_JobListings/includes
- * @author     Your Name <email@example.com>
+ * @author     Elliot Davies <elliot.a.davies@gmail.com>
  */
 class JR_JobListings_Deactivator {
 	/**

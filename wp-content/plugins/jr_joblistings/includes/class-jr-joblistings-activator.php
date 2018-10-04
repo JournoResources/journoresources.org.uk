@@ -2,7 +2,6 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
  * @since      1.0.0
  *
  * @package    JR_JobListings
@@ -16,14 +15,10 @@
  * @since      1.0.0
  * @package    JR_JobListings
  * @subpackage JR_JobListings/includes
- * @author     Your Name <email@example.com>
+ * @author     Elliot Davies <elliot.a.davies@gmail.com>
  */
 class JR_JobListings_Activator {
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
 	 * @since    1.0.0
 	 */
 	public static function activate() {

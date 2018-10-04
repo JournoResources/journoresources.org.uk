@@ -2,7 +2,6 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://example.com
  * @since      1.0.0
  *
  * @package    JR_JobListings
@@ -17,7 +16,7 @@
  *
  * @package    JR_JobListings
  * @subpackage JR_JobListings/public
- * @author     Your Name <email@example.com>
+ * @author     Elliot Davies <elliot.a.davies@gmail.com>
  */
 class JR_JobListings_Public {
 	/**
