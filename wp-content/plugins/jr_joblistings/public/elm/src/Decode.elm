@@ -2,6 +2,7 @@ module Decode exposing (decodeJobs)
 
 import Date exposing (Date)
 import Json.Decode as Json
+import Json.Decode.Pipeline exposing (custom, decode, required)
 import Types exposing (..)
 
 
@@ -12,15 +13,17 @@ decodeJobs =
 
 decodeJob : Json.Decoder Job
 decodeJob =
-    Json.map8 Job
-        (Json.field "title" Json.string)
-        (Json.field "employer" Json.string)
-        (Json.field "location" Json.string)
-        (Json.field "salary" Json.string)
-        (Json.field "expiry_date" decodeDate)
-        (Json.field "listing_url" Json.string)
-        (Json.field "link" Json.string)
-        (Json.field "paid_promotion" Json.bool |> Json.andThen decodePaidPromotion)
+    decode Job
+        |> required "title" Json.string
+        |> required "employer" Json.string
+        |> required "location" Json.string
+        |> required "salary" Json.string
+        |> required "citation" Json.string
+        |> required "expiry_date" decodeDate
+        |> required "listing_url" Json.string
+        |> required "link" Json.string
+        |> custom (Json.field "paid_promotion" Json.bool
+                    |> Json.andThen decodePaidPromotion)
 
 
 decodeDate : Json.Decoder (Result String Date)

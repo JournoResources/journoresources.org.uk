@@ -73,6 +73,10 @@
   text-decoration: none;
 }
 
+#jr-joblistings .job .citation {
+  font-style: italic;
+}
+
 #jr-joblistings .job .logo {
   padding-left: 1rem;
   padding-bottom: 1rem;

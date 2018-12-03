@@ -66,7 +66,7 @@ class JR_JobListings_Public {
 	public function enqueue_scripts() {
 
 		if (defined('WP_DEV')) {
-			$path = 'http://localhost:3001/static/js/bundle.js';
+			$path = 'http://localhost:3000/static/js/bundle.js';
 		} else {
 			$path = plugin_dir_url( __FILE__ ) . 'build/static/js/main.js';
 		}

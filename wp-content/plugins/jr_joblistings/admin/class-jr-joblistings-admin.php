@@ -210,7 +210,20 @@ class JR_JobListings_Admin {
 						'append' => '',
 						'formatting' => 'html',
 						'maxlength' => '',
-					),
+          ),
+          array(
+            'key' => 'field_5b65c9d38f5cb',
+						'label' => 'Citation',
+						'name' => 'citation',
+						'type' => 'text',
+						'required' => 0,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+          ),
 					array (
 						'key' => 'field_5b65c9d38f5bb',
 						'label' => 'Expiry date',
@@ -353,6 +366,7 @@ class JR_JobListings_Admin {
 			'employer' =>  __( 'Employer' ),
 			'location' =>  __( 'Location' ),
 			'salary' =>  __( 'Salary' ),
+			'citation' =>  __( 'Citation' ),
 			'expiry_date' =>  __( 'Expiry date' ),
 			'date' =>  $columns['date'],
 		);
@@ -378,6 +392,9 @@ class JR_JobListings_Admin {
 				break;
 			case 'salary' :
 				echo $fields['salary'];
+				break;
+			case 'citation' :
+				echo $fields['citation'];
 				break;
     }
 	}
@@ -433,6 +450,7 @@ class JR_JobListings_Admin {
 					'employer',
 					'location',
 					'salary',
+					'citation',
 					'expiry_date',
 					'listing_url',
 					'paid_promotion',

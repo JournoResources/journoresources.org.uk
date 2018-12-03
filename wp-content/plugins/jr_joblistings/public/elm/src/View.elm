@@ -145,6 +145,13 @@ viewLocationSalary location salary =
         ]
 
 
+viewCitation : String -> Html a
+viewCitation citation =
+    div [ class "citation" ]
+        [ text citation
+        ]
+
+
 viewExpiryDate : Maybe Date -> Result String Date -> Html a
 viewExpiryDate maybeToday expiry_date =
     let
@@ -180,7 +187,7 @@ viewPaidPromotion { description_preview, company_logo } =
 
 
 viewJob : Maybe Date -> Job -> Html a
-viewJob today ({ title, employer, location, salary, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
+viewJob today ({ title, employer, location, salary, citation, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
         linkUrl =
             if isPaidPromotion job then
@@ -192,6 +199,7 @@ viewJob today ({ title, employer, location, salary, expiry_date, listing_url, jo
             [ div []
                 [ viewTitleEmployer title employer linkUrl
                 , viewLocationSalary location salary
+                , viewCitation citation
                 ]
             , div []
                 [ viewExpiryDate today expiry_date
