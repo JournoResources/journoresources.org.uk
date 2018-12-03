@@ -368,6 +368,7 @@ class JR_JobListings_Admin {
 			'salary' =>  __( 'Salary' ),
 			'citation' =>  __( 'Citation' ),
 			'expiry_date' =>  __( 'Expiry date' ),
+			'paid_promotion' =>  __( 'Promoted?' ),
 			'date' =>  $columns['date'],
 		);
 	}
@@ -395,6 +396,13 @@ class JR_JobListings_Admin {
 				break;
 			case 'citation' :
 				echo $fields['citation'];
+				break;
+      case 'paid_promotion' :
+        if ($fields['paid_promotion']) {
+          echo 'Yes';
+        } else {
+          echo 'No';
+        }
 				break;
     }
 	}
