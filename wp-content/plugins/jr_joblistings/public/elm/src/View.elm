@@ -1,7 +1,6 @@
 module View exposing (view)
 
 import Date exposing (Date)
-import Date.Extra as DE
 import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
 import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Attributes.Extra exposing (innerHtml)
@@ -145,11 +144,24 @@ viewLocationSalary location salary =
         ]
 
 
-viewCitation : String -> Html a
-viewCitation citation =
-    div [ class "citation" ]
-        [ text citation
-        ]
+viewCitation : Maybe String -> Maybe Url -> Html a
+viewCitation maybeCitation maybeCitationUrl =
+    let
+        renderedCitation =
+            case (maybeCitation, maybeCitationUrl) of
+                (Just citation, Just url) ->
+                    a [ href url, target "_blank" ]
+                      [ text citation ]
+
+                (Just citation, Nothing) ->
+                    text citation
+
+                (_, _) -> text ""
+
+    in
+        div [ class "citation" ]
+            [ renderedCitation
+            ]
 
 
 viewExpiryDate : Maybe Date -> Result String Date -> Html a
@@ -187,7 +199,7 @@ viewPaidPromotion { description_preview, company_logo } =
 
 
 viewJob : Maybe Date -> Job -> Html a
-viewJob today ({ title, employer, location, salary, citation, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
+viewJob today ({ title, employer, location, salary, citation, citation_url, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
         linkUrl =
             if isPaidPromotion job then
@@ -199,7 +211,7 @@ viewJob today ({ title, employer, location, salary, citation, expiry_date, listi
             [ div []
                 [ viewTitleEmployer title employer linkUrl
                 , viewLocationSalary location salary
-                , viewCitation citation
+                , viewCitation citation citation_url
                 ]
             , div []
                 [ viewExpiryDate today expiry_date

@@ -29,7 +29,8 @@ type alias Job =
     , employer : String
     , location : String
     , salary : String
-    , citation : String
+    , citation : Maybe Url
+    , citation_url : Maybe Url
     , expiry_date : Result String Date
     , listing_url : Url
     , job_page_url : Url

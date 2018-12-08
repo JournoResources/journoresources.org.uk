@@ -2,7 +2,7 @@ module Decode exposing (decodeJobs)
 
 import Date exposing (Date)
 import Json.Decode as Json
-import Json.Decode.Pipeline exposing (custom, decode, required)
+import Json.Decode.Pipeline exposing (custom, decode, optional, required)
 import Types exposing (..)
 
 
@@ -18,7 +18,8 @@ decodeJob =
         |> required "employer" Json.string
         |> required "location" Json.string
         |> required "salary" Json.string
-        |> required "citation" Json.string
+        |> optional "citation" (Json.maybe Json.string) Nothing
+        |> optional "citation_url" (Json.maybe Json.string) Nothing
         |> required "expiry_date" decodeDate
         |> required "listing_url" Json.string
         |> required "link" Json.string
