@@ -1,4 +1,4 @@
-module Types exposing (..)
+module Types exposing (Job, Model, Msg(..), PaidPromotion, Url)
 
 import Date exposing (Date)
 import RemoteData as RD

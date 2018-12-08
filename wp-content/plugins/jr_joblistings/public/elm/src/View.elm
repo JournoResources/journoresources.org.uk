@@ -42,10 +42,10 @@ londonVisibilityToggle =
         fieldName =
             "hideLondon"
     in
-        div [ class "filterOption londonVisibility" ]
-            [ label [ for fieldName ] [ text "Show me jobs outside of London" ]
-            , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
-            ]
+    div [ class "filterOption londonVisibility" ]
+        [ label [ for fieldName ] [ text "Show me jobs outside of London" ]
+        , input [ type_ "checkbox", name fieldName, onCheck ToggleLondon ] []
+        ]
 
 
 
@@ -77,7 +77,7 @@ jobMatchesCriteria searchText hideLondon { title, employer, location } =
         shouldHide =
             hideLondon && locationMatches "london" location
     in
-        matchesSearch && not shouldHide
+    matchesSearch && not shouldHide
 
 
 orderJobs : List Job -> List Job
@@ -89,7 +89,7 @@ orderJobs jobs =
         sort =
             List.sortWith (\job1 job2 -> orderDateResults job1.expiry_date job2.expiry_date)
     in
-        (sort promotedJobs) ++ (sort regularJobs)
+    sort promotedJobs ++ sort regularJobs
 
 
 viewFilteredJobs : String -> Bool -> Maybe Date -> List Job -> Html a
@@ -98,10 +98,11 @@ viewFilteredJobs searchText hideLondon today jobs =
         filteredJobs =
             List.filter (jobMatchesCriteria searchText hideLondon) (orderJobs jobs)
     in
-        if List.isEmpty filteredJobs then
-            viewEmptyResults hideLondon
-        else
-            ul [ class "jobs" ] (List.map (viewJob today) filteredJobs)
+    if List.isEmpty filteredJobs then
+        viewEmptyResults hideLondon
+
+    else
+        ul [ class "jobs" ] (List.map (viewJob today) filteredJobs)
 
 
 viewEmptyResults : Bool -> Html a
@@ -110,11 +111,11 @@ viewEmptyResults londonHidden =
         newsletterUrl =
             "https://journoresources.us14.list-manage.com/subscribe?u=9037ace2517242ddbf0100fad&id=867663be55"
     in
-        div []
-            [ text "We couldn't find any jobs matching this search right now, but you can sign up to our A* newsletter "
-            , a [ href newsletterUrl ] [ text "here" ]
-            , text ", which might have what you're looking for. You can also try widening your search 😊"
-            ]
+    div []
+        [ text "We couldn't find any jobs matching this search right now, but you can sign up to our A* newsletter "
+        , a [ href newsletterUrl ] [ text "here" ]
+        , text ", which might have what you're looking for. You can also try widening your search 😊"
+        ]
 
 
 
@@ -127,14 +128,14 @@ viewTitleEmployer title employer linkUrl =
         renderedTitle =
             span [ innerHtml title ] []
     in
-        div [ class "titleEmployer" ]
-            [ h3 []
-                [ a [ href linkUrl, target "_blank" ]
-                    [ renderedTitle
-                    , text <| ", " ++ employer
-                    ]
+    div [ class "titleEmployer" ]
+        [ h3 []
+            [ a [ href linkUrl, target "_blank" ]
+                [ renderedTitle
+                , text <| ", " ++ employer
                 ]
             ]
+        ]
 
 
 viewLocationSalary : String -> String -> Html a
@@ -148,20 +149,20 @@ viewCitation : Maybe String -> Maybe Url -> Html a
 viewCitation maybeCitation maybeCitationUrl =
     let
         renderedCitation =
-            case (maybeCitation, maybeCitationUrl) of
-                (Just citation, Just url) ->
+            case ( maybeCitation, maybeCitationUrl ) of
+                ( Just citation, Just url ) ->
                     a [ href url, target "_blank" ]
-                      [ text citation ]
+                        [ text citation ]
 
-                (Just citation, Nothing) ->
+                ( Just citation, Nothing ) ->
                     text citation
 
-                (_, _) -> text ""
-
+                ( _, _ ) ->
+                    text ""
     in
-        div [ class "citation" ]
-            [ renderedCitation
-            ]
+    div [ class "citation" ]
+        [ renderedCitation
+        ]
 
 
 viewExpiryDate : Maybe Date -> Result String Date -> Html a
@@ -172,6 +173,7 @@ viewExpiryDate maybeToday expiry_date =
                 ( Just today, Ok date ) ->
                     if isToday today date then
                         strong [] [ text "Closes today" ]
+
                     else
                         text <| "Closes " ++ formatDate date
 
@@ -181,9 +183,9 @@ viewExpiryDate maybeToday expiry_date =
                 ( _, Err e ) ->
                     text e
     in
-        div [ class "expiryDate" ]
-            [ renderedDate
-            ]
+    div [ class "expiryDate" ]
+        [ renderedDate
+        ]
 
 
 viewPaidPromotion : PaidPromotion -> Html a
@@ -204,22 +206,23 @@ viewJob today ({ title, employer, location, salary, citation, citation_url, expi
         linkUrl =
             if isPaidPromotion job then
                 job_page_url
+
             else
                 listing_url
     in
-        li [ classList [ ( "job", True ), ( "promotion", isPaidPromotion job ) ] ]
-            [ div []
-                [ viewTitleEmployer title employer linkUrl
-                , viewLocationSalary location salary
-                , viewCitation citation citation_url
-                ]
-            , div []
-                [ viewExpiryDate today expiry_date
-                ]
-            , case paid_promotion of
-                Just data ->
-                    viewPaidPromotion data
-
-                Nothing ->
-                    text ""
+    li [ classList [ ( "job", True ), ( "promotion", isPaidPromotion job ) ] ]
+        [ div []
+            [ viewTitleEmployer title employer linkUrl
+            , viewLocationSalary location salary
+            , viewCitation citation citation_url
             ]
+        , div []
+            [ viewExpiryDate today expiry_date
+            ]
+        , case paid_promotion of
+            Just data ->
+                viewPaidPromotion data
+
+            Nothing ->
+                text ""
+        ]

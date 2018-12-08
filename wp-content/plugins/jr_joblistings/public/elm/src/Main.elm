@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (Flags, getTodaysDate, init, loadJobs, main, update)
 
 import Date exposing (Date, now)
 import Date.Extra exposing (toFormattedString)
@@ -9,6 +9,7 @@ import RemoteData as RD
 import Task
 import Types exposing (..)
 import View exposing (view)
+
 
 
 ---- MODEL ----
@@ -42,9 +43,9 @@ loadJobs expireAfter host =
         dateString =
             toFormattedString "yyyyMMdd" expireAfter
     in
-        Http.get (host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString) decodeJobs
-            |> RD.sendRequest
-            |> Cmd.map JobsLoaded
+    Http.get (host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString) decodeJobs
+        |> RD.sendRequest
+        |> Cmd.map JobsLoaded
 
 
 

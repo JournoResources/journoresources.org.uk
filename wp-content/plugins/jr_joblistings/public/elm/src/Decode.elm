@@ -23,8 +23,10 @@ decodeJob =
         |> required "expiry_date" decodeDate
         |> required "listing_url" Json.string
         |> required "link" Json.string
-        |> custom (Json.field "paid_promotion" Json.bool
-                    |> Json.andThen decodePaidPromotion)
+        |> custom
+            (Json.field "paid_promotion" Json.bool
+                |> Json.andThen decodePaidPromotion
+            )
 
 
 decodeDate : Json.Decoder (Result String Date)
@@ -40,5 +42,6 @@ decodePaidPromotion isPaid =
             (Json.field "job_description_preview" Json.string)
             (Json.field "company_logo" Json.string)
             |> Json.map Just
+
     else
         Json.succeed Nothing

@@ -1,4 +1,4 @@
-module Utils exposing (..)
+module Utils exposing (formatDate, isPaidPromotion, isToday, locationMatches, orderDateResults)
 
 import Date exposing (Date)
 import Date.Extra exposing (Interval(..), equalBy, toFormattedString)
@@ -21,7 +21,7 @@ locationMatches searchText location =
         clean =
             String.trim << String.toLower
     in
-        String.contains (clean searchText) (clean location)
+    String.contains (clean searchText) (clean location)
 
 
 formatDate : Date -> String
@@ -35,7 +35,7 @@ isToday today date =
         intervals =
             [ Year, Month, Day ]
     in
-        List.foldr (\interval acc -> acc && equalBy interval today date) True intervals
+    List.foldr (\interval acc -> acc && equalBy interval today date) True intervals
 
 
 orderDateResults : Result String Date -> Result String Date -> Order
