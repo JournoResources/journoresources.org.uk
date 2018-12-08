@@ -1,13 +1,13 @@
-module Main exposing (Flags, getTodaysDate, init, loadJobs, main, update)
+module Main exposing (main)
 
-import Date exposing (Date, now)
-import Date.Extra exposing (toFormattedString)
+import Browser
 import Decode exposing (decodeJobs)
-import Html
 import Http
 import RemoteData as RD
 import Task
+import Time exposing (Posix, now)
 import Types exposing (..)
+import Utils exposing (formatDateApi)
 import View exposing (view)
 
 
@@ -37,11 +37,11 @@ getTodaysDate =
     Task.perform ReceiveTodaysDate now
 
 
-loadJobs : Date -> Url -> Cmd Msg
+loadJobs : Posix -> Url -> Cmd Msg
 loadJobs expireAfter host =
     let
         dateString =
-            toFormattedString "yyyyMMdd" expireAfter
+            formatDateApi expireAfter
     in
     Http.get (host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString) decodeJobs
         |> RD.sendRequest
@@ -74,7 +74,7 @@ update msg model =
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
+    Browser.element
         { view = view
         , init = init
         , update = update

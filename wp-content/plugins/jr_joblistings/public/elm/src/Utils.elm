@@ -1,7 +1,8 @@
-module Utils exposing (formatDate, isPaidPromotion, isToday, locationMatches, orderDateResults)
+module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromotion, isToday, locationMatches, printHttpError)
 
-import Date exposing (Date)
-import Date.Extra exposing (Interval(..), equalBy, toFormattedString)
+import DateFormat as DF
+import Http exposing (Error(..))
+import Time exposing (Posix, posixToMillis, toDay, toMonth, toYear, utc)
 import Types exposing (..)
 
 
@@ -24,35 +25,44 @@ locationMatches searchText location =
     String.contains (clean searchText) (clean location)
 
 
-formatDate : Date -> String
-formatDate date =
-    toFormattedString "dd/MM/yyyy" date
+formatDateView : Posix -> String
+formatDateView =
+    DF.format
+        [ DF.dayOfMonthFixed
+        , DF.text "/"
+        , DF.monthFixed
+        , DF.text "/"
+        , DF.yearNumber
+        ]
+        utc
 
 
-isToday : Date -> Date -> Bool
+formatDateApi : Posix -> String
+formatDateApi =
+    DF.format
+        [ DF.yearNumber
+        , DF.monthFixed
+        , DF.dayOfMonthFixed
+        ]
+        utc
+
+
+isToday : Posix -> Posix -> Bool
 isToday today date =
-    let
-        intervals =
-            [ Year, Month, Day ]
-    in
-    List.foldr (\interval acc -> acc && equalBy interval today date) True intervals
+    (toYear utc today == toYear utc date)
+        && (toMonth utc today == toMonth utc date)
+        && (toDay utc today == toDay utc date)
 
 
-orderDateResults : Result String Date -> Result String Date -> Order
-orderDateResults dr1 dr2 =
-    case dr1 of
-        Ok d1 ->
-            case dr2 of
-                Ok d2 ->
-                    Date.Extra.compare d1 d2
+compareDates : Posix -> Posix -> Order
+compareDates d1 d2 =
+    compare (posixToMillis d1) (posixToMillis d2)
 
-                Err _ ->
-                    GT
 
-        Err _ ->
-            case dr2 of
-                Ok _ ->
-                    LT
 
-                Err _ ->
-                    EQ
+-- @TODO
+
+
+printHttpError : Error -> String
+printHttpError error =
+    ""

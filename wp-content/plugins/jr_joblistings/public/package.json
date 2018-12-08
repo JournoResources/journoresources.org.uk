@@ -25,7 +25,7 @@
     "connect-history-api-fallback": "^1.5.0",
     "css-loader": "^0.28.9",
     "dotenv": "^5.0.0",
-    "elm": "^0.18.0",
+    "elm": "0.19",
     "elm-hot-loader": "0.5.4",
     "elm-test": "^0.18.12",
     "elm-webpack-loader": "^4.4.0",

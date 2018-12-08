@@ -1,7 +1,7 @@
 module Types exposing (Job, Model, Msg(..), PaidPromotion, Url)
 
-import Date exposing (Date)
 import RemoteData as RD
+import Time exposing (Posix)
 
 
 type alias Model =
@@ -9,12 +9,12 @@ type alias Model =
     , jobsRequest : RD.WebData (List Job)
     , searchText : String
     , hideLondon : Bool
-    , today : Maybe Date
+    , today : Maybe Posix
     }
 
 
 type Msg
-    = ReceiveTodaysDate Date
+    = ReceiveTodaysDate Posix
     | JobsLoaded (RD.WebData (List Job))
     | UpdateSearch String
     | ToggleLondon Bool
@@ -31,7 +31,7 @@ type alias Job =
     , salary : String
     , citation : Maybe Url
     , citation_url : Maybe Url
-    , expiry_date : Result String Date
+    , expiry_date : Posix
     , listing_url : Url
     , job_page_url : Url
 
