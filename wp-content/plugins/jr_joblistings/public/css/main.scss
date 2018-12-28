@@ -1,0 +1,54 @@
+@import "variables";
+@import "job-listing";
+@import "single-job";
+
+#jr-joblistings {
+  .wrapper {
+    padding-bottom: 1rem;
+  }
+
+  /* Filter options */
+  .filterOptions {
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px dashed lightgrey;
+
+    @media (min-width: $tablet) {
+      display: flex;
+      align-items: center;
+    }
+
+    .filterOption {
+      @media (min-width: $tablet) {
+        .filterOption {
+          margin-right: 1rem;
+
+          .search {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+
+    .search {
+      margin-bottom: 1rem;
+    }
+
+    .londonVisibility {
+      display: flex;
+      align-items: center;
+
+      label {
+        margin-right: 0.2rem;
+      }
+    }
+  }
+
+  /* Jobs list */
+  .jobs {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+}
+

@@ -1,4 +1,4 @@
-import "./css/main.css";
+import "./css/main.scss";
 import { Elm } from "./elm/src/Main.elm";
 
 const container = document.getElementById("jr-joblistings-app");

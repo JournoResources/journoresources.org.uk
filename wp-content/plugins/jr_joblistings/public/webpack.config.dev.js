@@ -28,13 +28,13 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.PUBLIC_URL": "'http://localhost:8000'"
     }),
-    
+
     // Suggested for hot-loading
     new webpack.NamedModulesPlugin(),
-    
+
     // Prevents compilation errors causing the hot loader to lose state
     new webpack.NoEmitOnErrorsPlugin(),
-    
+
     new HtmlWebpackPlugin({
       inject: true,
       template: "partials/index.html"
@@ -58,8 +58,8 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader", "postcss-loader"]
+        test: /\.scss$/,
+        use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"]
       }
     ]
   },
