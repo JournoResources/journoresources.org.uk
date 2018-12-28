@@ -480,8 +480,13 @@ class JR_JobListings_Admin {
 					'company_logo',
 				);
 
-				foreach ( $customFieldsToInclude as $cf ) {
-					$job[$cf] = $customFieldsData[$cf];
+        foreach ( $customFieldsToInclude as $cf ) {
+          $fieldData = $customFieldsData[$cf];
+          if ($cf == 'expiry_date') {
+            $fieldData = strtotime( $fieldData ) * 1000;
+          }
+					$job[$cf] = $fieldData;
+
 				};
 
 				$jobs[$key] = $job;
