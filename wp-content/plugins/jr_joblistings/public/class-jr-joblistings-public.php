@@ -61,7 +61,7 @@ class JR_JobListings_Public {
 			$path = plugin_dir_url( __FILE__ ) . 'build/main.css';
 		}
 
-		wp_enqueue_style( $this->plugin_name, $path, array(), $this->version, true );
+		wp_enqueue_style( $this->plugin_name, $path, array(), $this->version, 'all' );
   }
     
 	/**
