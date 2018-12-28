@@ -25,17 +25,26 @@ The public-facing list of jobs is displayed via a widget built in [Elm](http://e
 To install dependencies:
 
 ```
+cd public
 yarn
 ```
 
 To build the Elm app:
 
 ```
+cd public
 yarn build
 ```
 
 To serve the app locally and watch files for changes:
 
 ```
+cd public
 yarn start
+```
+
+To build and package the whole plugin:
+
+```
+make build
 ```
