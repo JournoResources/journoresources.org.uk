@@ -1,13 +1,17 @@
 module View exposing (view)
 
-import Date exposing (Date)
-import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
-import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
-import Html.Attributes.Extra exposing (innerHtml)
+import Html exposing (Html, a, div, h3, img, input, label, li, pre, span, strong, text, ul)
+import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
+import Time exposing (Posix)
 import Types exposing (..)
-import Utils exposing (formatDate, isPaidPromotion, isToday, locationMatches, orderDateResults)
+import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, printHttpError)
+
+
+dataHtml : String -> List (Html.Attribute a)
+dataHtml s =
+    [ attribute "data-jr_joblisting_html" s ]
 
 
 view : Model -> Html Msg
@@ -52,7 +56,7 @@ londonVisibilityToggle =
 ---- Jobs list ----
 
 
-viewJobs : String -> Bool -> Maybe Date -> RD.WebData (List Job) -> Html msg
+viewJobs : String -> Bool -> Maybe Posix -> RD.WebData (List Job) -> Html msg
 viewJobs searchText hideLondon today webdata =
     case webdata of
         RD.NotAsked ->
@@ -62,7 +66,10 @@ viewJobs searchText hideLondon today webdata =
             text "Loading..."
 
         RD.Failure e ->
-            text ("There was a problem loading the jobs: " ++ toString e)
+            div []
+                [ text "There was a problem loading the jobs:"
+                , pre [] [ text <| printHttpError e ]
+                ]
 
         RD.Success jobs ->
             viewFilteredJobs searchText hideLondon today jobs
@@ -87,12 +94,12 @@ orderJobs jobs =
             List.partition isPaidPromotion jobs
 
         sort =
-            List.sortWith (\job1 job2 -> orderDateResults job1.expiry_date job2.expiry_date)
+            List.sortWith (\job1 job2 -> compareDates job1.expiry_date job2.expiry_date)
     in
     sort promotedJobs ++ sort regularJobs
 
 
-viewFilteredJobs : String -> Bool -> Maybe Date -> List Job -> Html a
+viewFilteredJobs : String -> Bool -> Maybe Posix -> List Job -> Html a
 viewFilteredJobs searchText hideLondon today jobs =
     let
         filteredJobs =
@@ -126,7 +133,7 @@ viewTitleEmployer : String -> String -> Url -> Html a
 viewTitleEmployer title employer linkUrl =
     let
         renderedTitle =
-            span [ innerHtml title ] []
+            span (dataHtml title) []
     in
     div [ class "titleEmployer" ]
         [ h3 []
@@ -165,23 +172,20 @@ viewCitation maybeCitation maybeCitationUrl =
         ]
 
 
-viewExpiryDate : Maybe Date -> Result String Date -> Html a
-viewExpiryDate maybeToday expiry_date =
+viewExpiryDate : Maybe Posix -> Posix -> Html a
+viewExpiryDate maybeToday expiryDate =
     let
         renderedDate =
-            case ( maybeToday, expiry_date ) of
-                ( Just today, Ok date ) ->
-                    if isToday today date then
+            case maybeToday of
+                Just today ->
+                    if isToday today expiryDate then
                         strong [] [ text "Closes today" ]
 
                     else
-                        text <| "Closes " ++ formatDate date
+                        text <| "Closes " ++ formatDateView expiryDate
 
-                ( Nothing, Ok date ) ->
-                    text <| "Closes " ++ formatDate date
-
-                ( _, Err e ) ->
-                    text e
+                Nothing ->
+                    text <| "Closes " ++ formatDateView expiryDate
     in
     div [ class "expiryDate" ]
         [ renderedDate
@@ -195,12 +199,12 @@ viewPaidPromotion { description_preview, company_logo } =
             [ img [ src company_logo ]
                 []
             ]
-        , div [ class "description", innerHtml description_preview ]
+        , div ([ class "description" ] ++ dataHtml description_preview)
             []
         ]
 
 
-viewJob : Maybe Date -> Job -> Html a
+viewJob : Maybe Posix -> Job -> Html a
 viewJob today ({ title, employer, location, salary, citation, citation_url, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
         linkUrl =

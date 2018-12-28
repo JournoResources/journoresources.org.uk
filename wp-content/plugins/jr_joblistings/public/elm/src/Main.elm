@@ -1,13 +1,13 @@
-module Main exposing (Flags, getTodaysDate, init, loadJobs, main, update)
+port module Main exposing (main)
 
-import Date exposing (Date, now)
-import Date.Extra exposing (toFormattedString)
+import Browser
 import Decode exposing (decodeJobs)
-import Html
 import Http
 import RemoteData as RD
 import Task
+import Time exposing (Posix, now)
 import Types exposing (..)
+import Utils exposing (formatDateApi)
 import View exposing (view)
 
 
@@ -37,15 +37,23 @@ getTodaysDate =
     Task.perform ReceiveTodaysDate now
 
 
-loadJobs : Date -> Url -> Cmd Msg
+loadJobs : Posix -> Url -> Cmd Msg
 loadJobs expireAfter host =
     let
         dateString =
-            toFormattedString "yyyyMMdd" expireAfter
+            formatDateApi expireAfter
     in
-    Http.get (host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString) decodeJobs
-        |> RD.sendRequest
-        |> Cmd.map JobsLoaded
+    Http.get
+        { url = host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString
+        , expect = Http.expectJson (RD.fromResult >> JobsLoaded) decodeJobs
+        }
+
+
+
+---- PORTS ----
+
+
+port updateFormattedHTML : () -> Cmd a
 
 
 
@@ -54,18 +62,22 @@ loadJobs expireAfter host =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        ReceiveTodaysDate date ->
-            ( { model | today = Just date }, loadJobs date model.host )
+    let
+        ( newModel, newMsg ) =
+            case msg of
+                ReceiveTodaysDate date ->
+                    ( { model | today = Just date }, loadJobs date model.host )
 
-        JobsLoaded webdata ->
-            ( { model | jobsRequest = webdata }, Cmd.none )
+                JobsLoaded webdata ->
+                    ( { model | jobsRequest = webdata }, Cmd.none )
 
-        UpdateSearch text ->
-            ( { model | searchText = text }, Cmd.none )
+                UpdateSearch text ->
+                    ( { model | searchText = text }, Cmd.none )
 
-        ToggleLondon shouldHide ->
-            ( { model | hideLondon = shouldHide }, Cmd.none )
+                ToggleLondon shouldHide ->
+                    ( { model | hideLondon = shouldHide }, Cmd.none )
+    in
+    ( newModel, Cmd.batch [ newMsg, updateFormattedHTML () ] )
 
 
 
@@ -74,7 +86,7 @@ update msg model =
 
 main : Program Flags Model Msg
 main =
-    Html.programWithFlags
+    Browser.element
         { view = view
         , init = init
         , update = update

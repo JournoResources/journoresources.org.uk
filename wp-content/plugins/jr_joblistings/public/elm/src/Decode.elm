@@ -1,8 +1,8 @@
 module Decode exposing (decodeJobs)
 
-import Date exposing (Date)
 import Json.Decode as Json
-import Json.Decode.Pipeline exposing (custom, decode, optional, required)
+import Json.Decode.Pipeline exposing (custom, optional, required)
+import Time exposing (Posix, millisToPosix)
 import Types exposing (..)
 
 
@@ -13,7 +13,7 @@ decodeJobs =
 
 decodeJob : Json.Decoder Job
 decodeJob =
-    decode Job
+    Json.succeed Job
         |> required "title" Json.string
         |> required "employer" Json.string
         |> required "location" Json.string
@@ -29,10 +29,9 @@ decodeJob =
             )
 
 
-decodeDate : Json.Decoder (Result String Date)
+decodeDate : Json.Decoder Posix
 decodeDate =
-    Json.string
-        |> Json.map Date.fromString
+    Json.int |> Json.map millisToPosix
 
 
 decodePaidPromotion : Bool -> Json.Decoder (Maybe PaidPromotion)

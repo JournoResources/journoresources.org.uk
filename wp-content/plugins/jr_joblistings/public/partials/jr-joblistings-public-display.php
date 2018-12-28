@@ -10,4 +10,6 @@
  * @subpackage JR_JobListings/public/partials
  */
 ?>
-<div id="jr-joblistings"></div>
+<div id="jr-joblistings">
+  <div id="jr-joblistings-app"></div>
+</div>

@@ -55,7 +55,13 @@ class JR_JobListings_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'build/static/css/main.css', array(), $this->version, 'all' );
+		if (defined('WP_DEV')) {
+			$path = 'http://localhost:3001/main.css';
+		} else {
+			$path = plugin_dir_url( __FILE__ ) . 'build/main.css';
+		}
+
+		wp_enqueue_style( $this->plugin_name, $path, array(), $this->version, 'all' );
   }
     
 	/**
@@ -66,9 +72,9 @@ class JR_JobListings_Public {
 	public function enqueue_scripts() {
 
 		if (defined('WP_DEV')) {
-			$path = 'http://localhost:3000/static/js/bundle.js';
+			$path = 'http://localhost:3001/main.js';
 		} else {
-			$path = plugin_dir_url( __FILE__ ) . 'build/static/js/main.js';
+			$path = plugin_dir_url( __FILE__ ) . 'build/main.js';
 		}
 
 		wp_enqueue_script( $this->plugin_name, $path, array(), $this->version, true );
