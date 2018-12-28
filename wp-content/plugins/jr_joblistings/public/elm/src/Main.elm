@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Decode exposing (decodeJobs)
@@ -50,23 +50,34 @@ loadJobs expireAfter host =
 
 
 
+---- PORTS ----
+
+
+port updateFormattedHTML : () -> Cmd a
+
+
+
 ---- UPDATE ----
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        ReceiveTodaysDate date ->
-            ( { model | today = Just date }, loadJobs date model.host )
+    let
+        ( newModel, newMsg ) =
+            case msg of
+                ReceiveTodaysDate date ->
+                    ( { model | today = Just date }, loadJobs date model.host )
 
-        JobsLoaded webdata ->
-            ( { model | jobsRequest = webdata }, Cmd.none )
+                JobsLoaded webdata ->
+                    ( { model | jobsRequest = webdata }, Cmd.none )
 
-        UpdateSearch text ->
-            ( { model | searchText = text }, Cmd.none )
+                UpdateSearch text ->
+                    ( { model | searchText = text }, Cmd.none )
 
-        ToggleLondon shouldHide ->
-            ( { model | hideLondon = shouldHide }, Cmd.none )
+                ToggleLondon shouldHide ->
+                    ( { model | hideLondon = shouldHide }, Cmd.none )
+    in
+    ( newModel, Cmd.batch [ newMsg, updateFormattedHTML () ] )
 
 
 

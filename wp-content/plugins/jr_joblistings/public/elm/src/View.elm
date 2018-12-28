@@ -1,12 +1,17 @@
 module View exposing (view)
 
 import Html exposing (Html, a, div, h3, img, input, label, li, pre, span, strong, text, ul)
-import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
+import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Time exposing (Posix)
 import Types exposing (..)
 import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, printHttpError)
+
+
+dataHtml : String -> List (Html.Attribute a)
+dataHtml s =
+    [ attribute "data-jr_joblisting_html" s ]
 
 
 view : Model -> Html Msg
@@ -127,9 +132,8 @@ viewEmptyResults londonHidden =
 viewTitleEmployer : String -> String -> Url -> Html a
 viewTitleEmployer title employer linkUrl =
     let
-        -- @TODO innerHTML here
         renderedTitle =
-            span [] [ text title ]
+            span (dataHtml title) []
     in
     div [ class "titleEmployer" ]
         [ h3 []
@@ -195,10 +199,8 @@ viewPaidPromotion { description_preview, company_logo } =
             [ img [ src company_logo ]
                 []
             ]
-
-        -- @TODO innerHtml the preview here
-        , div [ class "description" ]
-            [ text description_preview ]
+        , div ([ class "description" ] ++ dataHtml description_preview)
+            []
         ]
 
 
