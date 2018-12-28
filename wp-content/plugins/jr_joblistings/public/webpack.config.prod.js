@@ -32,7 +32,7 @@ module.exports = {
 
   plugins: [
     new webpack.DefinePlugin({
-      "process.env.PUBLIC_URL": "'.'"
+      "process.env.PUBLIC_URL": "''"
     }),
     new CleanWebpackPlugin([buildPath]),
     new MiniCssExtractPlugin({})
