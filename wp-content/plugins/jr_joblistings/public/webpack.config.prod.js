@@ -30,10 +30,26 @@ module.exports = {
     ]
   },
 
-  plugins: [new CleanWebpackPlugin([buildPath]), new MiniCssExtractPlugin({})],
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env.PUBLIC_URL": "'.'"
+    }),
+    new CleanWebpackPlugin([buildPath]),
+    new MiniCssExtractPlugin({})
+  ],
 
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"]
+          }
+        }
+      },
       {
         test: /\.elm$/,
         exclude: [/elm-stuff/, /node_modules/],
