@@ -1,6 +1,6 @@
 module View exposing (view)
 
-import Html exposing (Html, a, div, h3, img, input, label, li, span, strong, text, ul)
+import Html exposing (Html, a, div, h3, img, input, label, li, pre, span, strong, text, ul)
 import Html.Attributes exposing (class, classList, for, href, name, placeholder, src, target, type_)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
@@ -61,7 +61,10 @@ viewJobs searchText hideLondon today webdata =
             text "Loading..."
 
         RD.Failure e ->
-            text ("There was a problem loading the jobs: " ++ printHttpError e)
+            div []
+                [ text "There was a problem loading the jobs:"
+                , pre [] [ text <| printHttpError e ]
+                ]
 
         RD.Success jobs ->
             viewFilteredJobs searchText hideLondon today jobs

@@ -43,9 +43,10 @@ loadJobs expireAfter host =
         dateString =
             formatDateApi expireAfter
     in
-    Http.get (host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString) decodeJobs
-        |> RD.sendRequest
-        |> Cmd.map JobsLoaded
+    Http.get
+        { url = host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString
+        , expect = Http.expectJson (RD.fromResult >> JobsLoaded) decodeJobs
+        }
 
 
 

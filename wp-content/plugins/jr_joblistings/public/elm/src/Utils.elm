@@ -2,6 +2,7 @@ module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromot
 
 import DateFormat as DF
 import Http exposing (Error(..))
+import String exposing (fromInt)
 import Time exposing (Posix, posixToMillis, toDay, toMonth, toYear, utc)
 import Types exposing (..)
 
@@ -59,10 +60,20 @@ compareDates d1 d2 =
     compare (posixToMillis d1) (posixToMillis d2)
 
 
-
--- @TODO
-
-
 printHttpError : Error -> String
 printHttpError error =
-    ""
+    case error of
+        BadUrl url ->
+            "Bad URL: " ++ url
+
+        Timeout ->
+            "Timeout"
+
+        NetworkError ->
+            "Network error"
+
+        BadStatus status ->
+            "Bad status: " ++ fromInt status
+
+        BadBody b ->
+            "Bad body: " ++ b
