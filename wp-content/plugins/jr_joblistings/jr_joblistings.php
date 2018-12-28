@@ -29,8 +29,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'WP_DEV', true );
-
 /**
  * Current plugin version
  */
