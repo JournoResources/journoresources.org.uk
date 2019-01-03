@@ -1,6 +1,6 @@
 {
-  "name": "jr-joblistings",
-  "version": "1.2.0",
+  "name": "jr-salaries",
+  "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/JournoResources/journoresources.org.uk",
   "author": "Elliot Davies <elliot.a.davies@gmail.com>",

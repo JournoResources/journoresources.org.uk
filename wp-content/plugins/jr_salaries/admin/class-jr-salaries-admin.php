@@ -362,11 +362,21 @@ class JR_Salaries_Admin {
 	}
 
 	/**
-	 * Register custom /jr/v1/salaries REST endpoint
+	 * Register custom /jr/v1/salaries REST endpoints
 	 *
 	 * @since    1.0.0
 	 */
 	public function add_custom_rest_endpoint() {
+    add_get_rest_endpoint();
+    add_post_rest_endpoint();
+  }
+
+	/**
+	 * Register custom /jr/v1/salaries GET endpoint
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_get_rest_endpoint() {
 
 		$jr_salaries_endpoint = function ( $request ) {
 
@@ -414,7 +424,43 @@ class JR_Salaries_Admin {
 		};
 
 		register_rest_route( 'jr/v1', '/salaries/', array(
-			'methods' => 'GET',
+			'methods'  => 'GET',
+			'callback' => $jr_salaries_endpoint
+		));
+	}
+
+	/**
+	 * Register custom /jr/v1/salaries POST endpoint
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_post_rest_endpoint() {
+
+		$jr_salaries_endpoint = function ( $request ) {
+
+      $job_title = $request->get_param( 'job_title' );
+
+			$args = array(
+        'post_type'  => 'jr_salary',
+        'post_title' => $job_title,
+        'meta_input' => array(
+				  'name'      => $request->get_param( 'name' ),
+					'email'     => $request->get_param( 'email' ),
+					'job_title' => $job_title,
+					'company'   => $request->get_param( 'company' ),
+					'salary'    => $request->get_param( 'salary' ),
+					'anonymise' => $request->get_param( 'anonymise' ),
+					'location'  => $request->get_param( 'location' ),
+					'job_date'  => $request->get_param( 'job_date' ),
+					'other'     => $request->get_param( 'other' ),
+        ),
+      );
+
+			wp_insert_post( $args );
+		};
+
+		register_rest_route( 'jr/v1', '/salaries/', array(
+			'methods' => 'POST',
 			'callback' => $jr_salaries_endpoint
 		));
 	}

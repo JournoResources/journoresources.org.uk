@@ -1,8 +1,7 @@
 @import "variables";
-@import "job-listing";
-@import "single-job";
+@import "salary-listing";
 
-#jr-joblistings {
+#jr-salaries {
   .wrapper {
     padding-bottom: 1rem;
   }
@@ -43,7 +42,7 @@
   }
 
   /* Jobs list */
-  .jobs {
+  .salaries {
     margin: 0;
     padding: 0;
     width: 100%;

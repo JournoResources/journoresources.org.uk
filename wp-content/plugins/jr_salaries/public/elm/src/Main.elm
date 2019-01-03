@@ -1,13 +1,11 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Browser
-import Decode exposing (decodeJobs)
+import Encode exposing (encodeSalary)
 import Http
 import RemoteData as RD
 import Task
-import Time exposing (Posix, now)
 import Types exposing (..)
-import Utils exposing (formatDateApi)
 import View exposing (view)
 
 
@@ -23,37 +21,20 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { host = flags.host
-      , jobsRequest = RD.NotAsked
-      , searchText = ""
-      , hideLondon = False
-      , today = Nothing
+      , salary =
+            { name = ""
+            , email = ""
+            , job_title = ""
+            , company = ""
+            , salary = ""
+            , anonymise = False
+            , location = ""
+            , job_date = ""
+            , other = ""
+            }
       }
-    , getTodaysDate
+    , Cmd.none
     )
-
-
-getTodaysDate : Cmd Msg
-getTodaysDate =
-    Task.perform ReceiveTodaysDate now
-
-
-loadJobs : Posix -> Url -> Cmd Msg
-loadJobs expireAfter host =
-    let
-        dateString =
-            formatDateApi expireAfter
-    in
-    Http.get
-        { url = host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString
-        , expect = Http.expectJson (RD.fromResult >> JobsLoaded) decodeJobs
-        }
-
-
-
----- PORTS ----
-
-
-port updateFormattedHTML : () -> Cmd a
 
 
 
@@ -63,21 +44,39 @@ port updateFormattedHTML : () -> Cmd a
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
-        ( newModel, newMsg ) =
+        salary =
+            model.salary
+
+        newSalary =
             case msg of
-                ReceiveTodaysDate date ->
-                    ( { model | today = Just date }, loadJobs date model.host )
+                UpdateName name ->
+                    { salary | name = name }
 
-                JobsLoaded webdata ->
-                    ( { model | jobsRequest = webdata }, Cmd.none )
+                UpdateEmail email ->
+                    { salary | email = email }
 
-                UpdateSearch text ->
-                    ( { model | searchText = text }, Cmd.none )
+                UpdateJobTitle job_title ->
+                    { salary | job_title = job_title }
 
-                ToggleLondon shouldHide ->
-                    ( { model | hideLondon = shouldHide }, Cmd.none )
+                UpdateCompany company ->
+                    { salary | company = company }
+
+                UpdateSalary salary_ ->
+                    { salary | salary = salary_ }
+
+                UpdateAnonymise anonymise ->
+                    { salary | anonymise = anonymise }
+
+                UpdateLocation location ->
+                    { salary | location = location }
+
+                UpdateJobDate job_date ->
+                    { salary | job_date = job_date }
+
+                UpdateOther other ->
+                    { salary | other = other }
     in
-    ( newModel, Cmd.batch [ newMsg, updateFormattedHTML () ] )
+    ( { model | salary = newSalary }, Cmd.none )
 
 
 
