@@ -21,6 +21,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { host = flags.host
+      , submitRequest = RD.NotAsked
       , salary =
             { name = ""
             , email = ""
@@ -37,46 +38,63 @@ init flags =
     )
 
 
+postForm : Url -> Salary -> Cmd Msg
+postForm host salary =
+    Http.post
+        { url = host ++ "/wp-json/jr/v1/salaries"
+        , body = Http.jsonBody (encodeSalary salary)
+        , expect = Http.expectWhatever (RD.fromResult >> FormSubmitted)
+        }
+
+
 
 ---- UPDATE ----
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    let
-        salary =
-            model.salary
+    case msg of
+        SubmitForm ->
+            ( model, postForm model.host model.salary )
 
-        newSalary =
-            case msg of
-                UpdateName name ->
-                    { salary | name = name }
+        FormSubmitted webdata ->
+            ( { model | submitRequest = webdata }, Cmd.none )
 
-                UpdateEmail email ->
-                    { salary | email = email }
+        UpdateFormField updateMsg ->
+            let
+                salary =
+                    model.salary
 
-                UpdateJobTitle job_title ->
-                    { salary | job_title = job_title }
+                newSalary =
+                    case updateMsg of
+                        UpdateName name ->
+                            { salary | name = name }
 
-                UpdateCompany company ->
-                    { salary | company = company }
+                        UpdateEmail email ->
+                            { salary | email = email }
 
-                UpdateSalary salary_ ->
-                    { salary | salary = salary_ }
+                        UpdateJobTitle job_title ->
+                            { salary | job_title = job_title }
 
-                UpdateAnonymise anonymise ->
-                    { salary | anonymise = anonymise }
+                        UpdateCompany company ->
+                            { salary | company = company }
 
-                UpdateLocation location ->
-                    { salary | location = location }
+                        UpdateSalary salary_ ->
+                            { salary | salary = salary_ }
 
-                UpdateJobDate job_date ->
-                    { salary | job_date = job_date }
+                        UpdateAnonymise anonymise ->
+                            { salary | anonymise = anonymise }
 
-                UpdateOther other ->
-                    { salary | other = other }
-    in
-    ( { model | salary = newSalary }, Cmd.none )
+                        UpdateLocation location ->
+                            { salary | location = location }
+
+                        UpdateJobDate job_date ->
+                            { salary | job_date = job_date }
+
+                        UpdateOther other ->
+                            { salary | other = other }
+            in
+            ( { model | salary = newSalary }, Cmd.none )
 
 
 

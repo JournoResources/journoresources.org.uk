@@ -367,8 +367,8 @@ class JR_Salaries_Admin {
 	 * @since    1.0.0
 	 */
 	public function add_custom_rest_endpoint() {
-    add_get_rest_endpoint();
-    add_post_rest_endpoint();
+    $this->add_get_rest_endpoint();
+    $this->add_post_rest_endpoint();
   }
 
 	/**
@@ -376,7 +376,7 @@ class JR_Salaries_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_get_rest_endpoint() {
+	private function add_get_rest_endpoint() {
 
 		$jr_salaries_endpoint = function ( $request ) {
 
@@ -434,7 +434,7 @@ class JR_Salaries_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_post_rest_endpoint() {
+	private function add_post_rest_endpoint() {
 
 		$jr_salaries_endpoint = function ( $request ) {
 

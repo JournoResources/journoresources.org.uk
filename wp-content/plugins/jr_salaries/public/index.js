@@ -9,15 +9,4 @@ if (container) {
       host: process.env.PUBLIC_URL
     }
   });
-
-  app.ports.updateFormattedHTML.subscribe(() => {
-    requestAnimationFrame(updateFormattedHTML);
-  });
 }
-
-const updateFormattedHTML = () => {
-  const htmlNodes = document.querySelectorAll("[data-jr_salary_html]");
-  htmlNodes.forEach(node => {
-    node.innerHTML = node.dataset["jr_salary_html"];
-  });
-};

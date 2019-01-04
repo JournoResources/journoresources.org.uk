@@ -1,15 +1,16 @@
-module Types exposing (Model, Msg(..), Salary, Url)
+module Types exposing (Model, Msg(..), Salary, UpdateFieldMsg(..), Url)
 
--- import RemoteData as RD
+import RemoteData as RD
 
 
 type alias Model =
     { host : Url
+    , submitRequest : RD.WebData ()
     , salary : Salary
     }
 
 
-type Msg
+type UpdateFieldMsg
     = UpdateName String
     | UpdateEmail String
     | UpdateJobTitle String
@@ -19,6 +20,12 @@ type Msg
     | UpdateLocation String
     | UpdateJobDate String
     | UpdateOther String
+
+
+type Msg
+    = UpdateFormField UpdateFieldMsg
+    | SubmitForm
+    | FormSubmitted (RD.WebData ())
 
 
 type alias Url =
