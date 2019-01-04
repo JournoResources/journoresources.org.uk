@@ -1,7 +1,7 @@
 module View exposing (view)
 
-import Html exposing (Html, button, div, fieldset, form, input, label, legend, text)
-import Html.Attributes exposing (checked, class, name, type_, value)
+import Html exposing (Html, button, div, form, input, label, legend, text)
+import Html.Attributes exposing (checked, class, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
 import Types exposing (..)
 
@@ -14,52 +14,57 @@ view { salary } =
             [ onSubmit SubmitForm
             ]
             [ label []
-                [ text "Name"
+                [ text "What's your name?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateName)
                     , value salary.name
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Email"
+                [ text "What's your email address?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateEmail)
                     , value salary.email
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Job title"
+                [ text "What is the job title?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateJobTitle)
                     , value salary.job_title
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Company"
+                [ text "What is the company?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateCompany)
                     , value salary.company
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Salary"
+                [ text "How much were you paid?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateSalary)
                     , value salary.salary
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Anonymise?"
+                [ text "Would you like us to anonymise the company?"
                 , input
                     [ type_ "checkbox"
                     , onCheck (UpdateFormField << UpdateAnonymise)
@@ -68,11 +73,12 @@ view { salary } =
                     []
                 ]
             , label []
-                [ text "Location"
+                [ text "Where was the job located?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateLocation)
                     , value salary.location
+                    , required True
                     ]
                     []
                 ]
@@ -82,11 +88,12 @@ view { salary } =
                     [ type_ "date"
                     , onInput (UpdateFormField << UpdateJobDate)
                     , value salary.job_date
+                    , required True
                     ]
                     []
                 ]
             , label []
-                [ text "Other information"
+                [ text "Anything else?"
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateOther)
