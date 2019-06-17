@@ -50,7 +50,8 @@ class JR_JobListings_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->register_acf_fields();
+		$this->register_acf_fields_joblistings();
+		$this->register_acf_fields_joblabels();
 
 	}
 
@@ -204,8 +205,8 @@ class JR_JobListings_Admin {
 			'show_in_nav_menus'     => true,
 			'can_export'            => true,
 			'has_archive'           => true,
-			'exclude_from_search'   => false,
-			'publicly_queryable'    => true,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => false,
 			'rewrite'               => $rewrite,
 			'capability_type'       => 'post',
 			'show_in_rest'          => true,
@@ -237,11 +238,11 @@ class JR_JobListings_Admin {
 	}
 
 	/**
-	 * Register fields with ACF
+	 * Register job listing fields with ACF
 	 *
 	 * @since    1.0.0
 	 */
-	private function register_acf_fields()
+	private function register_acf_fields_joblistings()
 	{
 		if(function_exists("register_field_group"))
 		{
@@ -421,6 +422,82 @@ class JR_JobListings_Admin {
 						),
 					),
 				),
+				'options' => array (
+					'position' => 'normal',
+					'layout' => 'no_box',
+					'hide_on_screen' => array (
+						0 => 'permalink',
+						1 => 'the_content',
+						2 => 'excerpt',
+						3 => 'custom_fields',
+						4 => 'discussion',
+						5 => 'comments',
+						6 => 'revisions',
+						7 => 'format',
+						8 => 'featured_image',
+						9 => 'categories',
+						10 => 'tags',
+						11 => 'send-trackbacks',
+					),
+				),
+				'menu_order' => 0,
+			));
+		}
+	}
+
+	/**
+	 * Register job listing fields with ACF
+	 *
+	 * @since    1.0.0
+	 */
+	private function register_acf_fields_joblabels()
+	{
+		if(function_exists("register_field_group"))
+		{
+			register_field_group(array (
+				'id' => 'acf_joblabels',
+				'title' => 'Job labels',
+				'fields' => array (
+					array (
+						'key' => 'field_5c75c99d8f5b8',
+						'label' => 'Background colour',
+						'name' => 'background_colour',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => 'Hex code e.g. 1d76db',
+						'prepend' => '#',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_5c75c99d8f5b9',
+						'label' => 'Text colour',
+						'name' => 'text_colour',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '#ffffff',
+						'placeholder' => 'Hex code e.g. ffffff',
+						'prepend' => '#',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+				),
+
+				'location' => array (
+					array (
+						array (
+							'param' => 'post_type',
+							'operator' => '==',
+							'value' => 'jr_joblabel',
+							'order_no' => 0,
+							'group_no' => 0,
+						),
+					),
+				),
+
 				'options' => array (
 					'position' => 'normal',
 					'layout' => 'no_box',
