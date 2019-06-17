@@ -71,11 +71,21 @@ class JR_JobListings_Admin {
 	}
 
 	/**
+	 * Register custom post types
+	 *
+	 * @since    1.3.0
+	 */
+	public function add_custom_post_type() {
+    $this->add_jobs_custom_post_type();
+    $this->add_labels_custom_post_type();
+	}
+
+	/**
 	 * Register the custom 'Jobs' post type
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_custom_post_type()
+	public function add_jobs_custom_post_type()
 	{
 		$labels = array(
 			'name'                  => _x( 'Jobs', 'Post Type General Name', 'text_domain' ),
@@ -135,6 +145,73 @@ class JR_JobListings_Admin {
 			'rest_base'             => 'jobs',
 		);
 		register_post_type( 'jr_joblisting', $args );
+	}
+
+	/**
+	 * Register the custom 'Labels' post type
+	 *
+	 * @since    1.3.0
+	 */
+	public function add_labels_custom_post_type()
+	{
+		$labels = array(
+			'name'                  => _x( 'Labels', 'Post Type General Name', 'text_domain' ),
+			'singular_name'         => _x( 'Label', 'Post Type Singular Name', 'text_domain' ),
+			'menu_name'             => __( 'Labels', 'text_domain' ),
+			'name_admin_bar'        => __( 'Label', 'text_domain' ),
+			'archives'              => __( 'Label Archives', 'text_domain' ),
+			'attributes'            => __( 'Label Attributes', 'text_domain' ),
+			'parent_item_colon'     => __( 'Parent Label:', 'text_domain' ),
+			'all_items'             => __( 'Job Labels', 'text_domain' ),
+			'add_new_item'          => __( 'Add New Label', 'text_domain' ),
+			'add_new'               => __( 'Add New', 'text_domain' ),
+			'new_item'              => __( 'New Label', 'text_domain' ),
+			'edit_item'             => __( 'Edit Label', 'text_domain' ),
+			'update_item'           => __( 'Update Label', 'text_domain' ),
+			'view_item'             => __( 'View Label', 'text_domain' ),
+			'view_items'            => __( 'View Labels', 'text_domain' ),
+			'search_items'          => __( 'Search Label', 'text_domain' ),
+			'not_found'             => __( 'Not found', 'text_domain' ),
+			'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
+			'featured_image'        => __( 'Featured Image', 'text_domain' ),
+			'set_featured_image'    => __( 'Set featured image', 'text_domain' ),
+			'remove_featured_image' => __( 'Remove featured image', 'text_domain' ),
+			'use_featured_image'    => __( 'Use as featured image', 'text_domain' ),
+			'insert_into_item'      => __( 'Insert into Label', 'text_domain' ),
+			'uploaded_to_this_item' => __( 'Uploaded to this label', 'text_domain' ),
+			'items_list'            => __( 'Labels list', 'text_domain' ),
+			'items_list_navigation' => __( 'Labels list navigation', 'text_domain' ),
+			'filter_items_list'     => __( 'Filter labels list', 'text_domain' ),
+		);
+		$rewrite = array(
+			'slug'                  => 'job-label',
+			'with_front'            => true,
+			'pages'                 => true,
+			'feeds'                 => true,
+		);
+		$args = array(
+			'label'                 => __( 'Label', 'text_domain' ),
+			'description'           => __( 'A Journo Resources job label', 'text_domain' ),
+			'labels'                => $labels,
+			'supports'              => array( 'title' ),
+			'hierarchical'          => false,
+			'public'                => true,
+			'show_ui'               => true,
+			'show_in_menu'          => 'edit.php?post_type=jr_joblisting',
+			'menu_position'         => 5,
+			'menu_icon'             => 'dashicons-carrot',
+			'show_in_admin_bar'     => true,
+			'show_in_nav_menus'     => true,
+			'can_export'            => true,
+			'has_archive'           => true,
+			'exclude_from_search'   => false,
+			'publicly_queryable'    => true,
+			'rewrite'               => $rewrite,
+			'capability_type'       => 'post',
+			'show_in_rest'          => true,
+			'rest_base'             => 'labels',
+		);
+		register_post_type( 'jr_joblabel', $args );
 	}
 
 	/**
