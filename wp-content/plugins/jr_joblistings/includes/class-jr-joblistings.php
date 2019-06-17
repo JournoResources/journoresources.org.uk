@@ -174,6 +174,7 @@ class JR_JobListings {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'init', $plugin_admin, 'add_custom_post_type' );
+		$this->loader->add_action( 'init', $plugin_admin, 'add_custom_taxonomy' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'add_custom_rest_endpoint' );
 		
 		$this->loader->add_filter( 'manage_jr_joblisting_posts_columns', $plugin_admin, 'add_custom_admin_columns' );

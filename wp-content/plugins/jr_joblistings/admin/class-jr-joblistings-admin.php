@@ -72,21 +72,11 @@ class JR_JobListings_Admin {
 	}
 
 	/**
-	 * Register custom post types
-	 *
-	 * @since    1.3.0
-	 */
-	public function add_custom_post_type() {
-    $this->add_jobs_custom_post_type();
-    $this->add_labels_custom_post_type();
-	}
-
-	/**
 	 * Register the custom 'Jobs' post type
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_jobs_custom_post_type()
+	public function add_custom_post_type()
 	{
 		$labels = array(
 			'name'                  => _x( 'Jobs', 'Post Type General Name', 'text_domain' ),
@@ -149,15 +139,15 @@ class JR_JobListings_Admin {
 	}
 
 	/**
-	 * Register the custom 'Labels' post type
+	 * Register the custom 'Labels' taxonomy
 	 *
 	 * @since    1.3.0
 	 */
-	public function add_labels_custom_post_type()
+	public function add_custom_taxonomy()
 	{
 		$labels = array(
-			'name'                  => _x( 'Labels', 'Post Type General Name', 'text_domain' ),
-			'singular_name'         => _x( 'Label', 'Post Type Singular Name', 'text_domain' ),
+			'name'                  => _x( 'Labels', 'Taxonomy General Name', 'text_domain' ),
+			'singular_name'         => _x( 'Label', 'Taxonomy Singular Name', 'text_domain' ),
 			'menu_name'             => __( 'Labels', 'text_domain' ),
 			'name_admin_bar'        => __( 'Label', 'text_domain' ),
 			'archives'              => __( 'Label Archives', 'text_domain' ),
@@ -191,7 +181,6 @@ class JR_JobListings_Admin {
 			'feeds'                 => true,
 		);
 		$args = array(
-			'label'                 => __( 'Label', 'text_domain' ),
 			'description'           => __( 'A Journo Resources job label', 'text_domain' ),
 			'labels'                => $labels,
 			'supports'              => array( 'title' ),
@@ -212,7 +201,7 @@ class JR_JobListings_Admin {
 			'show_in_rest'          => true,
 			'rest_base'             => 'labels',
 		);
-		register_post_type( 'jr_joblabel', $args );
+		register_taxonomy( 'jr_joblabel', 'jr_joblisting', $args );
 	}
 
 	/**
@@ -349,10 +338,11 @@ class JR_JobListings_Admin {
 						'key' => 'field_5b65ca008f5bd',
 						'label' => 'Label(s)',
 						'name' => 'job_label',
-						'type' => 'post_object',
-            'post_type' => ['jr_joblabel'],
-						'required' => 0,
-            'multiple' => 1,
+						'type' => 'taxonomy',
+            'taxonomy' => 'jr_joblabel',
+						'field_type' => 'checkbox',
+            'return_format' => 'object',
+            'allow_term' => 0
 					),
 
 
@@ -512,7 +502,7 @@ class JR_JobListings_Admin {
 				'location' => array (
 					array (
 						array (
-							'param' => 'post_type',
+							'param' => 'ef_taxonomy',
 							'operator' => '==',
 							'value' => 'jr_joblabel',
 							'order_no' => 0,
@@ -677,5 +667,4 @@ class JR_JobListings_Admin {
 			'callback' => $jr_jobs_endpoint
 		));
 	}
-
 }
