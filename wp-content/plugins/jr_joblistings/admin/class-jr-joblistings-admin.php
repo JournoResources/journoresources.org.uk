@@ -263,6 +263,7 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
 					array (
 						'key' => 'field_5b65c9ac8f5b9',
 						'label' => 'Location',
@@ -276,6 +277,7 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
 					array (
 						'key' => 'field_5b65c9bf8f5ba',
 						'label' => 'Salary',
@@ -289,6 +291,7 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
           ),
+
           array(
             'key' => 'field_5b65c9d38f5cb',
 						'label' => 'Citation',
@@ -302,6 +305,7 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
           ),
+
           array(
             'key' => 'field_5b65c9d38f5cc',
 						'label' => 'Citation URL',
@@ -315,6 +319,7 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
           ),
+
 					array (
 						'key' => 'field_5b65c9d38f5bb',
 						'label' => 'Expiry date',
@@ -325,6 +330,7 @@ class JR_JobListings_Admin {
 						'display_format' => 'dd/mm/yy',
 						'first_day' => 1,
 					),
+
 					array (
 						'key' => 'field_5b65ca008f5bc',
 						'label' => 'Listing URL',
@@ -338,6 +344,18 @@ class JR_JobListings_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
+					array (
+						'key' => 'field_5b65ca008f5bd',
+						'label' => 'Label(s)',
+						'name' => 'job_label',
+						'type' => 'post_object',
+            'post_type' => ['jr_joblabel'],
+						'required' => 0,
+            'multiple' => 1,
+					),
+
+
 					array (
 						'key' => 'field_5b71c19a7ae3c',
 						'label' => 'Paid promotion',
@@ -346,6 +364,7 @@ class JR_JobListings_Admin {
 						'message' => '',
 						'default_value' => 0,
 					),
+
 					array (
 						'key' => 'field_5b71c1d77ae3d',
 						'label' => 'Job description (preview)',
@@ -367,6 +386,7 @@ class JR_JobListings_Admin {
 						'toolbar' => 'full',
 						'media_upload' => 'no',
 					),
+
 					array (
 						'key' => 'field_5b71c1d77ae3f',
 						'label' => 'Job description (full)',
@@ -388,6 +408,7 @@ class JR_JobListings_Admin {
 						'toolbar' => 'full',
 						'media_upload' => 'no',
 					),
+
 					array (
 						'key' => 'field_5b71c2267ae3e',
 						'label' => 'Company logo',
@@ -411,6 +432,7 @@ class JR_JobListings_Admin {
 						'library' => 'all',
 					),
 				),
+
 				'location' => array (
 					array (
 						array (
@@ -422,6 +444,7 @@ class JR_JobListings_Admin {
 						),
 					),
 				),
+
 				'options' => array (
 					'position' => 'normal',
 					'layout' => 'no_box',
@@ -477,7 +500,7 @@ class JR_JobListings_Admin {
 						'name' => 'text_colour',
 						'type' => 'text',
 						'required' => 1,
-						'default_value' => '#ffffff',
+						'default_value' => 'ffffff',
 						'placeholder' => 'Hex code e.g. ffffff',
 						'prepend' => '#',
 						'append' => '',
