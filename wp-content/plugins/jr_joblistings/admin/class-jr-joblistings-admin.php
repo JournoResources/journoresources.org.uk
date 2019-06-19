@@ -337,11 +337,10 @@ class JR_JobListings_Admin {
 					array (
 						'key' => 'field_5b65ca008f5bd',
 						'label' => 'Label(s)',
-						'name' => 'job_label',
+						'name' => 'job_labels',
 						'type' => 'taxonomy',
             'taxonomy' => 'jr_joblabel',
 						'field_type' => 'checkbox',
-            'return_format' => 'object',
             'allow_term' => 0
 					),
 
@@ -588,11 +587,21 @@ class JR_JobListings_Admin {
 	}
 
 	/**
+	 * Register custom /jr/v1/jobs REST endpoints
+	 *
+	 * @since    1.3.0
+	 */
+  public function add_custom_rest_endpoints() {
+    $this->add_custom_jobs_endpoint();
+    $this->add_custom_job_labels_endpoint();
+  }
+
+	/**
 	 * Register custom /jr/v1/jobs REST endpoint
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_custom_rest_endpoint() {
+	public function add_custom_jobs_endpoint() {
 
 		$jr_jobs_endpoint = function ( $request ) {
 
@@ -642,6 +651,7 @@ class JR_JobListings_Admin {
 					'citation_url',
 					'expiry_date',
 					'listing_url',
+          'job_labels',
 					'paid_promotion',
 					'job_description_preview',
 					'company_logo',
@@ -665,6 +675,58 @@ class JR_JobListings_Admin {
 		register_rest_route( 'jr/v1', '/jobs/', array(
 			'methods' => 'GET',
 			'callback' => $jr_jobs_endpoint
+		));
+	}
+
+	/**
+	 * Register custom /jr/v1/jobs/labels REST endpoint
+	 *
+	 * @since    1.3.0
+	 */
+	public function add_custom_job_labels_endpoint() {
+
+		$jr_job_labels_endpoint = function ( $request ) {
+
+			$args = array(
+				'post_type' => 'jr_joblabel',
+				'posts_per_page' => -1,
+			);
+
+			// The basic get_posts response includes lots of extra fields from WP...
+			$labelsData = get_posts( $args );
+
+			$labels = array();
+
+			foreach ( $labelsData as $key => $jobData ) {
+
+				$jobID = $jobData->ID;
+
+				// ... so we pick the ones we want
+				$job = array(
+					'title' => $jobData->post_title,
+				);
+
+				$customFieldsData = get_fields( $jobID );
+
+				$customFieldsToInclude = array(
+					'background_colour',
+					'text_colour',
+				);
+
+        foreach ( $customFieldsToInclude as $cf ) {
+          $fieldData = $customFieldsData[$cf];
+					$job[$cf] = $fieldData;
+				};
+
+				$labels[$key] = $job;
+			}
+
+			return $labels;
+		};
+
+		register_rest_route( 'jr/v1', '/jobs/labels/', array(
+			'methods' => 'GET',
+			'callback' => $jr_job_labels_endpoint
 		));
 	}
 }
