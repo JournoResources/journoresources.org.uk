@@ -703,7 +703,8 @@ class JR_JobListings_Admin {
 
 				// ... so we pick the ones we want
 				$job = array(
-					'title' => $jobData->post_title,
+					'id' => $jobData->ID,
+					'text' => $jobData->post_title,
 				);
 
 				$customFieldsData = get_fields( $jobID );

@@ -1,7 +1,7 @@
 port module Main exposing (main)
 
 import Browser
-import Decode exposing (decodeJobs)
+import Decode exposing (decodeJobs, decodeLabels)
 import Http
 import RemoteData as RD
 import Task
@@ -24,6 +24,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { host = flags.host
       , jobsRequest = RD.NotAsked
+      , labelsRequest = RD.NotAsked
       , searchText = ""
       , hideLondon = False
       , today = Nothing
@@ -37,6 +38,11 @@ getTodaysDate =
     Task.perform ReceiveTodaysDate now
 
 
+apiPath : String
+apiPath =
+    "/wp-json/jr/v1/"
+
+
 loadJobs : Posix -> Url -> Cmd Msg
 loadJobs expireAfter host =
     let
@@ -44,8 +50,16 @@ loadJobs expireAfter host =
             formatDateApi expireAfter
     in
     Http.get
-        { url = host ++ "/wp-json/jr/v1/jobs?expire_after=" ++ dateString
+        { url = host ++ apiPath ++ "jobs?expire_after=" ++ dateString
         , expect = Http.expectJson (RD.fromResult >> JobsLoaded) decodeJobs
+        }
+
+
+loadLabels : Url -> Cmd Msg
+loadLabels host =
+    Http.get
+        { url = host ++ apiPath ++ "jobs/labels"
+        , expect = Http.expectJson (RD.fromResult >> LabelsLoaded) decodeLabels
         }
 
 
@@ -66,10 +80,18 @@ update msg model =
         ( newModel, newMsg ) =
             case msg of
                 ReceiveTodaysDate date ->
-                    ( { model | today = Just date }, loadJobs date model.host )
+                    ( { model | today = Just date }
+                    , Cmd.batch
+                        [ loadJobs date model.host
+                        , loadLabels model.host
+                        ]
+                    )
 
                 JobsLoaded webdata ->
                     ( { model | jobsRequest = webdata }, Cmd.none )
+
+                LabelsLoaded webdata ->
+                    ( { model | labelsRequest = webdata }, Cmd.none )
 
                 UpdateSearch text ->
                     ( { model | searchText = text }, Cmd.none )
