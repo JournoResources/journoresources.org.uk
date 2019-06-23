@@ -5,6 +5,7 @@
   margin-bottom: 1rem;
   padding: 0.5rem;
   border: 1px solid lightgrey;
+  border-radius: 3px;
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: 100%;
@@ -20,9 +21,14 @@
   .titleEmployer {
     h3 {
       margin: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
     }
+
     a {
       text-decoration: none;
+      margin-right: 10px;
     }
   }
 

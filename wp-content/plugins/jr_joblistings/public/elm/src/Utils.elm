@@ -1,4 +1,4 @@
-module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromotion, isToday, locationMatches, printHttpError)
+module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError, toHex)
 
 import DateFormat as DF
 import Http exposing (Error(..))
@@ -77,3 +77,13 @@ printHttpError error =
 
         BadBody b ->
             "Bad body: " ++ b
+
+
+lookupLabels : List Label -> List LabelId -> List Label
+lookupLabels labels ids =
+    List.filter (\{ id } -> List.member id ids) labels
+
+
+toHex : String -> String
+toHex str =
+    "#" ++ String.filter ((/=) '#') str

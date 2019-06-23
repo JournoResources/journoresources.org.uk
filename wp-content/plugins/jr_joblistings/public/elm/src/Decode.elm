@@ -1,4 +1,4 @@
-module Decode exposing (decodeJobs)
+module Decode exposing (decodeJobs, decodeLabels)
 
 import Json.Decode as Json
 import Json.Decode.Pipeline exposing (custom, optional, required)
@@ -23,6 +23,7 @@ decodeJob =
         |> required "expiry_date" decodeDate
         |> required "listing_url" Json.string
         |> required "link" Json.string
+        |> optional "job_labels" (Json.list Json.int) []
         |> custom
             (Json.field "paid_promotion" Json.bool
                 |> Json.andThen decodePaidPromotion
@@ -44,3 +45,17 @@ decodePaidPromotion isPaid =
 
     else
         Json.succeed Nothing
+
+
+decodeLabels : Json.Decoder (List Label)
+decodeLabels =
+    Json.list decodeLabel
+
+
+decodeLabel : Json.Decoder Label
+decodeLabel =
+    Json.succeed Label
+        |> required "id" Json.int
+        |> required "text" Json.string
+        |> required "background_colour" Json.string
+        |> required "text_colour" Json.string

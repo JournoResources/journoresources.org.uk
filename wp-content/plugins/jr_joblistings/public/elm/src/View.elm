@@ -1,12 +1,12 @@
 module View exposing (view)
 
-import Html exposing (Html, a, div, h3, img, input, label, li, pre, span, strong, text, ul)
-import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, src, target, type_)
+import Html exposing (Html, a, div, h3, img, input, label, li, option, pre, select, span, strong, text, ul)
+import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, selected, src, style, target, type_, value)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Time exposing (Posix)
 import Types exposing (..)
-import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, printHttpError)
+import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError, toHex)
 
 
 dataHtml : String -> List (Html.Attribute a)
@@ -20,8 +20,9 @@ view model =
         [ div [ class "filterOptions" ]
             [ searchField
             , londonVisibilityToggle
+            , labelsFilter model.labelsRequest
             ]
-        , viewJobs model.searchText model.hideLondon model.today model.jobsRequest
+        , viewJobs model.searchText model.hideLondon model.labelFilter model.today model.jobsRequest model.labelsRequest
         ]
 
 
@@ -53,14 +54,51 @@ londonVisibilityToggle =
 
 
 
+---- Labels filter ----
+
+
+labelsFilter : RD.WebData (List Label) -> Html Msg
+labelsFilter webData =
+    let
+        labelOption label =
+            option
+                [ value <| String.fromInt label.id ]
+                [ text label.text ]
+
+        defaultOption =
+            option
+                [ value ""
+                , selected True
+                ]
+                [ text "All labels" ]
+
+        fieldName =
+            "labelsFilter"
+    in
+    case webData of
+        RD.Success labels ->
+            div [ class "filterOption labelsFilter" ]
+                [ label [ for fieldName ] [ text "Show me jobs tagged with:" ]
+                , select
+                    [ onInput <| \str -> UpdateLabelFilter (String.toInt str)
+                    , name fieldName
+                    ]
+                    (defaultOption :: List.map labelOption labels)
+                ]
+
+        _ ->
+            text ""
+
+
+
 ---- Jobs list ----
 
 
-viewJobs : String -> Bool -> Maybe Posix -> RD.WebData (List Job) -> Html msg
-viewJobs searchText hideLondon today webdata =
-    case webdata of
+viewJobs : String -> Bool -> Maybe LabelId -> Maybe Posix -> RD.WebData (List Job) -> RD.WebData (List Label) -> Html msg
+viewJobs searchText hideLondon labelFilter today jobs_webdata labels_webdata =
+    case jobs_webdata of
         RD.NotAsked ->
-            text "Not asked"
+            text "Loading..."
 
         RD.Loading ->
             text "Loading..."
@@ -72,19 +110,36 @@ viewJobs searchText hideLondon today webdata =
                 ]
 
         RD.Success jobs ->
-            viewFilteredJobs searchText hideLondon today jobs
+            let
+                labels =
+                    case labels_webdata of
+                        RD.Success labels_ ->
+                            labels_
+
+                        _ ->
+                            []
+            in
+            viewFilteredJobs searchText hideLondon labelFilter today jobs labels
 
 
-jobMatchesCriteria : String -> Bool -> Job -> Bool
-jobMatchesCriteria searchText hideLondon { title, employer, location } =
+jobMatchesCriteria : String -> Bool -> Maybe LabelId -> Job -> Bool
+jobMatchesCriteria searchText hideLondon labelFilter { title, employer, location, labels } =
     let
         matchesSearch =
             List.foldr ((||) << locationMatches searchText) False [ title, employer, location ]
 
         shouldHide =
             hideLondon && locationMatches "london" location
+
+        matchesLabelFilter =
+            case labelFilter of
+                Just labelId ->
+                    List.member labelId labels
+
+                Nothing ->
+                    True
     in
-    matchesSearch && not shouldHide
+    matchesSearch && not shouldHide && matchesLabelFilter
 
 
 orderJobs : List Job -> List Job
@@ -99,17 +154,17 @@ orderJobs jobs =
     sort promotedJobs ++ sort regularJobs
 
 
-viewFilteredJobs : String -> Bool -> Maybe Posix -> List Job -> Html a
-viewFilteredJobs searchText hideLondon today jobs =
+viewFilteredJobs : String -> Bool -> Maybe LabelId -> Maybe Posix -> List Job -> List Label -> Html a
+viewFilteredJobs searchText hideLondon labelFilter today jobs labels =
     let
         filteredJobs =
-            List.filter (jobMatchesCriteria searchText hideLondon) (orderJobs jobs)
+            List.filter (jobMatchesCriteria searchText hideLondon labelFilter) (orderJobs jobs)
     in
     if List.isEmpty filteredJobs then
         viewEmptyResults hideLondon
 
     else
-        ul [ class "jobs" ] (List.map (viewJob today) filteredJobs)
+        ul [ class "jobs" ] (List.map (viewJob today labels) filteredJobs)
 
 
 viewEmptyResults : Bool -> Html a
@@ -129,8 +184,8 @@ viewEmptyResults londonHidden =
 ---- Individual jobs ----
 
 
-viewTitleEmployer : String -> String -> Url -> Html a
-viewTitleEmployer title employer linkUrl =
+viewTitleEmployer : String -> String -> Url -> List Label -> Html a
+viewTitleEmployer title employer linkUrl labels =
     let
         renderedTitle =
             span (dataHtml title) []
@@ -141,7 +196,20 @@ viewTitleEmployer title employer linkUrl =
                 [ renderedTitle
                 , text <| ", " ++ employer
                 ]
+            , ul [ class "jr-job-labels" ]
+                (List.map viewLabel labels)
             ]
+        ]
+
+
+viewLabel : Label -> Html a
+viewLabel label =
+    li
+        [ class "label"
+        , style "backgroundColor" <| toHex label.background_colour
+        , style "color" <| toHex label.text_colour
+        ]
+        [ text label.text
         ]
 
 
@@ -204,8 +272,8 @@ viewPaidPromotion { description_preview, company_logo } =
         ]
 
 
-viewJob : Maybe Posix -> Job -> Html a
-viewJob today ({ title, employer, location, salary, citation, citation_url, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
+viewJob : Maybe Posix -> List Label -> Job -> Html a
+viewJob today labels ({ title, employer, location, salary, citation, citation_url, expiry_date, listing_url, job_page_url, paid_promotion } as job) =
     let
         linkUrl =
             if isPaidPromotion job then
@@ -213,10 +281,13 @@ viewJob today ({ title, employer, location, salary, citation, citation_url, expi
 
             else
                 listing_url
+
+        labels_ =
+            lookupLabels labels job.labels
     in
     li [ classList [ ( "job", True ), ( "promotion", isPaidPromotion job ) ] ]
         [ div []
-            [ viewTitleEmployer title employer linkUrl
+            [ viewTitleEmployer title employer linkUrl labels_
             , viewLocationSalary location salary
             , viewCitation citation citation_url
             ]
