@@ -697,17 +697,17 @@ class JR_JobListings_Admin {
 
 			$labels = array();
 
-			foreach ( $labelsData as $key => $jobData ) {
+			foreach ( $labelsData as $key => $labelData ) {
 
-				$jobID = $jobData->ID;
+				$labelID = $labelData->ID;
 
 				// ... so we pick the ones we want
-				$job = array(
-					'id' => $jobData->ID,
-					'text' => $jobData->post_title,
+				$label = array(
+					'id' => $labelData->ID,
+					'text' => $labelData->post_title,
 				);
 
-				$customFieldsData = get_fields( $jobID );
+				$customFieldsData = get_fields( $labelID );
 
 				$customFieldsToInclude = array(
 					'background_colour',
@@ -716,10 +716,10 @@ class JR_JobListings_Admin {
 
         foreach ( $customFieldsToInclude as $cf ) {
           $fieldData = $customFieldsData[$cf];
-					$job[$cf] = $fieldData;
+					$label[$cf] = $fieldData;
 				};
 
-				$labels[$key] = $job;
+				$labels[$key] = $label;
 			}
 
 			return $labels;
