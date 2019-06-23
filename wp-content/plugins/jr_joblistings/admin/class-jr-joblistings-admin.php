@@ -173,6 +173,7 @@ class JR_JobListings_Admin {
 			'items_list'            => __( 'Labels list', 'text_domain' ),
 			'items_list_navigation' => __( 'Labels list navigation', 'text_domain' ),
 			'filter_items_list'     => __( 'Filter labels list', 'text_domain' ),
+      'back_to_items'         => __( 'Back to labels', 'text_domain' ),
 		);
 		$rewrite = array(
 			'slug'                  => 'job-label',
@@ -458,9 +459,9 @@ class JR_JobListings_Admin {
 	}
 
 	/**
-	 * Register job listing fields with ACF
+	 * Register job label fields with ACF
 	 *
-	 * @since    1.0.0
+	 * @since    1.3.0
 	 */
 	private function register_acf_fields_joblabels()
 	{
@@ -687,18 +688,16 @@ class JR_JobListings_Admin {
 
 		$jr_job_labels_endpoint = function ( $request ) {
 
-			$args = array(
-				'taxonomy' => 'jr_joblabel',
-				//'posts_per_page' => -1,
+      $args = array(
+        'taxonomy' => 'jr_joblabel',
         'hide_empty' => false
-			);
+      );
 
-			// The basic get_posts response includes lots of extra fields from WP...
-			$labelsData = get_terms( $args );
+      $labelsData = get_terms( $args );
 
-			$labels = array();
+      $labels = array();
 
-			foreach ( $labelsData as $key => $labelData ) {
+      foreach ( $labelsData as $key => $labelData ) {
 
         $taxonomyWithId = $labelData->taxonomy . '_' . $labelData->term_id;
         $customFieldsData = get_fields($taxonomyWithId);
@@ -708,21 +707,21 @@ class JR_JobListings_Admin {
           'text' => $labelData->name,
         );
 
-				$customFieldsToInclude = array(
-					'background_colour',
-					'text_colour',
-				);
+        $customFieldsToInclude = array(
+          'background_colour',
+          'text_colour',
+        );
 
         foreach ( $customFieldsToInclude as $cf ) {
           $fieldData = $customFieldsData[$cf];
-					$label[$cf] = $fieldData;
-				};
+          $label[$cf] = $fieldData;
+        };
 
-				$labels[$key] = $label;
-			}
+        $labels[$key] = $label;
+      }
 
       return $labels;
-		};
+    };
 
 		register_rest_route( 'jr/v1', '/jobs/labels/', array(
 			'methods' => 'GET',
