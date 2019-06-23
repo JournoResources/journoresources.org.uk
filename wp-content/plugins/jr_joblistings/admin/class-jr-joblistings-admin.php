@@ -688,26 +688,25 @@ class JR_JobListings_Admin {
 		$jr_job_labels_endpoint = function ( $request ) {
 
 			$args = array(
-				'post_type' => 'jr_joblabel',
-				'posts_per_page' => -1,
+				'taxonomy' => 'jr_joblabel',
+				//'posts_per_page' => -1,
+        'hide_empty' => false
 			);
 
 			// The basic get_posts response includes lots of extra fields from WP...
-			$labelsData = get_posts( $args );
+			$labelsData = get_terms( $args );
 
 			$labels = array();
 
 			foreach ( $labelsData as $key => $labelData ) {
 
-				$labelID = $labelData->ID;
+        $taxonomyWithId = $labelData->taxonomy . '_' . $labelData->term_id;
+        $customFieldsData = get_fields($taxonomyWithId);
 
-				// ... so we pick the ones we want
-				$label = array(
-					'id' => $labelData->ID,
-					'text' => $labelData->post_title,
-				);
-
-				$customFieldsData = get_fields( $labelID );
+        $label = array(
+          'id' => $labelData->term_id,
+          'text' => $labelData->name,
+        );
 
 				$customFieldsToInclude = array(
 					'background_colour',
@@ -722,7 +721,7 @@ class JR_JobListings_Admin {
 				$labels[$key] = $label;
 			}
 
-			return $labels;
+      return $labels;
 		};
 
 		register_rest_route( 'jr/v1', '/jobs/labels/', array(
