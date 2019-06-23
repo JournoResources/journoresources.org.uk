@@ -1,4 +1,4 @@
-module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError)
+module Utils exposing (compareDates, formatDateApi, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError, toHex)
 
 import DateFormat as DF
 import Http exposing (Error(..))
@@ -82,3 +82,8 @@ printHttpError error =
 lookupLabels : List Label -> List LabelId -> List Label
 lookupLabels labels ids =
     List.filter (\{ id } -> List.member id ids) labels
+
+
+toHex : String -> String
+toHex str =
+    "#" ++ String.filter ((/=) '#') str

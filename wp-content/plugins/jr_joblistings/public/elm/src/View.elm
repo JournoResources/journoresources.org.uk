@@ -6,7 +6,7 @@ import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Time exposing (Posix)
 import Types exposing (..)
-import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError)
+import Utils exposing (compareDates, formatDateView, isPaidPromotion, isToday, locationMatches, lookupLabels, printHttpError, toHex)
 
 
 dataHtml : String -> List (Html.Attribute a)
@@ -160,8 +160,8 @@ viewLabel : Label -> Html a
 viewLabel label =
     li
         [ class "label"
-        , style "backgroundColor" label.background_colour
-        , style "color" label.text_colour
+        , style "backgroundColor" <| toHex label.background_colour
+        , style "color" <| toHex label.text_colour
         ]
         [ text label.text
         ]
