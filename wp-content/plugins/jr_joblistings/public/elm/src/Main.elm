@@ -27,6 +27,7 @@ init flags =
       , labelsRequest = RD.NotAsked
       , searchText = ""
       , hideLondon = False
+      , labelFilter = Nothing
       , today = Nothing
       }
     , getTodaysDate
@@ -98,6 +99,9 @@ update msg model =
 
                 ToggleLondon shouldHide ->
                     ( { model | hideLondon = shouldHide }, Cmd.none )
+
+                UpdateLabelFilter maybeId ->
+                    ( { model | labelFilter = maybeId }, Cmd.none )
     in
     ( newModel, Cmd.batch [ newMsg, updateFormattedHTML () ] )
 

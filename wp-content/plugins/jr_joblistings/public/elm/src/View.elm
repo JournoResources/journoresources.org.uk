@@ -1,7 +1,7 @@
 module View exposing (view)
 
-import Html exposing (Html, a, div, h3, img, input, label, li, pre, span, strong, text, ul)
-import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, src, style, target, type_)
+import Html exposing (Html, a, div, h3, img, input, label, li, option, pre, select, span, strong, text, ul)
+import Html.Attributes exposing (attribute, class, classList, for, href, name, placeholder, selected, src, style, target, type_, value)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import Time exposing (Posix)
@@ -20,8 +20,9 @@ view model =
         [ div [ class "filterOptions" ]
             [ searchField
             , londonVisibilityToggle
+            , labelsFilter model.labelsRequest
             ]
-        , viewJobs model.searchText model.hideLondon model.today model.jobsRequest model.labelsRequest
+        , viewJobs model.searchText model.hideLondon model.labelFilter model.today model.jobsRequest model.labelsRequest
         ]
 
 
@@ -53,14 +54,51 @@ londonVisibilityToggle =
 
 
 
+---- Labels filter ----
+
+
+labelsFilter : RD.WebData (List Label) -> Html Msg
+labelsFilter webData =
+    let
+        labelOption label =
+            option
+                [ value <| String.fromInt label.id ]
+                [ text label.text ]
+
+        defaultOption =
+            option
+                [ value ""
+                , selected True
+                ]
+                [ text "All labels" ]
+
+        fieldName =
+            "labelsFilter"
+    in
+    case webData of
+        RD.Success labels ->
+            div [ class "filterOption labelsFilter" ]
+                [ label [ for fieldName ] [ text "Show me jobs tagged with:" ]
+                , select
+                    [ onInput <| \str -> UpdateLabelFilter (String.toInt str)
+                    , name fieldName
+                    ]
+                    (defaultOption :: List.map labelOption labels)
+                ]
+
+        _ ->
+            text ""
+
+
+
 ---- Jobs list ----
 
 
-viewJobs : String -> Bool -> Maybe Posix -> RD.WebData (List Job) -> RD.WebData (List Label) -> Html msg
-viewJobs searchText hideLondon today jobs_webdata labels_webdata =
+viewJobs : String -> Bool -> Maybe LabelId -> Maybe Posix -> RD.WebData (List Job) -> RD.WebData (List Label) -> Html msg
+viewJobs searchText hideLondon labelFilter today jobs_webdata labels_webdata =
     case jobs_webdata of
         RD.NotAsked ->
-            text "Not asked"
+            text "Loading..."
 
         RD.Loading ->
             text "Loading..."
@@ -81,19 +119,27 @@ viewJobs searchText hideLondon today jobs_webdata labels_webdata =
                         _ ->
                             []
             in
-            viewFilteredJobs searchText hideLondon today jobs labels
+            viewFilteredJobs searchText hideLondon labelFilter today jobs labels
 
 
-jobMatchesCriteria : String -> Bool -> Job -> Bool
-jobMatchesCriteria searchText hideLondon { title, employer, location } =
+jobMatchesCriteria : String -> Bool -> Maybe LabelId -> Job -> Bool
+jobMatchesCriteria searchText hideLondon labelFilter { title, employer, location, labels } =
     let
         matchesSearch =
             List.foldr ((||) << locationMatches searchText) False [ title, employer, location ]
 
         shouldHide =
             hideLondon && locationMatches "london" location
+
+        matchesLabelFilter =
+            case labelFilter of
+                Just labelId ->
+                    List.member labelId labels
+
+                Nothing ->
+                    True
     in
-    matchesSearch && not shouldHide
+    matchesSearch && not shouldHide && matchesLabelFilter
 
 
 orderJobs : List Job -> List Job
@@ -108,11 +154,11 @@ orderJobs jobs =
     sort promotedJobs ++ sort regularJobs
 
 
-viewFilteredJobs : String -> Bool -> Maybe Posix -> List Job -> List Label -> Html a
-viewFilteredJobs searchText hideLondon today jobs labels =
+viewFilteredJobs : String -> Bool -> Maybe LabelId -> Maybe Posix -> List Job -> List Label -> Html a
+viewFilteredJobs searchText hideLondon labelFilter today jobs labels =
     let
         filteredJobs =
-            List.filter (jobMatchesCriteria searchText hideLondon) (orderJobs jobs)
+            List.filter (jobMatchesCriteria searchText hideLondon labelFilter) (orderJobs jobs)
     in
     if List.isEmpty filteredJobs then
         viewEmptyResults hideLondon

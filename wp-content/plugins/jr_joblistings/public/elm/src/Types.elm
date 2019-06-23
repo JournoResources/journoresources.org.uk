@@ -10,6 +10,7 @@ type alias Model =
     , labelsRequest : RD.WebData (List Label)
     , searchText : String
     , hideLondon : Bool
+    , labelFilter : Maybe LabelId
     , today : Maybe Posix
     }
 
@@ -20,6 +21,7 @@ type Msg
     | LabelsLoaded (RD.WebData (List Label))
     | UpdateSearch String
     | ToggleLondon Bool
+    | UpdateLabelFilter (Maybe LabelId)
 
 
 type alias Url =
