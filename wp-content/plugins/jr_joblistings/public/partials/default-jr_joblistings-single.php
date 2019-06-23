@@ -19,6 +19,19 @@
   $formattedToday = date( 'd/m/Y' );
 
   $isToday = $formattedDate == $formattedToday;
+
+  $labelIds = get_field('job_labels');
+  $labels = array();
+  foreach ($labelIds as $labelId) {
+    $labelData = get_term($labelId);
+    $labelFields = get_fields($labelData->taxonomy . '_' . $labelId);
+
+    $label = array();
+    $label['text'] = $labelData->name;
+    $label['background_colour'] = $labelFields['background_colour'];
+    $label['text_colour'] = $labelFields['text_colour'];
+    $labels[$labelId] = $label;
+  }
 ?>
 
 <style>
@@ -71,6 +84,20 @@
             } else {
               echo '<strong>Closes: </strong>' . $formattedDate;
             } ?>
+          </div>
+
+          <div class="jr-job-labels-container">
+            <ul class="jr-job-labels">
+              <?php foreach ($labels as $label) {
+                $color = str_replace( '#', '', $label['text_colour'] );
+                $bgColor = str_replace( '#', '', $label['background_colour'] );
+              ?>
+                <li class="label" style="color: #<?php echo $color; ?>; background-color: #<?php echo $bgColor; ?>;"
+                >
+                  <?php echo $label['text']; ?>
+                </li>
+              <?php } ?>
+            </ul>
           </div>
 
           <hr class="jr-divider" />

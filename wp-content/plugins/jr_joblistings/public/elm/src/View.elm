@@ -150,7 +150,7 @@ viewTitleEmployer title employer linkUrl labels =
                 [ renderedTitle
                 , text <| ", " ++ employer
                 ]
-            , ul [ class "labels" ]
+            , ul [ class "jr-job-labels" ]
                 (List.map viewLabel labels)
             ]
         ]
