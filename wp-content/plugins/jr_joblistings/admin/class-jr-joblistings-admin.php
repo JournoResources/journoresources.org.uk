@@ -728,4 +728,14 @@ class JR_JobListings_Admin {
 			'callback' => $jr_job_labels_endpoint
 		));
 	}
+
+
+	/**
+	 * Hide admin fields on job label pages
+	 *
+	 * @since    1.3.0
+	 */
+	public function hide_joblabel_admin_fields() {
+    ?><style>.term-description-wrap,.term-slug-wrap{display:none;}</style><?php
+  }
 }
