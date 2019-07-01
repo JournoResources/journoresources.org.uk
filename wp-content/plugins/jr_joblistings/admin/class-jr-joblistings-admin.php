@@ -663,6 +663,9 @@ class JR_JobListings_Admin {
           if ($cf == 'expiry_date') {
             $fieldData = strtotime( $fieldData ) * 1000;
           }
+          if ($cf == 'job_labels' && ($fieldData == "" || $fieldData == null)) {
+            $fieldData = [];
+          }
 					$job[$cf] = $fieldData;
 
 				};

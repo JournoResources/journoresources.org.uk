@@ -23,7 +23,7 @@ decodeJob =
         |> required "expiry_date" decodeDate
         |> required "listing_url" Json.string
         |> required "link" Json.string
-        |> optional "job_labels" (Json.list Json.int) []
+        |> required "job_labels" (Json.list Json.int)
         |> custom
             (Json.field "paid_promotion" Json.bool
                 |> Json.andThen decodePaidPromotion
