@@ -34,6 +34,23 @@
   }
 ?>
 
+<!-- Google Jobs -->
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "JobPosting",
+    "description": "<?php echo $description; ?>",
+    "datePosted": "<?php echo get_the_date('d/m/Y'); ?>",
+    "hiringOrganization": "<?php echo $employer; ?>",
+    "jobLocation": {
+      "@type": "Place",
+      "address": "<?php echo $location; ?>"
+    },
+    "title": "<?php echo $title; ?>",
+    "validThrough": "<?php echo $formattedDate; ?>"
+  }
+</script>
+
 <style>
   .page-title {
     display: none;
