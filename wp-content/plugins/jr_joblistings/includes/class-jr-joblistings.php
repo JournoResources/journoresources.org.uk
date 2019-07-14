@@ -183,6 +183,7 @@ class JR_JobListings {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'add_custom_rest_endpoints' );
 		$this->loader->add_action( 'jr_joblabel_edit_form', $plugin_admin, 'hide_joblabel_admin_fields' );
 		$this->loader->add_action( 'jr_joblabel_add_form', $plugin_admin, 'hide_joblabel_admin_fields' );
+    $this->loader->add_action( 'post_updated', $plugin_admin, 'handle_jr_joblisting_update', 10, 3 );
 		
 		$this->loader->add_filter( 'manage_jr_joblisting_posts_columns', $plugin_admin, 'add_custom_admin_columns' );
 		$this->loader->add_filter( 'manage_jr_joblisting_posts_custom_column', $plugin_admin, 'manage_custom_admin_columns', 10, 2 );

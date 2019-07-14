@@ -741,4 +741,50 @@ class JR_JobListings_Admin {
 	public function hide_joblabel_admin_fields() {
     ?><style>.term-description-wrap,.term-slug-wrap{display:none;}</style><?php
   }
+
+  /**
+   * Run when job listings are updated
+   *
+   * @since   1.5.0
+   */
+  public function handle_jr_joblisting_update($post_ID, $post_after, $post_before) {
+    if ($post_after->post_type == 'jr_joblisting') {
+
+      $statusBefore = $post_before->post_status;
+      $statusAfter = $post_after->post_status;
+
+      $client = new Google_Client();
+      $serviceAccountPath = plugin_dir_path( __FILE__ ) . '../jr-google-api-service-account.json';
+      $client->setAuthConfig($serviceAccountPath);
+      $client->addScope('https://www.googleapis.com/auth/indexing');
+      $httpClient = $client->authorize();
+
+      $endpoint = 'https://indexing.googleapis.com/v3/urlNotifications:publish';
+      $action = "";
+
+      // New publish
+      if ($statusBefore != 'publish' && $statusAfter == 'publish') {
+        $action = 'URL_UPDATED';
+      }
+
+      // Unpublish
+      else if ($statusBefore == 'publish' && $statusAfter != 'publish') {
+        $action = 'URL_DELETED';
+      }
+
+      // Edit to a live page
+      else if ($statusAfter == 'publish') {
+        $action = 'URL_UPDATED';
+      }
+
+      if (!empty($action)) {
+        //$url = rtrim( get_permalink($post_ID), "/" );
+        $url = "https://www.journoresources.org.uk/job/thismuchiknow-news-reporter-job/";
+        $content = '{"url":"' . $url . '","type":"' . $action . '"}';
+        $response = $httpClient->post($endpoint, [ 'body' => $content ]);
+        // $b = (string) $response->getBody();
+        // var_dump($b);
+      }
+    }
+  }
 }
