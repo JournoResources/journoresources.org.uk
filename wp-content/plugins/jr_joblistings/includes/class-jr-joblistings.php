@@ -145,6 +145,11 @@ class JR_JobListings {
 		$this->loader->add_filter( 'acf/settings/dir', $plugin_admin, 'get_acf_settings_dir' );
 		define( 'ACF_LITE', false ); // Hide ACF UI
 		include_once( plugin_dir_path( __FILE__ ) . '../vendor/acf/acf.php' );
+
+    /**
+     * Google API
+     */
+		include_once( plugin_dir_path( __FILE__ ) . '../vendor/google-api-php-client-2.2.3/vendor/autoload.php' );
 	}
     
 	/**
