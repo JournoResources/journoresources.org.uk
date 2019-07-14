@@ -43,7 +43,7 @@
   {
     "@context": "http://schema.org/",
     "@type": "JobPosting",
-    "description": "<?php echo $description; ?>",
+    "description": "<?php echo addslashes($description); ?>",
     "datePosted": "<?php echo get_the_date('d/m/Y'); ?>",
     "hiringOrganization": "<?php echo $employer; ?>",
     "jobLocation": {
