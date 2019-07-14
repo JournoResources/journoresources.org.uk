@@ -15,12 +15,15 @@
   $logo = get_field('company_logo');
   $description = get_field('job_description_full');
 
+  $isPromotion = get_field('paid_promotion');
+
   $formattedDate = date( 'd/m/Y', strtotime( $expiry_date ) );
   $formattedToday = date( 'd/m/Y' );
 
   $isToday = $formattedDate == $formattedToday;
 
   $labelIds = get_field('job_labels');
+  if (empty($labelIds)) $labelIds = array();
   $labels = array();
   foreach ($labelIds as $labelId) {
     $labelData = get_term($labelId);
@@ -34,6 +37,7 @@
   }
 ?>
 
+<?php if ($isPromotion) { ?>
 <!-- Google Jobs -->
 <script type="application/ld+json">
   {
@@ -50,6 +54,7 @@
     "validThrough": "<?php echo $formattedDate; ?>"
   }
 </script>
+<?php } ?>
 
 <style>
   .page-title {
