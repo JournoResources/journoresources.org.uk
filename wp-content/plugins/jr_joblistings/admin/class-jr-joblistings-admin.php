@@ -778,8 +778,7 @@ class JR_JobListings_Admin {
       }
 
       if (!empty($action)) {
-        //$url = rtrim( get_permalink($post_ID), "/" );
-        $url = "https://www.journoresources.org.uk/job/thismuchiknow-news-reporter-job/";
+        $url = get_permalink($post_ID);
         $content = '{"url":"' . $url . '","type":"' . $action . '"}';
         $response = $httpClient->post($endpoint, [ 'body' => $content ]);
         // $b = (string) $response->getBody();
