@@ -11,16 +11,22 @@ Currently this includes:
 ### Run WordPress
 
 ```
-docker-compose
+docker-compose up
 ```
 
-The `wp-content/plugins` directory inside the container will automatically be linked to the same path in this repository.
+The `wp-content/plugins` directory inside the container will automatically be
+linked to the same path in this repository.
 
 ### Job listings plugin
 
-The admin-facing part of the plugin is built on top of [ACF](https://www.advancedcustomfields.com), which is bundled inside the `vendor` directory.
+The admin-facing part of the plugin is built on top of [ACF](https://www.advancedcustomfields.com),
+which is bundled inside the `vendor` directory.
 
-The public-facing list of jobs is displayed via a widget built in [Elm](http://elm-lang.org). JavaScript dependencies are managed using [Yarn](https://yarnpkg.com/lang/en/).
+The public-facing list of jobs is displayed via a widget built in [Elm](http://elm-lang.org).
+JavaScript dependencies are managed using [Yarn](https://yarnpkg.com/lang/en/).
+
+The permalink settings inside WordPress need to be set to something other than
+the default 'Plain' option for the WP JSON API to work.
 
 To install dependencies:
 
