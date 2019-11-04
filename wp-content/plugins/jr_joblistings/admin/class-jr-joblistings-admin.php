@@ -360,6 +360,7 @@ class JR_JobListings_Admin {
 						'label' => 'Job description (preview)',
 						'name' => 'job_description_preview',
 						'type' => 'wysiwyg',
+						'instructions' => 'This description will appear on the job listing page',
 						'required' => 1,
 						'conditional_logic' => array (
 							'status' => 1,
@@ -382,18 +383,19 @@ class JR_JobListings_Admin {
 						'label' => 'Job description (full)',
 						'name' => 'job_description_full',
 						'type' => 'wysiwyg',
+						'instructions' => 'This description will appear on the individual job page',
 						'required' => 1,
-						'conditional_logic' => array (
-							'status' => 1,
-							'rules' => array (
-								array (
-									'field' => 'field_5b71c19a7ae3c',
-									'operator' => '==',
-									'value' => '1',
-								),
-							),
-							'allorany' => 'all',
-						),
+						/* 'conditional_logic' => array ( */
+						/* 	'status' => 1, */
+						/* 	'rules' => array ( */
+						/* 		array ( */
+						/* 			'field' => 'field_5b71c19a7ae3c', */
+						/* 			'operator' => '==', */
+						/* 			'value' => '1', */
+						/* 		), */
+						/* 	), */
+						/* 	'allorany' => 'all', */
+						/* ), */
 						'default_value' => '',
 						'toolbar' => 'full',
 						'media_upload' => 'no',
@@ -404,19 +406,19 @@ class JR_JobListings_Admin {
 						'label' => 'Company logo',
 						'name' => 'company_logo',
 						'type' => 'image',
-						'instructions' => 'The logo of the company paying to promote this job',
+						'instructions' => 'The logo of the company advertising this job',
 						'required' => 1,
-						'conditional_logic' => array (
-							'status' => 1,
-							'rules' => array (
-								array (
-									'field' => 'field_5b71c19a7ae3c',
-									'operator' => '==',
-									'value' => '1',
-								),
-							),
-							'allorany' => 'all',
-						),
+						/* 'conditional_logic' => array ( */
+						/* 	'status' => 1, */
+						/* 	'rules' => array ( */
+						/* 		array ( */
+						/* 			'field' => 'field_5b71c19a7ae3c', */
+						/* 			'operator' => '==', */
+						/* 			'value' => '1', */
+						/* 		), */
+						/* 	), */
+							/* 'allorany' => 'all', */
+						/* ), */
 						'save_format' => 'url',
 						'preview_size' => 'thumbnail',
 						'library' => 'all',
