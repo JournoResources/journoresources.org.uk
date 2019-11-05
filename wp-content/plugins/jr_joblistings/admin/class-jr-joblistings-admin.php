@@ -395,7 +395,7 @@ class JR_JobListings_Admin {
 						'label' => 'Company logo',
 						'name' => 'company_logo',
 						'type' => 'image',
-						'instructions' => 'The logo of the company advertising this job, Required for promoted jobs',
+						'instructions' => 'The logo of the company advertising this job. Required for promoted jobs',
 						'required' => 0,
 						'save_format' => 'url',
 						'preview_size' => 'thumbnail',
