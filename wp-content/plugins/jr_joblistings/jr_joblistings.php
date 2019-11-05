@@ -15,7 +15,7 @@
  * Plugin Name:       Journo Resources Job Listings
  * Plugin URI:        https://github.com/JournoResources/journoresources.org.uk
  * Description:       Job listings for the Journo Resources website jobs page
- * Version:           1.5.1
+ * Version:           1.6.0
  * Author:            Elliot Davies
  * Author URI:        http://elliotdavies.co.uk
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version
  */
-define( 'JR_JOBLISTINGS_VERSION', '1.5.1' );
+define( 'JR_JOBLISTINGS_VERSION', '1.6.0' );
 
 /**
  * The code that runs during plugin activation.
