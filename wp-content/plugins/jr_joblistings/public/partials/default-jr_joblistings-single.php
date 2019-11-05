@@ -125,7 +125,9 @@
           <hr class="jr-divider" />
           
           <div class="jr-company-logo">
-            <img src="<?php echo $logo; ?>" alt="<?php echo $employer; ?>" />
+            <?php if ($logo) { ?>
+              <img src="<?php echo $logo; ?>" alt="<?php echo $employer; ?>" />
+            <?php } ?>
           </div>
         
           <div class="jr-job-description"><?php echo the_field('job_description_full'); ?></div>
