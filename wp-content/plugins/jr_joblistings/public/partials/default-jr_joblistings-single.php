@@ -133,8 +133,12 @@
           <div class="jr-job-description"><?php echo the_field('job_description_full'); ?></div>
           
           <div class="jr-apply-button">
-            <a title="Apply now" href="<?php echo $listing_url; ?>" target="_blank">
-              <span>Apply now</span>
+            <a href="<?php echo $listing_url; ?>" target="_blank">
+              <span>
+                <?php if ($isPromotion) { ?>Apply now
+                <?php } else { ?>More details
+                <?php } ?>
+              </span>
             </a>
           </div>
 
