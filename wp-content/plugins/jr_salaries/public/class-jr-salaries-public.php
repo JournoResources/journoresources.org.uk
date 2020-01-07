@@ -56,7 +56,7 @@ class JR_Salaries_Public {
 	 */
 	public function enqueue_styles() {
 		if (defined('WP_DEV')) {
-			$path = 'http://localhost:3001/main.css';
+			$path = 'http://localhost:3002/main.css';
 		} else {
 			$path = plugin_dir_url( __FILE__ ) . 'build/main.css';
 		}
@@ -72,7 +72,7 @@ class JR_Salaries_Public {
 	public function enqueue_scripts() {
 
 		if (defined('WP_DEV')) {
-			$path = 'http://localhost:3001/main.js';
+			$path = 'http://localhost:3002/main.js';
 		} else {
 			$path = plugin_dir_url( __FILE__ ) . 'build/main.js';
 		}

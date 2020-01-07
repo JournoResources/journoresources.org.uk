@@ -50,7 +50,8 @@ class JR_Salaries_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
-		$this->register_acf_fields();
+		$this->register_acf_fields_salaries();
+		$this->register_acf_fields_categories();
 
 	}
 
@@ -138,6 +139,75 @@ class JR_Salaries_Admin {
 	}
 
 	/**
+	 * Register the custom 'Category' taxonomy
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_custom_taxonomy()
+	{
+		$labels = array(
+			'name'                  => _x( 'Category', 'Taxonomy General Name', 'text_domain' ),
+			'singular_name'         => _x( 'Category', 'Taxonomy Singular Name', 'text_domain' ),
+			'menu_name'             => __( 'Salary Categories', 'text_domain' ),
+			'name_admin_bar'        => __( 'Category', 'text_domain' ),
+			'archives'              => __( 'Category Archives', 'text_domain' ),
+			'attributes'            => __( 'Category Attributes', 'text_domain' ),
+			'parent_item_colon'     => __( 'Parent Category:', 'text_domain' ),
+			'all_items'             => __( 'Salary Categories', 'text_domain' ),
+			'add_new_item'          => __( 'Add New Category', 'text_domain' ),
+			'add_new'               => __( 'Add New', 'text_domain' ),
+			'new_item'              => __( 'New Category', 'text_domain' ),
+			'edit_item'             => __( 'Edit Category', 'text_domain' ),
+			'update_item'           => __( 'Update Category', 'text_domain' ),
+			'view_item'             => __( 'View Category', 'text_domain' ),
+			'view_items'            => __( 'View Categories', 'text_domain' ),
+			'search_items'          => __( 'Search Categories', 'text_domain' ),
+			'not_found'             => __( 'Not found', 'text_domain' ),
+			'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
+			'featured_image'        => __( 'Featured Image', 'text_domain' ),
+			'set_featured_image'    => __( 'Set featured image', 'text_domain' ),
+			'remove_featured_image' => __( 'Remove featured image', 'text_domain' ),
+			'use_featured_image'    => __( 'Use as featured image', 'text_domain' ),
+			'insert_into_item'      => __( 'Insert into Category', 'text_domain' ),
+			'uploaded_to_this_item' => __( 'Uploaded to this category', 'text_domain' ),
+			'items_list'            => __( 'Categories list', 'text_domain' ),
+			'items_list_navigation' => __( 'Categories list navigation', 'text_domain' ),
+			'filter_items_list'     => __( 'Filter categories list', 'text_domain' ),
+      'back_to_items'         => __( 'Back to categories', 'text_domain' ),
+		);
+		$rewrite = array(
+			'slug'                  => 'salary-category',
+			'with_front'            => true,
+			'pages'                 => true,
+			'feeds'                 => true,
+		);
+
+		$args = array(
+			'description'           => __( 'A Journo Resources salary category', 'text_domain' ),
+			'labels'                => $labels,
+			'supports'              => array( 'title' ),
+			'hierarchical'          => false,
+			'public'                => true,
+			'show_ui'               => true,
+			'show_in_menu'          => 'edit.php?post_type=jr_salary',
+			'menu_position'         => 5,
+			'menu_icon'             => 'dashicons-carrot',
+			'show_in_admin_bar'     => true,
+			'show_in_nav_menus'     => true,
+			'can_export'            => true,
+			'has_archive'           => true,
+			'exclude_from_search'   => true,
+			'publicly_queryable'    => false,
+			'rewrite'               => $rewrite,
+			'capability_type'       => 'post',
+			'show_in_rest'          => true,
+			'rest_base'             => 'salary-categories',
+		);
+		register_taxonomy( 'jr_salarycategory', 'jr_salary', $args );
+	}
+
+
+	/**
 	 * Configure the ACF settings path in order to bundle it
 	 *
 	 * @since    1.0.0
@@ -160,11 +230,11 @@ class JR_Salaries_Admin {
 	}
 
 	/**
-	 * Register fields with ACF
+	 * Register salary fields with ACF
 	 *
 	 * @since    1.0.0
 	 */
-	private function register_acf_fields()
+	private function register_acf_fields_salaries()
 	{
 		if(function_exists("register_field_group"))
 		{
@@ -185,6 +255,7 @@ class JR_Salaries_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
 					array (
 						'key' => 'field_1192881b-2b92',
 						'label' => 'Contact email',
@@ -198,23 +269,11 @@ class JR_Salaries_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
-					array (
-						'key' => 'field_9ff6b2d928a2',
-						'label' => 'Job title',
-						'name' => 'job_title',
-						'type' => 'text',
-						'required' => 1,
-						'default_value' => '',
-						'placeholder' => '',
-						'prepend' => '',
-						'append' => '',
-						'formatting' => 'html',
-						'maxlength' => '',
-					),
+
 					array (
 						'key' => 'field_236a1c13f7f2',
-						'label' => 'Company',
-						'name' => 'company',
+						'label' => 'Company name',
+						'name' => 'company_name',
 						'type' => 'text',
 						'required' => 1,
 						'default_value' => '',
@@ -224,29 +283,39 @@ class JR_Salaries_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
 					array (
-						'key' => 'field_8b5fc8d5-03be',
-						'label' => 'Salary',
-						'name' => 'salary',
-						'type' => 'text',
-						'required' => 1,
-						'default_value' => '',
-						'placeholder' => '',
-						'prepend' => '',
-						'append' => '',
-						'formatting' => 'html',
-						'maxlength' => '',
-          ),
-					array (
-						'key' => 'field_935b2f78-3d0f',
-						'label' => 'Anonymise?',
-						'name' => 'anonymise',
+						'key' => 'field_935b2f78-4d0g',
+						'label' => 'Anonymise company?',
+						'name' => 'anonymise_company',
 						'type' => 'true_false',
 						'message' => '',
 						'default_value' => 0,
 					),
+
 					array (
-						'key' => 'field_486eb2c9ce82',
+						'key' => 'field_935b2f78-4d0h',
+						'label' => 'Anonymised company name',
+						'name' => 'company_name_anonymised',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 1,
+						'conditional_logic' => array (
+							'status' => 1,
+							'rules' => array (
+								array (
+									'field' => 'field_935b2f78-4d0g',
+									'operator' => '==',
+									'value' => '1',
+								),
+							),
+							'allorany' => 'all',
+						),
+						'default_value' => '',
+					),
+
+					array (
+						'key' => 'field_8b5fc9d5-03be',
 						'label' => 'Location',
 						'name' => 'location',
 						'type' => 'text',
@@ -258,21 +327,22 @@ class JR_Salaries_Admin {
 						'formatting' => 'html',
 						'maxlength' => '',
 					),
+
 					array (
-						'key' => 'field_9292a2e0d977',
-						'label' => 'Job date',
-						'name' => 'job_date',
-						'type' => 'date_picker',
-						'required' => 1,
-						'date_format' => 'yy-mm-dd',
-						'display_format' => 'dd/mm/yy',
-						'first_day' => 1,
+						'key' => 'field_8crfc9d5-03be',
+						'label' => 'Category',
+						'name' => 'salary_category',
+						'type' => 'taxonomy',
+            'taxonomy' => 'jr_salarycategory',
+						'field_type' => 'select',
+            'allow_term' => 0
 					),
+
 					array (
-						'key' => 'field_1014f012-b844',
-						'label' => 'Other information',
-						'name' => 'other',
-						'type' => 'text',
+						'key' => 'field_8b5fc8d5-03be',
+						'label' => 'Salary per annum',
+						'name' => 'salary',
+						'type' => 'number',
 						'required' => 1,
 						'default_value' => '',
 						'placeholder' => '',
@@ -280,8 +350,50 @@ class JR_Salaries_Admin {
 						'append' => '',
 						'formatting' => 'html',
 						'maxlength' => '',
+          ),
+
+					array (
+						'key' => 'field_935b2f78-3d0g',
+						'label' => 'Part time?',
+						'name' => 'part_time',
+						'type' => 'true_false',
+						'message' => '',
+						'default_value' => 0,
+					),
+
+					array (
+						'key' => 'field_935b3f78-4d0h',
+						'label' => 'Extra salary information',
+						'name' => 'extra_salary_info',
+						'type' => 'text',
+						'instructions' => '',
+						'required' => 1,
+						'conditional_logic' => array (
+							'status' => 1,
+							'rules' => array (
+								array (
+									'field' => 'field_935b2f78-3d0g',
+									'operator' => '==',
+									'value' => '1',
+								),
+							),
+							'allorany' => 'all',
+						),
+						'default_value' => '',
+					),
+
+					array (
+						'key' => 'field_5b75c9d38f5bb',
+						'label' => 'Year',
+						'name' => 'year',
+						'type' => 'date_picker',
+						'required' => 1,
+						'date_format' => 'yy-mm-dd',
+						'display_format' => 'dd/mm/yy',
+						'first_day' => 1,
 					),
 				),
+
 				'location' => array (
 					array (
 						array (
@@ -293,6 +405,68 @@ class JR_Salaries_Admin {
 						),
 					),
 				),
+
+				'options' => array (
+					'position' => 'normal',
+					'layout' => 'no_box',
+					'hide_on_screen' => array (
+						0 => 'permalink',
+						1 => 'the_content',
+						2 => 'excerpt',
+						3 => 'custom_fields',
+						4 => 'discussion',
+						5 => 'comments',
+						6 => 'revisions',
+						7 => 'format',
+						8 => 'featured_image',
+						9 => 'categories',
+						10 => 'tags',
+						11 => 'send-trackbacks',
+					),
+				),
+				'menu_order' => 0,
+			));
+		}
+	}
+
+	/**
+	 * Register salary category fields with ACF
+	 *
+	 * @since    1.3.0
+	 */
+  private function register_acf_fields_categories()
+	{
+		if(function_exists("register_field_group"))
+		{
+			register_field_group(array (
+				'id' => 'acf_salarycategory',
+				'title' => 'Category',
+				'fields' => array (
+					array (
+						'key' => 'field_6d85c99d8f5b8',
+						'label' => 'We recommend asking for...',
+						'name' => 'recommended',
+						'type' => 'number',
+						'required' => 1,
+						'default_value' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+				),
+
+				'location' => array (
+					array (
+						array (
+							'param' => 'ef_taxonomy',
+							'operator' => '==',
+							'value' => 'jr_salarycategory',
+							'order_no' => 0,
+							'group_no' => 0,
+						),
+					),
+				),
+
 				'options' => array (
 					'position' => 'normal',
 					'layout' => 'no_box',
@@ -325,11 +499,10 @@ class JR_Salaries_Admin {
 		return array(
 			'cb' => $columns['cb'],
 			'title' => $columns['title'],
-      'job_title' => __('Job title'),
-      'company' => __('Company'),
-      'salary' => __('Salary'),
+      'company_name' => __('Company'),
       'location' => __('Location'),
-      'job_date' => __('Job date'),
+      'salary' => __('Salary'),
+      'year' => __('Year'),
 		);
 
 	}
@@ -343,20 +516,20 @@ class JR_Salaries_Admin {
 		$fields = get_fields( $post_id );
 
     switch ( $column ) {
-			case 'job_title' :
-				echo $fields['job_title'];
-				break;
-			case 'company' :
-				echo $fields['company'];
-				break;
-			case 'salary' :
-				echo $fields['salary'];
+			case 'company_name' :
+				echo $fields['company_name'];
 				break;
 			case 'location' :
 				echo $fields['location'];
 				break;
-			case 'job_date' :
-				echo $fields['job_date'];
+			case 'salary_category' :
+				echo $fields['salary_category'];
+				break;
+			case 'salary' :
+				echo $fields['salary'];
+				break;
+			case 'year' :
+				echo $fields['year'];
 				break;
     }
 	}
@@ -366,9 +539,11 @@ class JR_Salaries_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	public function add_custom_rest_endpoint() {
-    $this->add_get_rest_endpoint();
-    $this->add_post_rest_endpoint();
+	public function add_custom_rest_endpoints() {
+    $this->add_get_salaries_endpoint();
+    $this->add_post_salary_endpoint();
+
+    $this->add_get_categories_endpoint();
   }
 
 	/**
@@ -376,7 +551,7 @@ class JR_Salaries_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	private function add_get_rest_endpoint() {
+	private function add_get_salaries_endpoint() {
 
 		$jr_salaries_endpoint = function ( $request ) {
 
@@ -396,7 +571,7 @@ class JR_Salaries_Admin {
 
 				// ... so we pick the ones we want
 				$salary = array(
-					// 'title' => $salaryData->post_title,
+					'job_title' => $salaryData->post_title,
 					// 'link' => get_permalink( $salaryID ),
 					'params' => $params
 				);
@@ -404,17 +579,26 @@ class JR_Salaries_Admin {
 				$customFieldsData = get_fields( $salaryID );
 
 				$customFieldsToInclude = array(
-          'job_title',
-          'company',
-          'salary',
+          'anonymise_company',
           'location',
-          'job_date',
+          'salary_category',
+          'salary',
+          'part_time',
+          'extra_salary_info',
+          'year',
 				);
 
         foreach ( $customFieldsToInclude as $cf ) {
           $fieldData = $customFieldsData[$cf];
 					$salary[$cf] = $fieldData;
 
+          if ($cf == 'anonymise_company') {
+            if ($fieldData == true) {
+              $salary['company_name'] = $customFieldsData['company_name_anonymised'];
+            } else {
+              $salary['company_name'] = $customFieldsData['company_name'];
+            }
+          }
 				};
 
 				$salaries[$key] = $salary;
@@ -434,7 +618,7 @@ class JR_Salaries_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	private function add_post_rest_endpoint() {
+	private function add_post_salary_endpoint() {
 
 		$jr_salaries_endpoint = function ( $request ) {
 
@@ -444,15 +628,15 @@ class JR_Salaries_Admin {
         'post_type'  => 'jr_salary',
         'post_title' => $job_title,
         'meta_input' => array(
-				  'name'      => $request->get_param( 'name' ),
-					'email'     => $request->get_param( 'email' ),
-					'job_title' => $job_title,
-					'company'   => $request->get_param( 'company' ),
-					'salary'    => $request->get_param( 'salary' ),
-					'anonymise' => $request->get_param( 'anonymise' ),
-					'location'  => $request->get_param( 'location' ),
-					'job_date'  => $request->get_param( 'job_date' ),
-					'other'     => $request->get_param( 'other' ),
+				  'name'              => $request->get_param( 'name' ),
+					'email'             => $request->get_param( 'email' ),
+					'company_name'      => $request->get_param( 'company_name' ),
+					'anonymise_company' => $request->get_param( 'anonymise_company' ),
+					'location'          => $request->get_param( 'location' ),
+					'salary'            => $request->get_param( 'salary' ),
+					'part_time'         => $request->get_param( 'part_time' ),
+					'extra_salary_info' => $request->get_param( 'extra_salary_info' ),
+					'year'              => $request->get_param( 'year' ),
         ),
       );
 
@@ -465,4 +649,61 @@ class JR_Salaries_Admin {
 		));
 	}
 
+	/**
+	 * Register custom /jr/v1/salaries/categories REST endpoint
+	 *
+	 * @since    1.0.0
+	 */
+	public function add_get_categories_endpoint() {
+
+		$jr_salary_categories_endpoint = function ( $request ) {
+
+      $args = array(
+        'taxonomy' => 'jr_salarycategory',
+        'hide_empty' => false
+      );
+
+      $categoriesData = get_terms( $args );
+
+      $categories = array();
+
+      foreach ( $categoriesData as $key => $categoryData ) {
+
+        $taxonomyWithId = $categoryData->taxonomy . '_' . $categoryData->term_id;
+        $customFieldsData = get_fields($taxonomyWithId);
+
+        $category = array(
+          'id' => $categoryData->term_id,
+          'text' => $categoryData->name,
+        );
+
+        $customFieldsToInclude = array(
+          'recommended',
+        );
+
+        foreach ( $customFieldsToInclude as $cf ) {
+          $fieldData = $customFieldsData[$cf];
+          $category[$cf] = $fieldData;
+        };
+
+        $categories[$key] = $category;
+      }
+
+      return $categories;
+    };
+
+		register_rest_route( 'jr/v1', '/salaries/categories/', array(
+			'methods' => 'GET',
+      'callback' => $jr_salary_categories_endpoint
+		));
+	}
+
+	/**
+	 * Hide admin fields on salary category pages
+	 *
+	 * @since    1.0.0
+	 */
+	public function hide_salarycategory_admin_fields() {
+    ?><style>.term-description-wrap,.term-slug-wrap{display:none;}</style><?php
+  }
 }

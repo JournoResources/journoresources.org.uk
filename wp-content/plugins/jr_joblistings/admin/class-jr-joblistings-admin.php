@@ -345,7 +345,6 @@ class JR_JobListings_Admin {
             'allow_term' => 0
 					),
 
-
 					array (
 						'key' => 'field_5b71c19a7ae3c',
 						'label' => 'Paid promotion',

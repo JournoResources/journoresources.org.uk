@@ -12,7 +12,7 @@ module.exports = {
 
   devServer: {
     contentBase: buildPath,
-    port: 3001,
+    port: 3002,
     stats: "errors-only",
     historyApiFallback: {
       disableDotRule: true,
