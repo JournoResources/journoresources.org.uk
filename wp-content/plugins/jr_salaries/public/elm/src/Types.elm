@@ -1,4 +1,4 @@
-module Types exposing (Model, Msg(..), Salary, UpdateFieldMsg(..), Url)
+module Types exposing (Location(..), Model, Msg(..), Salary, UpdateFieldMsg(..), Url)
 
 import RemoteData as RD
 
@@ -13,13 +13,14 @@ type alias Model =
 type UpdateFieldMsg
     = UpdateName String
     | UpdateEmail String
-    | UpdateJobTitle String
     | UpdateCompany String
-    | UpdateSalary String
     | UpdateAnonymise Bool
-    | UpdateLocation String
-    | UpdateJobDate String
-    | UpdateOther String
+    | UpdateLocation Location
+    | UpdateJobTitle String
+    | UpdateSalary Int
+    | UpdatePartTime Bool
+    | UpdateSalaryInfo String
+    | UpdateYear String
 
 
 type Msg
@@ -32,14 +33,21 @@ type alias Url =
     String
 
 
+type Location
+    = London
+    | Rural
+    | City
+
+
 type alias Salary =
     { name : String
     , email : String
+    , company_name : String
+    , anonymise_company : Bool
+    , location : Location
     , job_title : String
-    , company : String
-    , salary : String
-    , anonymise : Bool
-    , location : String
-    , job_date : String
-    , other : String
+    , salary : Int
+    , part_time : Bool
+    , extra_salary_info : String
+    , year : String
     }

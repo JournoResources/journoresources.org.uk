@@ -5,15 +5,29 @@ import Types exposing (..)
 
 
 encodeSalary : Salary -> Json.Value
-encodeSalary { name, email, job_title, company, salary, anonymise, location, job_date, other } =
+encodeSalary { name, email, company_name, anonymise_company, location, job_title, salary, part_time, extra_salary_info, year } =
     Json.object
         [ ( "name", Json.string name )
         , ( "email", Json.string email )
+        , ( "company_name", Json.string company_name )
+        , ( "anonymise_company", Json.bool anonymise_company )
+        , ( "location", encodeLocation location )
         , ( "job_title", Json.string job_title )
-        , ( "company", Json.string company )
-        , ( "salary", Json.string salary )
-        , ( "anonymise", Json.bool anonymise )
-        , ( "location", Json.string location )
-        , ( "job_date", Json.string job_date )
-        , ( "other", Json.string other )
+        , ( "salary", Json.int salary )
+        , ( "part_time", Json.bool part_time )
+        , ( "extra_salary_info", Json.string extra_salary_info )
+        , ( "year", Json.string year )
         ]
+
+
+encodeLocation : Location -> Json.Value
+encodeLocation location =
+    case location of
+        London ->
+            Json.string "London"
+
+        Rural ->
+            Json.string "Rural"
+
+        City ->
+            Json.string "City"

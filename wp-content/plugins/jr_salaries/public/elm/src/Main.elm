@@ -25,13 +25,14 @@ init flags =
       , salary =
             { name = ""
             , email = ""
+            , company_name = ""
+            , anonymise_company = False
+            , location = London
             , job_title = ""
-            , company = ""
-            , salary = ""
-            , anonymise = False
-            , location = ""
-            , job_date = ""
-            , other = ""
+            , salary = 0
+            , part_time = False
+            , extra_salary_info = ""
+            , year = ""
             }
       }
     , Cmd.none
@@ -73,26 +74,29 @@ update msg model =
                         UpdateEmail email ->
                             { salary | email = email }
 
-                        UpdateJobTitle job_title ->
-                            { salary | job_title = job_title }
+                        UpdateCompany company_name ->
+                            { salary | company_name = company_name }
 
-                        UpdateCompany company ->
-                            { salary | company = company }
-
-                        UpdateSalary salary_ ->
-                            { salary | salary = salary_ }
-
-                        UpdateAnonymise anonymise ->
-                            { salary | anonymise = anonymise }
+                        UpdateAnonymise anonymise_company ->
+                            { salary | anonymise_company = anonymise_company }
 
                         UpdateLocation location ->
                             { salary | location = location }
 
-                        UpdateJobDate job_date ->
-                            { salary | job_date = job_date }
+                        UpdateJobTitle job_title ->
+                            { salary | job_title = job_title }
 
-                        UpdateOther other ->
-                            { salary | other = other }
+                        UpdateSalary salary_ ->
+                            { salary | salary = salary_ }
+
+                        UpdatePartTime part_time ->
+                            { salary | part_time = part_time }
+
+                        UpdateSalaryInfo info ->
+                            { salary | extra_salary_info = info }
+
+                        UpdateYear year ->
+                            { salary | year = year }
             in
             ( { model | salary = newSalary }, Cmd.none )
 
