@@ -6,7 +6,8 @@ if (container) {
   const app = Elm.Main.init({
     node: container,
     flags: {
-      host: process.env.PUBLIC_URL
+      host: process.env.PUBLIC_URL,
+      viewType: container.dataset.view
     }
   });
 }

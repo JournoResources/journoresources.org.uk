@@ -343,13 +343,8 @@ class JR_Salaries_Admin {
 						'label' => 'Salary per annum',
 						'name' => 'salary',
 						'type' => 'number',
+            'min' => 0,
 						'required' => 1,
-						'default_value' => '',
-						'placeholder' => '',
-						'prepend' => '',
-						'append' => '',
-						'formatting' => 'html',
-						'maxlength' => '',
           ),
 
 					array (
@@ -598,6 +593,10 @@ class JR_Salaries_Admin {
             } else {
               $salary['company_name'] = $customFieldsData['company_name'];
             }
+          }
+
+          if ($cf == 'salary') {
+            $salary[$cf] = intval($fieldData);
           }
 				};
 

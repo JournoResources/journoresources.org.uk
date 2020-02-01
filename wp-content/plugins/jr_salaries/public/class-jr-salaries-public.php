@@ -86,17 +86,32 @@ class JR_Salaries_Public {
 	 * @since    1.0.0
 	 */
 	public function register_shortcodes() {
-		add_shortcode( 'jr_salaries', array( $this, 'display_salaries' ) );
+		add_shortcode( 'jr_salaries_form', array( $this, 'display_salaries_form' ) );
+		add_shortcode( 'jr_salaries_list', array( $this, 'display_salaries_list' ) );
 	}
 
 	/**
-	 * Render the partial template when the plugin is included via a shortcode
+	 * Render a partial template when the plugin is included via a shortcode
 	 *
 	 * @since    1.0.0
 	 */
-	public function display_salaries( $attrs = array() ) {
+	public function display_salaries_form( $attrs = array() ) {
 		ob_start();
-		include('partials/jr-salaries-public-display.php');
+		include('partials/jr-salaries-form-display.php');
+		$output = ob_get_contents();
+		ob_end_clean();
+
+		return $output;
+	}
+
+	/**
+	 * Render a partial template when the plugin is included via a shortcode
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_salaries_list( $attrs = array() ) {
+		ob_start();
+		include('partials/jr-salaries-list-display.php');
 		$output = ob_get_contents();
 		ob_end_clean();
 

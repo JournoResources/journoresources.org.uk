@@ -1,7 +1,8 @@
 module Main exposing (main)
 
 import Browser
-import Encode exposing (encodeSalary)
+import Decode exposing (decodeCategories, decodeSalaries)
+import Encode exposing (encodeFormContents)
 import Http
 import RemoteData as RD
 import Task
@@ -15,14 +16,18 @@ import View exposing (view)
 
 type alias Flags =
     { host : Url
+    , viewType : String
     }
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { host = flags.host
+      , viewType = flags.viewType
+      , salariesRequest = RD.NotAsked
+      , categoriesRequest = RD.NotAsked
       , submitRequest = RD.NotAsked
-      , salary =
+      , formContents =
             { name = ""
             , email = ""
             , company_name = ""
@@ -35,16 +40,37 @@ init flags =
             , year = ""
             }
       }
-    , Cmd.none
+    , Cmd.batch [ loadSalaries flags.host, loadCategories flags.host ]
     )
 
 
-postForm : Url -> Salary -> Cmd Msg
-postForm host salary =
+apiPath : String
+apiPath =
+    "/wp-json/jr/v1/"
+
+
+postForm : Url -> FormContents -> Cmd Msg
+postForm host form =
     Http.post
-        { url = host ++ "/wp-json/jr/v1/salaries"
-        , body = Http.jsonBody (encodeSalary salary)
+        { url = host ++ apiPath ++ "salaries"
+        , body = Http.jsonBody (encodeFormContents form)
         , expect = Http.expectWhatever (RD.fromResult >> FormSubmitted)
+        }
+
+
+loadSalaries : Url -> Cmd Msg
+loadSalaries host =
+    Http.get
+        { url = host ++ apiPath ++ "salaries"
+        , expect = Http.expectJson (RD.fromResult >> SalariesLoaded) decodeSalaries
+        }
+
+
+loadCategories : Url -> Cmd Msg
+loadCategories host =
+    Http.get
+        { url = host ++ apiPath ++ "salaries/categories"
+        , expect = Http.expectJson (RD.fromResult >> CategoriesLoaded) decodeCategories
         }
 
 
@@ -56,49 +82,55 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SubmitForm ->
-            ( model, postForm model.host model.salary )
+            ( model, postForm model.host model.formContents )
 
         FormSubmitted webdata ->
             ( { model | submitRequest = webdata }, Cmd.none )
 
+        SalariesLoaded webdata ->
+            ( { model | salariesRequest = webdata }, Cmd.none )
+
+        CategoriesLoaded webdata ->
+            ( { model | categoriesRequest = webdata }, Cmd.none )
+
         UpdateFormField updateMsg ->
             let
-                salary =
-                    model.salary
+                formContents =
+                    model.formContents
 
-                newSalary =
+                formContents_ =
                     case updateMsg of
                         UpdateName name ->
-                            { salary | name = name }
+                            { formContents | name = name }
 
                         UpdateEmail email ->
-                            { salary | email = email }
+                            { formContents | email = email }
 
                         UpdateCompany company_name ->
-                            { salary | company_name = company_name }
+                            { formContents | company_name = company_name }
 
                         UpdateAnonymise anonymise_company ->
-                            { salary | anonymise_company = anonymise_company }
+                            { formContents | anonymise_company = anonymise_company }
 
                         UpdateLocation location ->
-                            { salary | location = location }
+                            { formContents | location = location }
 
                         UpdateJobTitle job_title ->
-                            { salary | job_title = job_title }
+                            { formContents | job_title = job_title }
 
-                        UpdateSalary salary_ ->
-                            { salary | salary = salary_ }
+                        UpdateSalary salary ->
+                            { formContents | salary = salary }
 
                         UpdatePartTime part_time ->
-                            { salary | part_time = part_time }
+                            { formContents | part_time = part_time }
 
                         UpdateSalaryInfo info ->
-                            { salary | extra_salary_info = info }
+                            { formContents | extra_salary_info = info }
 
                         UpdateYear year ->
-                            { salary | year = year }
+                            { formContents | year = year }
             in
-            ( { model | salary = newSalary }, Cmd.none )
+            ( { model | formContents = formContents_ }, Cmd.none )
 
 
 

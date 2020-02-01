@@ -8,6 +8,19 @@ import String exposing (fromInt, toInt)
 import Types exposing (..)
 
 
+view : Model -> Html Msg
+view { formContents, viewType } =
+    case viewType of
+        "form" ->
+            formView formContents
+
+        "list" ->
+            listView
+
+        _ ->
+            text "Invalid view type"
+
+
 locationSelect : Html Msg
 locationSelect =
     let
@@ -33,8 +46,8 @@ locationSelect =
         )
 
 
-view : Model -> Html Msg
-view { salary } =
+formView : FormContents -> Html Msg
+formView data =
     div
         [ class "wrapper" ]
         [ form
@@ -45,7 +58,7 @@ view { salary } =
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateName)
-                    , value salary.name
+                    , value data.name
                     , required True
                     ]
                     []
@@ -55,7 +68,7 @@ view { salary } =
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateEmail)
-                    , value salary.email
+                    , value data.email
                     , required True
                     ]
                     []
@@ -65,7 +78,7 @@ view { salary } =
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateJobTitle)
-                    , value salary.job_title
+                    , value data.job_title
                     , required True
                     ]
                     []
@@ -75,7 +88,7 @@ view { salary } =
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateCompany)
-                    , value salary.company_name
+                    , value data.company_name
                     , required True
                     ]
                     []
@@ -85,7 +98,7 @@ view { salary } =
                 , input
                     [ type_ "checkbox"
                     , onCheck (UpdateFormField << UpdateAnonymise)
-                    , checked salary.anonymise_company
+                    , checked data.anonymise_company
                     ]
                     []
                 ]
@@ -94,7 +107,7 @@ view { salary } =
                 , input
                     [ type_ "number"
                     , onInput (UpdateFormField << UpdateSalary << withDefault 0 << toInt)
-                    , value <| fromInt salary.salary
+                    , value <| fromInt data.salary
                     , required True
                     ]
                     []
@@ -104,7 +117,7 @@ view { salary } =
                 , input
                     [ type_ "checkbox"
                     , onCheck (UpdateFormField << UpdatePartTime)
-                    , checked salary.part_time
+                    , checked data.part_time
                     ]
                     []
                 ]
@@ -117,18 +130,18 @@ view { salary } =
                 , input
                     [ type_ "date"
                     , onInput (UpdateFormField << UpdateYear)
-                    , value salary.year
+                    , value data.year
                     , required True
                     ]
                     []
                 ]
-            , if salary.part_time then
+            , if data.part_time then
                 label []
                     [ text "Any further information?"
                     , input
                         [ type_ "text"
                         , onInput (UpdateFormField << UpdateSalaryInfo)
-                        , value salary.extra_salary_info
+                        , value data.extra_salary_info
                         ]
                         []
                     ]
@@ -139,4 +152,11 @@ view { salary } =
                 [ text "Submit"
                 ]
             ]
+        ]
+
+
+listView : Html Msg
+listView =
+    div []
+        [ text "list here"
         ]

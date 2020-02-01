@@ -1,11 +1,11 @@
-module Encode exposing (encodeSalary)
+module Encode exposing (encodeFormContents)
 
 import Json.Encode as Json
 import Types exposing (..)
 
 
-encodeSalary : Salary -> Json.Value
-encodeSalary { name, email, company_name, anonymise_company, location, job_title, salary, part_time, extra_salary_info, year } =
+encodeFormContents : FormContents -> Json.Value
+encodeFormContents { name, email, company_name, anonymise_company, location, job_title, salary, part_time, extra_salary_info, year } =
     Json.object
         [ ( "name", Json.string name )
         , ( "email", Json.string email )
