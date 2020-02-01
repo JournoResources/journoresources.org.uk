@@ -27,17 +27,11 @@ decodeSalary =
 
 decodeLocation : String -> Json.Decoder Location
 decodeLocation location =
-    case location of
-        "London" ->
-            Json.succeed London
+    case readLocation location of
+        Just loc ->
+            Json.succeed loc
 
-        "Rural" ->
-            Json.succeed Rural
-
-        "City" ->
-            Json.succeed City
-
-        _ ->
+        Nothing ->
             Json.fail <| "Invalid location: " ++ location
 
 

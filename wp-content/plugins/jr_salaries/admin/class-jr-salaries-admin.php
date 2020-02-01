@@ -318,14 +318,14 @@ class JR_Salaries_Admin {
 						'key' => 'field_8b5fc9d5-03be',
 						'label' => 'Location',
 						'name' => 'location',
-						'type' => 'text',
+						'type' => 'radio',
 						'required' => 1,
-						'default_value' => '',
-						'placeholder' => '',
-						'prepend' => '',
-						'append' => '',
-						'formatting' => 'html',
-						'maxlength' => '',
+            'choices' => array (
+              'London' => 'London',
+              'City' => 'City',
+              'Rural' => 'Rural',
+            ),
+            'other_choice' => 0
 					),
 
 					array (

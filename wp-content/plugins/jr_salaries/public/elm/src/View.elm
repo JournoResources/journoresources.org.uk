@@ -1,21 +1,46 @@
 module View exposing (view)
 
-import Html exposing (Html, button, div, form, input, label, legend, option, select, text)
+import Html exposing (Html, button, div, form, h1, input, label, legend, li, option, p, pre, select, strong, text, ul)
 import Html.Attributes exposing (checked, class, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
 import Maybe exposing (withDefault)
+import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
+import Utils exposing (printHttpError)
 
 
 view : Model -> Html Msg
-view { formContents, viewType } =
+view { viewType, formContents, salariesRequest, categoriesRequest } =
     case viewType of
         "form" ->
             formView formContents
 
         "list" ->
-            listView
+            case salariesRequest of
+                RD.NotAsked ->
+                    text "Loading..."
+
+                RD.Loading ->
+                    text "Loading..."
+
+                RD.Failure e ->
+                    div []
+                        [ text "There was a problem loading the salaries:"
+                        , pre [] [ text <| printHttpError e ]
+                        ]
+
+                RD.Success salaries ->
+                    let
+                        categories =
+                            case categoriesRequest of
+                                RD.Success categories_ ->
+                                    categories_
+
+                                _ ->
+                                    []
+                    in
+                    listView salaries categories
 
         _ ->
             text "Invalid view type"
@@ -155,8 +180,28 @@ formView data =
         ]
 
 
-listView : Html Msg
-listView =
-    div []
-        [ text "list here"
+listView : List Salary -> List Category -> Html Msg
+listView salaries categories =
+    ul [] (List.map viewSalary salaries)
+
+
+viewSalary : Salary -> Html a
+viewSalary { job_title, location, part_time, salary, year, company_name, extra_salary_info } =
+    li [ class "salary" ]
+        [ h1 [] [ text job_title ]
+        , p []
+            [ text company_name
+            , text ", "
+            , text <| showLocation location
+            ]
+        , p []
+            [ strong [] [ text <| formatSalary salary ]
+            , text <| Maybe.withDefault "" extra_salary_info
+            ]
+        , p [] [ text year ]
         ]
+
+
+formatSalary : Int -> String
+formatSalary salary =
+    "£" ++ String.fromInt salary

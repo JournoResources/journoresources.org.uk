@@ -1,4 +1,4 @@
-module Types exposing (Category, FormContents, Location(..), Model, Msg(..), Salary, UpdateFieldMsg(..), Url)
+module Types exposing (Category, FormContents, Location(..), Model, Msg(..), Salary, UpdateFieldMsg(..), Url, readLocation, showLocation)
 
 import RemoteData as RD
 
@@ -42,6 +42,35 @@ type Location
     = London
     | Rural
     | City
+
+
+showLocation : Location -> String
+showLocation location =
+    case location of
+        London ->
+            "London"
+
+        Rural ->
+            "Rural"
+
+        City ->
+            "City"
+
+
+readLocation : String -> Maybe Location
+readLocation location =
+    case location of
+        "London" ->
+            Just London
+
+        "Rural" ->
+            Just Rural
+
+        "City" ->
+            Just City
+
+        _ ->
+            Nothing
 
 
 type alias FormContents =
