@@ -1,9 +1,9 @@
 module View exposing (view)
 
-import Html exposing (Html, button, div, form, h1, input, label, legend, li, option, p, pre, select, strong, text, ul)
+import Dict as Dict
+import Html exposing (Html, button, div, form, h1, h2, h3, h4, input, label, legend, li, option, p, pre, section, select, strong, text, ul)
 import Html.Attributes exposing (checked, class, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
-import Maybe exposing (withDefault)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
@@ -56,10 +56,10 @@ locationSelect =
             ]
 
         elemAt n =
-            withDefault London << Maybe.map Tuple.first << List.head <| List.drop n options
+            Maybe.withDefault London << Maybe.map Tuple.first << List.head <| List.drop n options
     in
     select
-        [ onInput (UpdateFormField << UpdateLocation << elemAt << withDefault 0 << toInt)
+        [ onInput (UpdateFormField << UpdateLocation << elemAt << Maybe.withDefault 0 << toInt)
         ]
         (List.indexedMap
             (\i ( _, s ) ->
@@ -131,7 +131,7 @@ formView data =
                 [ text "How much were you paid (per annum)?"
                 , input
                     [ type_ "number"
-                    , onInput (UpdateFormField << UpdateSalary << withDefault 0 << toInt)
+                    , onInput (UpdateFormField << UpdateSalary << Maybe.withDefault 0 << toInt)
                     , value <| fromInt data.salary
                     , required True
                     ]
@@ -182,26 +182,102 @@ formView data =
 
 listView : List Salary -> List Category -> Html Msg
 listView salaries categories =
-    ul [] (List.map viewSalary salaries)
+    let
+        filterByLocation loc =
+            List.filter (.location >> (==) loc)
+
+        groupByCategory =
+            List.foldr
+                (\x dict ->
+                    Dict.update x.salary_category
+                        (\maybeVal ->
+                            case maybeVal of
+                                Just v ->
+                                    Just (x :: v)
+
+                                Nothing ->
+                                    Just [ x ]
+                        )
+                        dict
+                )
+                Dict.empty
+
+        categoryForId id =
+            List.head <| List.filter (.id >> (==) id) categories
+
+        buildCategoryGroup : Location -> List ( Category, List Salary )
+        buildCategoryGroup location =
+            filterByLocation location salaries
+                |> groupByCategory
+                |> Dict.toList
+                |> List.map
+                    (\( catId, ys ) ->
+                        case categoryForId catId of
+                            Just cat ->
+                                Just ( cat, ys )
+
+                            _ ->
+                                Nothing
+                    )
+                |> List.filterMap identity
+    in
+    div []
+        [ section []
+            [ h2 [] [ text <| showLocation London ]
+            , div [] (List.map viewSalaryGroup <| buildCategoryGroup London)
+            ]
+        , section []
+            [ h2 [] [ text <| showLocation City ]
+            , div [] (List.map viewSalaryGroup <| buildCategoryGroup City)
+            ]
+        , section []
+            [ h2 [] [ text <| showLocation Rural ]
+            , div [] (List.map viewSalaryGroup <| buildCategoryGroup Rural)
+            ]
+        ]
+
+
+viewSalaryGroup : ( Category, List Salary ) -> Html a
+viewSalaryGroup ( category, group ) =
+    let
+        numSalaries =
+            List.length group
+
+        groupAverage =
+            (toFloat <| List.sum <| List.map .salary group) / toFloat numSalaries
+    in
+    div []
+        [ h3 [] [ text category.text ]
+        , p [] [ text <| "No. recorded: " ++ String.fromInt numSalaries ]
+        , p [] [ text <| "Average salary: " ++ formatSalary groupAverage ]
+        , p [] [ text <| "We recommend you ask for: " ++ category.recommended ]
+        , ul [] <| List.map viewSalary group
+        ]
 
 
 viewSalary : Salary -> Html a
 viewSalary { job_title, location, part_time, salary, year, company_name, extra_salary_info } =
     li [ class "salary" ]
-        [ h1 [] [ text job_title ]
+        [ h4 [] [ text job_title ]
         , p []
             [ text company_name
             , text ", "
             , text <| showLocation location
             ]
         , p []
-            [ strong [] [ text <| formatSalary salary ]
-            , text <| Maybe.withDefault "" extra_salary_info
+            [ strong [] [ text <| formatSalary <| toFloat salary ]
+            , text <|
+                case extra_salary_info of
+                    Just info ->
+                        " (" ++ info ++ ")"
+
+                    Nothing ->
+                        ""
             ]
         , p [] [ text year ]
         ]
 
 
-formatSalary : Int -> String
+formatSalary : Float -> String
 formatSalary salary =
-    "£" ++ String.fromInt salary
+    "£" ++ String.fromFloat salary
