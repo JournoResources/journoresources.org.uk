@@ -39,6 +39,12 @@ init flags =
             , extra_salary_info = ""
             , year = ""
             }
+      , listFilters =
+            { searchText = ""
+            , category = Nothing
+            , showLondon = True
+            , showElsewhere = True
+            }
       }
     , Cmd.batch [ loadSalaries flags.host, loadCategories flags.host ]
     )
@@ -131,6 +137,27 @@ update msg model =
                             { formContents | year = year }
             in
             ( { model | formContents = formContents_ }, Cmd.none )
+
+        UpdateFilters filterMsg ->
+            let
+                filters =
+                    model.listFilters
+
+                filters_ =
+                    case filterMsg of
+                        UpdateSearchText searchText ->
+                            { filters | searchText = searchText }
+
+                        UpdateCategory category ->
+                            { filters | category = category }
+
+                        UpdateShowLondon showLondon ->
+                            { filters | showLondon = showLondon }
+
+                        UpdateShowElsewhere showElsewhere ->
+                            { filters | showElsewhere = showElsewhere }
+            in
+            ( { model | listFilters = filters_ }, Cmd.none )
 
 
 

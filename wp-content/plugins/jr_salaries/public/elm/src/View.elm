@@ -1,17 +1,17 @@
 module View exposing (view)
 
 import Dict as Dict
-import Html exposing (Html, button, div, form, h1, h2, h3, h4, input, label, legend, li, option, p, pre, section, select, strong, text, ul)
-import Html.Attributes exposing (checked, class, name, required, type_, value)
+import Html exposing (..)
+import Html.Attributes exposing (checked, class, name, required, selected, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
-import Utils exposing (printHttpError)
+import Utils exposing (matchesSearch, printHttpError)
 
 
 view : Model -> Html Msg
-view { viewType, formContents, salariesRequest, categoriesRequest } =
+view { viewType, formContents, listFilters, salariesRequest, categoriesRequest } =
     case viewType of
         "form" ->
             formView formContents
@@ -40,7 +40,7 @@ view { viewType, formContents, salariesRequest, categoriesRequest } =
                                 _ ->
                                     []
                     in
-                    listView salaries categories
+                    listView salaries categories listFilters
 
         _ ->
             text "Invalid view type"
@@ -153,7 +153,7 @@ formView data =
             , label []
                 [ text "When was this (year)?"
                 , input
-                    [ type_ "date"
+                    [ type_ "text"
                     , onInput (UpdateFormField << UpdateYear)
                     , value data.year
                     , required True
@@ -180,11 +180,29 @@ formView data =
         ]
 
 
-listView : List Salary -> List Category -> Html Msg
-listView salaries categories =
+listView : List Salary -> List Category -> Filters -> Html Msg
+listView salaries categories filters =
     let
         filterByLocation loc =
             List.filter (.location >> (==) loc)
+
+        filterByCategory =
+            List.filter
+                (\{ salary_category } ->
+                    case filters.category of
+                        Just cat ->
+                            cat == salary_category
+
+                        Nothing ->
+                            True
+                )
+
+        filterBySearchText =
+            List.filter
+                (\x ->
+                    List.any (matchesSearch filters.searchText)
+                        [ x.company_name, x.job_title ]
+                )
 
         groupByCategory =
             List.foldr
@@ -207,7 +225,10 @@ listView salaries categories =
 
         buildCategoryGroup : Location -> List ( Category, List Salary )
         buildCategoryGroup location =
-            filterByLocation location salaries
+            salaries
+                |> filterByLocation location
+                |> filterByCategory
+                |> filterBySearchText
                 |> groupByCategory
                 |> Dict.toList
                 |> List.map
@@ -220,19 +241,83 @@ listView salaries categories =
                                 Nothing
                     )
                 |> List.filterMap identity
+
+        locationsToShow =
+            List.concat
+                [ if filters.showLondon then
+                    [ ( London, buildCategoryGroup London ) ]
+
+                  else
+                    []
+                , if filters.showElsewhere then
+                    [ ( City, buildCategoryGroup City ), ( Rural, buildCategoryGroup Rural ) ]
+
+                  else
+                    []
+                ]
+                |> List.filter (Tuple.second >> List.length >> (<) 0)
     in
-    div []
-        [ section []
-            [ h2 [] [ text <| showLocation London ]
-            , div [] (List.map viewSalaryGroup <| buildCategoryGroup London)
+    div [] <|
+        [ Html.map UpdateFilters <| viewListFilters categories filters
+        ]
+            ++ (case locationsToShow of
+                    [] ->
+                        [ text "Sorry, no salaries found. Try changing your search criteria"
+                        ]
+
+                    xs ->
+                        List.map
+                            (\( loc, group ) ->
+                                section []
+                                    [ h2 [] [ text <| showLocation loc ]
+                                    , div [] (List.map viewSalaryGroup group)
+                                    ]
+                            )
+                            xs
+               )
+
+
+viewListFilters : List Category -> Filters -> Html UpdateFilterMsg
+viewListFilters categories { searchText, category, showLondon, showElsewhere } =
+    let
+        options =
+            option [ value "", selected True ] [ text "All categories" ]
+                :: List.map (\c -> option [ value <| String.fromInt c.id ] [ text c.text ]) categories
+    in
+    section []
+        [ label []
+            [ span [] [ text "Search salaries: " ]
+            , input
+                [ type_ "text"
+                , onInput UpdateSearchText
+                , value searchText
+                ]
+                []
             ]
-        , section []
-            [ h2 [] [ text <| showLocation City ]
-            , div [] (List.map viewSalaryGroup <| buildCategoryGroup City)
+        , label []
+            [ span [] [ text "Choose category: " ]
+            , select
+                [ onInput <| \str -> UpdateCategory (String.toInt str)
+                ]
+                options
             ]
-        , section []
-            [ h2 [] [ text <| showLocation Rural ]
-            , div [] (List.map viewSalaryGroup <| buildCategoryGroup Rural)
+        , label []
+            [ span [] [ text "Show jobs in London" ]
+            , input
+                [ type_ "checkbox"
+                , onCheck UpdateShowLondon
+                , checked showLondon
+                ]
+                []
+            ]
+        , label []
+            [ span [] [ text "Show jobs outside London" ]
+            , input
+                [ type_ "checkbox"
+                , onCheck UpdateShowElsewhere
+                , checked showElsewhere
+                ]
+                []
             ]
         ]
 
@@ -251,30 +336,27 @@ viewSalaryGroup ( category, group ) =
         , p [] [ text <| "No. recorded: " ++ String.fromInt numSalaries ]
         , p [] [ text <| "Average salary: " ++ formatSalary groupAverage ]
         , p [] [ text <| "We recommend you ask for: " ++ category.recommended ]
-        , ul [] <| List.map viewSalary group
+        , table [] <|
+            [ tr []
+                [ th [] [ text "Job title" ]
+                , th [] [ text "Salary" ]
+                , th [] [ text "Date recorded" ]
+                ]
+            ]
+                ++ List.map viewSalary group
         ]
 
 
 viewSalary : Salary -> Html a
 viewSalary { job_title, location, part_time, salary, year, company_name, extra_salary_info } =
-    li [ class "salary" ]
-        [ h4 [] [ text job_title ]
-        , p []
-            [ text company_name
-            , text ", "
-            , text <| showLocation location
+    tr []
+        [ td []
+            [ text job_title
+            , text " at "
+            , text company_name
             ]
-        , p []
-            [ strong [] [ text <| formatSalary <| toFloat salary ]
-            , text <|
-                case extra_salary_info of
-                    Just info ->
-                        " (" ++ info ++ ")"
-
-                    Nothing ->
-                        ""
-            ]
-        , p [] [ text year ]
+        , td [] [ text <| formatSalary <| toFloat salary ]
+        , td [] [ text year ]
         ]
 
 

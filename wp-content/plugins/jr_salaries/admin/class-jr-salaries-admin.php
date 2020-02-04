@@ -381,11 +381,8 @@ class JR_Salaries_Admin {
 						'key' => 'field_5b75c9d38f5bb',
 						'label' => 'Year',
 						'name' => 'year',
-						'type' => 'date_picker',
+						'type' => 'text',
 						'required' => 1,
-						'date_format' => 'yy-mm-dd',
-						'display_format' => 'dd/mm/yy',
-						'first_day' => 1,
 					),
 				),
 

@@ -1,7 +1,15 @@
-module Utils exposing (printHttpError)
+module Utils exposing (matchesSearch, printHttpError)
 
 import Http exposing (Error(..))
-import String exposing (fromInt)
+
+
+matchesSearch : String -> String -> Bool
+matchesSearch needle haystack =
+    let
+        clean =
+            String.trim << String.toLower
+    in
+    String.contains (clean needle) (clean haystack)
 
 
 printHttpError : Error -> String
@@ -17,7 +25,7 @@ printHttpError error =
             "Network error"
 
         BadStatus status ->
-            "Bad status: " ++ fromInt status
+            "Bad status: " ++ String.fromInt status
 
         BadBody b ->
             "Bad body: " ++ b

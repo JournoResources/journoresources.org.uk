@@ -1,4 +1,4 @@
-module Types exposing (Category, FormContents, Location(..), Model, Msg(..), Salary, UpdateFieldMsg(..), Url, readLocation, showLocation)
+module Types exposing (Category, Filters, FormContents, Location(..), Model, Msg(..), Salary, UpdateFieldMsg(..), UpdateFilterMsg(..), Url, readLocation, showLocation)
 
 import RemoteData as RD
 
@@ -10,6 +10,7 @@ type alias Model =
     , salariesRequest : RD.WebData (List Salary)
     , submitRequest : RD.WebData ()
     , formContents : FormContents
+    , listFilters : Filters
     }
 
 
@@ -26,12 +27,20 @@ type UpdateFieldMsg
     | UpdateYear String
 
 
+type UpdateFilterMsg
+    = UpdateSearchText String
+    | UpdateCategory (Maybe Int)
+    | UpdateShowLondon Bool
+    | UpdateShowElsewhere Bool
+
+
 type Msg
     = UpdateFormField UpdateFieldMsg
     | SubmitForm
     | SalariesLoaded (RD.WebData (List Salary))
     | CategoriesLoaded (RD.WebData (List Category))
     | FormSubmitted (RD.WebData ())
+    | UpdateFilters UpdateFilterMsg
 
 
 type alias Url =
@@ -104,4 +113,12 @@ type alias Category =
     { id : Int
     , text : String
     , recommended : String
+    }
+
+
+type alias Filters =
+    { searchText : String
+    , category : Maybe Int
+    , showLondon : Bool
+    , showElsewhere : Bool
     }
