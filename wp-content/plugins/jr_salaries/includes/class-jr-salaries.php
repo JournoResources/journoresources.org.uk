@@ -197,7 +197,7 @@ class JR_Salaries {
 
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 
-		$this->loader->add_filter( 'single_template', $plugin_public, 'register_custom_post_template' );
+		/* $this->loader->add_filter( 'single_template', $plugin_public, 'register_custom_post_template' ); */
     }
     
 	/**
