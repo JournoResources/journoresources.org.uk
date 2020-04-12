@@ -72,8 +72,8 @@ class JR_Salaries {
 				break;
 		}
 		
-		if ( defined( 'JR_JOBLISTINGS_VERSION' ) ) {
-			$this->version = JR_JOBLISTINGS_VERSION;
+		if ( defined( 'JR_SALARIES_VERSION' ) ) {
+			$this->version = JR_SALARIES_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}

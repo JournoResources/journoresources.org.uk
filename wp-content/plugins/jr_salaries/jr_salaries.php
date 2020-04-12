@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version
  */
-define( 'JR_JOBLISTINGS_VERSION', '1.0.0' );
+define( 'JR_SALARIES_VERSION', '1.0.0' );
 
 /**
  * The code that runs during plugin activation.
