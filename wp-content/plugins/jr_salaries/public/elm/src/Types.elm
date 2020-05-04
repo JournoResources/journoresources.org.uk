@@ -30,8 +30,7 @@ type UpdateFieldMsg
 type UpdateFilterMsg
     = UpdateSearchText String
     | UpdateCategory (Maybe Int)
-    | UpdateShowLondon Bool
-    | UpdateShowElsewhere Bool
+    | UpdateHideLondon Bool
 
 
 type Msg
@@ -112,13 +111,12 @@ type alias Salary =
 type alias Category =
     { id : Int
     , text : String
-    , recommended : String
+    , recommended : Int
     }
 
 
 type alias Filters =
     { searchText : String
     , category : Maybe Int
-    , showLondon : Bool
-    , showElsewhere : Bool
+    , hideLondon : Bool
     }

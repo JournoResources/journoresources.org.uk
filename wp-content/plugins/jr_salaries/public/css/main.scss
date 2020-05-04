@@ -2,11 +2,26 @@
 
 #jr-salaries {
   label {
-    display: block;
+    display: flex;
+    align-items: center;
     margin-bottom: 1rem;
 
-    input {
+    span {
+      white-space: nowrap;
+    }
+
+    input, select {
       margin-left: 1rem;
+    }
+  }
+
+  table {
+    tr:first-of-type {
+      background-color: rgba($color-jr, 0.2);
+
+      th {
+        text-transform: none;
+      }
     }
   }
 }

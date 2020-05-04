@@ -7,7 +7,7 @@ import Html.Events exposing (onCheck, onInput, onSubmit)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
-import Utils exposing (matchesSearch, printHttpError)
+import Utils exposing (formatSalary, matchesSearch, printHttpError)
 
 
 view : Model -> Html Msg
@@ -46,13 +46,26 @@ view { viewType, formContents, listFilters, salariesRequest, categoriesRequest }
             text "Invalid view type"
 
 
+prettyPrintLocation : Location -> String
+prettyPrintLocation location =
+    case location of
+        London ->
+            "London"
+
+        Rural ->
+            "Outside London (rural)"
+
+        City ->
+            "Outside London (other city)"
+
+
 locationSelect : Html Msg
 locationSelect =
     let
         options =
-            [ ( London, "London" )
-            , ( Rural, "Outside London (rural)" )
-            , ( City, "Outside London (other city)" )
+            [ ( London, prettyPrintLocation London )
+            , ( Rural, prettyPrintLocation Rural )
+            , ( City, prettyPrintLocation City )
             ]
 
         elemAt n =
@@ -244,16 +257,12 @@ listView salaries categories filters =
 
         locationsToShow =
             List.concat
-                [ if filters.showLondon then
+                [ if filters.hideLondon then
+                    []
+
+                  else
                     [ ( London, buildCategoryGroup London ) ]
-
-                  else
-                    []
-                , if filters.showElsewhere then
-                    [ ( City, buildCategoryGroup City ), ( Rural, buildCategoryGroup Rural ) ]
-
-                  else
-                    []
+                , [ ( City, buildCategoryGroup City ), ( Rural, buildCategoryGroup Rural ) ]
                 ]
                 |> List.filter (Tuple.second >> List.length >> (<) 0)
     in
@@ -269,7 +278,7 @@ listView salaries categories filters =
                         List.map
                             (\( loc, group ) ->
                                 section []
-                                    [ h2 [] [ text <| showLocation loc ]
+                                    [ h2 [] [ text <| prettyPrintLocation loc ]
                                     , div [] (List.map viewSalaryGroup group)
                                     ]
                             )
@@ -278,7 +287,7 @@ listView salaries categories filters =
 
 
 viewListFilters : List Category -> Filters -> Html UpdateFilterMsg
-viewListFilters categories { searchText, category, showLondon, showElsewhere } =
+viewListFilters categories { searchText, category, hideLondon } =
     let
         options =
             option [ value "", selected True ] [ text "All categories" ]
@@ -302,20 +311,11 @@ viewListFilters categories { searchText, category, showLondon, showElsewhere } =
                 options
             ]
         , label []
-            [ span [] [ text "Show jobs in London" ]
+            [ span [] [ text "Hide jobs in London" ]
             , input
                 [ type_ "checkbox"
-                , onCheck UpdateShowLondon
-                , checked showLondon
-                ]
-                []
-            ]
-        , label []
-            [ span [] [ text "Show jobs outside London" ]
-            , input
-                [ type_ "checkbox"
-                , onCheck UpdateShowElsewhere
-                , checked showElsewhere
+                , onCheck UpdateHideLondon
+                , checked hideLondon
                 ]
                 []
             ]
@@ -329,13 +329,12 @@ viewSalaryGroup ( category, group ) =
             List.length group
 
         groupAverage =
-            (toFloat <| List.sum <| List.map .salary group) / toFloat numSalaries
+            round ((toFloat <| List.sum <| List.map .salary group) / toFloat numSalaries)
     in
     div []
         [ h3 [] [ text category.text ]
-        , p [] [ text <| "No. recorded: " ++ String.fromInt numSalaries ]
         , p [] [ text <| "Average salary: " ++ formatSalary groupAverage ]
-        , p [] [ text <| "We recommend you ask for: " ++ category.recommended ]
+        , p [] [ text <| "We recommend you ask for: " ++ formatSalary category.recommended ]
         , table [] <|
             [ tr []
                 [ th [] [ text "Job title" ]
@@ -343,7 +342,7 @@ viewSalaryGroup ( category, group ) =
                 , th [] [ text "Date recorded" ]
                 ]
             ]
-                ++ List.map viewSalary group
+                ++ (List.map viewSalary <| List.reverse <| List.sortBy .salary group)
         ]
 
 
@@ -355,11 +354,6 @@ viewSalary { job_title, location, part_time, salary, year, company_name, extra_s
             , text " at "
             , text company_name
             ]
-        , td [] [ text <| formatSalary <| toFloat salary ]
+        , td [] [ text <| formatSalary salary ]
         , td [] [ text year ]
         ]
-
-
-formatSalary : Float -> String
-formatSalary salary =
-    "£" ++ String.fromFloat salary

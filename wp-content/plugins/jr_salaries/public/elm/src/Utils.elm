@@ -1,5 +1,6 @@
-module Utils exposing (matchesSearch, printHttpError)
+module Utils exposing (formatSalary, matchesSearch, printHttpError)
 
+import FormatNumber exposing (format)
 import Http exposing (Error(..))
 
 
@@ -29,3 +30,17 @@ printHttpError error =
 
         BadBody b ->
             "Bad body: " ++ b
+
+
+formatSalary : Int -> String
+formatSalary =
+    toFloat
+        >> format
+            { decimals = 0
+            , thousandSeparator = ","
+            , decimalSeparator = "."
+            , negativePrefix = "£"
+            , negativeSuffix = "pa"
+            , positivePrefix = "£"
+            , positiveSuffix = "pa"
+            }

@@ -42,8 +42,7 @@ init flags =
       , listFilters =
             { searchText = ""
             , category = Nothing
-            , showLondon = True
-            , showElsewhere = True
+            , hideLondon = False
             }
       }
     , Cmd.batch [ loadSalaries flags.host, loadCategories flags.host ]
@@ -151,11 +150,8 @@ update msg model =
                         UpdateCategory category ->
                             { filters | category = category }
 
-                        UpdateShowLondon showLondon ->
-                            { filters | showLondon = showLondon }
-
-                        UpdateShowElsewhere showElsewhere ->
-                            { filters | showElsewhere = showElsewhere }
+                        UpdateHideLondon hideLondon ->
+                            { filters | hideLondon = hideLondon }
             in
             ( { model | listFilters = filters_ }, Cmd.none )
 

@@ -45,4 +45,14 @@ decodeCategory =
     Json.succeed Category
         |> required "id" Json.int
         |> required "text" Json.string
-        |> required "recommended" Json.string
+        |> required "recommended" (Json.string |> Json.andThen decodeStringToInt)
+
+
+decodeStringToInt : String -> Json.Decoder Int
+decodeStringToInt str =
+    case String.toInt str of
+        Just int ->
+            Json.succeed int
+
+        Nothing ->
+            Json.fail "Failed to parse JSON string to int"
