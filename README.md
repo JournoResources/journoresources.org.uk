@@ -17,6 +17,15 @@ docker-compose up
 The `wp-content/plugins` directory inside the container will automatically be
 linked to the same path in this repository.
 
+#### Permissions issues
+
+If you run into problems with permissions issues when trying to install themes
+or plugins:
+  - SSH into the running `wp` Docker container (`docker exec -it <id> /bin/bash`)
+  - Run `chown -R www-data:www-data wp-content`
+  - If it still doesn't work, add `define('FS_METHOD', 'direct');` to the
+    `wp-config.php` inside the container
+
 ### Job listings plugin
 
 The admin-facing part of the plugin is built on top of [ACF](https://www.advancedcustomfields.com),
