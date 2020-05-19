@@ -111,7 +111,9 @@ type alias Salary =
 type alias Category =
     { id : Int
     , text : String
-    , recommended : Int
+    , recommendedLondon : Int
+    , recommendedRural : Int
+    , recommendedCity : Int
     }
 
 

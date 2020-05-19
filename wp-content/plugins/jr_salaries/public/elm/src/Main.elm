@@ -3,11 +3,13 @@ module Main exposing (main)
 import Browser
 import Decode exposing (decodeCategories, decodeSalaries)
 import Encode exposing (encodeFormContents)
+import Html exposing (text)
 import Http
 import RemoteData as RD
 import Task
 import Types exposing (..)
-import View exposing (view)
+import View.Form as Form
+import View.List as List
 
 
 
@@ -163,7 +165,17 @@ update msg model =
 main : Program Flags Model Msg
 main =
     Browser.element
-        { view = view
+        { view =
+            \model ->
+                case model.viewType of
+                    "form" ->
+                        Form.view model
+
+                    "list" ->
+                        List.view model
+
+                    _ ->
+                        text "Invalid view type"
         , init = init
         , update = update
         , subscriptions = always Sub.none

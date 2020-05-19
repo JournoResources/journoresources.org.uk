@@ -1,7 +1,8 @@
-module Utils exposing (formatSalary, matchesSearch, printHttpError)
+module Utils exposing (formatSalary, matchesSearch, prettyPrintLocation, printHttpError)
 
 import FormatNumber exposing (format)
 import Http exposing (Error(..))
+import Types exposing (Location(..))
 
 
 matchesSearch : String -> String -> Bool
@@ -11,6 +12,19 @@ matchesSearch needle haystack =
             String.trim << String.toLower
     in
     String.contains (clean needle) (clean haystack)
+
+
+prettyPrintLocation : Location -> String
+prettyPrintLocation location =
+    case location of
+        London ->
+            "London"
+
+        Rural ->
+            "Outside London (rural)"
+
+        City ->
+            "Outside London (other city)"
 
 
 printHttpError : Error -> String

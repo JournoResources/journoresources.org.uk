@@ -436,8 +436,30 @@ class JR_Salaries_Admin {
 				'fields' => array (
 					array (
 						'key' => 'field_6d85c99d8f5b8',
-						'label' => 'We recommend asking for...',
-						'name' => 'recommended',
+						'label' => 'Recommendation (London)',
+						'name' => 'recommended_london',
+						'type' => 'number',
+						'required' => 1,
+						'default_value' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_6d85c99d8f5b9',
+						'label' => 'Recommendation (outside London - rural)',
+						'name' => 'recommended_rural',
+						'type' => 'number',
+						'required' => 1,
+						'default_value' => '',
+						'prepend' => '',
+						'append' => '',
+						'maxlength' => '',
+					),
+					array (
+						'key' => 'field_6d85c99d8f5b7',
+						'label' => 'Recommendation (outside London - city)',
+						'name' => 'recommended_city',
 						'type' => 'number',
 						'required' => 1,
 						'default_value' => '',
@@ -674,7 +696,9 @@ class JR_Salaries_Admin {
         );
 
         $customFieldsToInclude = array(
-          'recommended',
+          'recommended_london',
+          'recommended_rural',
+          'recommended_city',
         );
 
         foreach ( $customFieldsToInclude as $cf ) {

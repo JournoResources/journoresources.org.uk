@@ -45,7 +45,9 @@ decodeCategory =
     Json.succeed Category
         |> required "id" Json.int
         |> required "text" Json.string
-        |> required "recommended" (Json.string |> Json.andThen decodeStringToInt)
+        |> required "recommended_london" (Json.string |> Json.andThen decodeStringToInt)
+        |> required "recommended_rural" (Json.string |> Json.andThen decodeStringToInt)
+        |> required "recommended_city" (Json.string |> Json.andThen decodeStringToInt)
 
 
 decodeStringToInt : String -> Json.Decoder Int
