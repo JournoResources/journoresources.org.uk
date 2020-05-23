@@ -21,7 +21,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./wp-content/plugins:/var/www/html/wp-content/plugins
+      - ./wp-content:/var/www/html/wp-content
     depends_on:
       - mysql
     restart: always
