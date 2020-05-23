@@ -1,7 +1,7 @@
 module View.List exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (checked, class, selected, type_, value)
+import Html.Attributes exposing (checked, class, id, selected, type_, value)
 import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
@@ -171,7 +171,7 @@ listView salaries categories filters =
         filteredByEmpty =
             List.filter groupingNotEmpty filteredBySearchText
     in
-    div [] <|
+    div [ id "jr-salaries-list" ] <|
         [ Html.map UpdateFilters <| viewListFilters categories filters
         ]
             ++ (case filteredByEmpty of

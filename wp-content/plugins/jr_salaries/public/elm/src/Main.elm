@@ -89,7 +89,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SubmitForm ->
-            ( model, postForm model.host model.formContents )
+            ( { model | submitRequest = RD.Loading }, postForm model.host model.formContents )
 
         FormSubmitted webdata ->
             ( { model | submitRequest = webdata }, Cmd.none )

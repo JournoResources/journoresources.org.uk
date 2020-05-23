@@ -1,22 +1,42 @@
 module View.Form exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (checked, class, name, required, type_, value)
+import Html.Attributes exposing (checked, id, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
+import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
-import Utils exposing (prettyPrintLocation)
+import Utils exposing (prettyPrintLocation, printHttpError)
 
 
 view : Model -> Html Msg
-view { formContents } =
+view { formContents, submitRequest } =
+    case submitRequest of
+        RD.NotAsked ->
+            formView formContents
+
+        RD.Loading ->
+            text "Submitting your answers..."
+
+        RD.Failure e ->
+            div []
+                [ text "There was a problem submitting your answers:"
+                , pre [] [ text <| printHttpError e ]
+                ]
+
+        RD.Success salaries ->
+            text "Thank you!"
+
+
+formView : FormContents -> Html Msg
+formView formContents =
     div
-        [ class "wrapper" ]
+        [ id "jr-salaries-form" ]
         [ form
             [ onSubmit SubmitForm
             ]
             [ label []
-                [ text "What's your name?"
+                [ span [] [ text "What's your name?" ]
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateName)
@@ -26,9 +46,9 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "What's your email address?"
+                [ span [] [ text "What's your email address?" ]
                 , input
-                    [ type_ "text"
+                    [ type_ "email"
                     , onInput (UpdateFormField << UpdateEmail)
                     , value formContents.email
                     , required True
@@ -36,7 +56,7 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "What is the job title?"
+                [ span [] [ text "What is the job title?" ]
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateJobTitle)
@@ -46,7 +66,7 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "What is the company's name?"
+                [ span [] [ text "What is the company's name?" ]
                 , input
                     [ type_ "text"
                     , onInput (UpdateFormField << UpdateCompany)
@@ -56,7 +76,7 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "Would you like us to anonymise the company?"
+                [ span [] [ text "Would you like us to anonymise the company?" ]
                 , input
                     [ type_ "checkbox"
                     , onCheck (UpdateFormField << UpdateAnonymise)
@@ -65,7 +85,7 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "How much were you paid (per annum)?"
+                [ span [] [ text "How much were you paid (£ per annum)?" ]
                 , input
                     [ type_ "number"
                     , onInput (UpdateFormField << UpdateSalary << Maybe.withDefault 0 << toInt)
@@ -75,7 +95,7 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "Was the job part-time?"
+                [ span [] [ text "Was the job part-time?" ]
                 , input
                     [ type_ "checkbox"
                     , onCheck (UpdateFormField << UpdatePartTime)
@@ -84,13 +104,13 @@ view { formContents } =
                     []
                 ]
             , label []
-                [ text "Where was the job located?"
+                [ span [] [ text "Where was the job located?" ]
                 , locationSelect
                 ]
             , label []
-                [ text "When was this (year)?"
+                [ span [] [ text "When was this (year)?" ]
                 , input
-                    [ type_ "text"
+                    [ type_ "number"
                     , onInput (UpdateFormField << UpdateYear)
                     , value formContents.year
                     , required True
@@ -99,7 +119,7 @@ view { formContents } =
                 ]
             , if formContents.part_time then
                 label []
-                    [ text "Any further information?"
+                    [ span [] [ text "Any further information?" ]
                     , input
                         [ type_ "text"
                         , onInput (UpdateFormField << UpdateSalaryInfo)

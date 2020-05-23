@@ -7,7 +7,8 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --mode development --config webpack.config.dev.js --progress --inline --hot",
-    "build": "webpack --mode production --config webpack.config.prod.js --progress"
+    "build": "webpack --mode production --config webpack.config.prod.js --progress",
+    "format": "elm-format elm/src --yes"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
@@ -16,6 +17,7 @@
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^1.0.0",
     "css-loader": "^2.1.0",
+    "elm-format": "^0.8.3",
     "elm-hot-webpack-loader": "^1.0.2",
     "elm-webpack-loader": "^5.0.0",
     "file-loader": "^3.0.1",
