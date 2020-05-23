@@ -1,7 +1,7 @@
 module View.Form exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (checked, id, name, required, type_, value)
+import Html.Attributes exposing (attribute, class,checked, id, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
@@ -130,6 +130,7 @@ formView formContents =
 
               else
                 text ""
+            , div [ class "g-recaptcha", attribute "data-sitekey" "6LcoY_sUAAAAAHUNhCO0VriapB1OAQvAnbfWGN4O" ] []
             , button []
                 [ text "Submit"
                 ]

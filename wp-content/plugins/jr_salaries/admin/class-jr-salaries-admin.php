@@ -335,7 +335,7 @@ class JR_Salaries_Admin {
 						'type' => 'taxonomy',
             'taxonomy' => 'jr_salarycategory',
 						'field_type' => 'select',
-            'allow_term' => 0
+            'allow_term' => 0,
 					),
 
 					array (
@@ -658,7 +658,20 @@ class JR_Salaries_Admin {
         ),
       );
 
-			wp_insert_post( $args );
+      $gRecaptchaResponse = $request->get_param( 'g-recaptcha-response' );
+      $secret = 'TODO';
+
+      $recaptcha = new \ReCaptcha\ReCaptcha($secret);
+      $resp = $recaptcha->verify($gRecaptchaResponse);
+
+      if ($resp->isSuccess()) {
+        $var_dump('success');
+        wp_insert_post( $args );
+      } else {
+        $errors = $resp->getErrorCodes();
+        var_dump($errors);
+      }
+
 		};
 
 		register_rest_route( 'jr/v1', '/salaries/', array(
