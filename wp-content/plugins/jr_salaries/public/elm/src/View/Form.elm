@@ -1,7 +1,7 @@
 module View.Form exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (attribute, class,checked, id, name, required, type_, value)
+import Html.Attributes exposing (attribute, checked, class, id, name, required, type_, value)
 import Html.Events exposing (onCheck, onInput, onSubmit)
 import RemoteData as RD
 import String exposing (fromInt, toInt)

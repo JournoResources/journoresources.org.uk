@@ -84,6 +84,8 @@ loadCategories host =
 
 port recaptchaSubmit : (String -> msg) -> Sub msg
 
+
+
 ---- UPDATE ----
 
 
@@ -160,10 +162,12 @@ update msg model =
             ( { model | listFilters = filters_ }, Cmd.none )
 
         RecaptchaSubmit token ->
-          let
-              formContents = model.formContents
-          in
-            ({model | formContents = {formContents | gRecaptchaResponseToken = token }},Cmd.none)
+            let
+                formContents =
+                    model.formContents
+            in
+            ( { model | formContents = { formContents | gRecaptchaResponseToken = token } }, Cmd.none )
+
 
 
 ---- PROGRAM ----
