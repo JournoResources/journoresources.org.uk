@@ -40,6 +40,7 @@ type Msg
     | CategoriesLoaded (RD.WebData (List Category))
     | FormSubmitted (RD.WebData ())
     | UpdateFilters UpdateFilterMsg
+    | RecaptchaSubmit String
 
 
 type alias Url =
@@ -92,6 +93,7 @@ type alias FormContents =
     , part_time : Bool
     , extra_salary_info : String
     , year : String
+    , gRecaptchaResponseToken : String
     }
 
 

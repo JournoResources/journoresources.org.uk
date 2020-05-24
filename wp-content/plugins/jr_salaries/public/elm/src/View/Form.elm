@@ -130,7 +130,7 @@ formView formContents =
 
               else
                 text ""
-            , div [ class "g-recaptcha", attribute "data-sitekey" "6LcoY_sUAAAAAHUNhCO0VriapB1OAQvAnbfWGN4O" ] []
+            , div [ class "g-recaptcha" ] []
             , button []
                 [ text "Submit"
                 ]

@@ -659,19 +659,17 @@ class JR_Salaries_Admin {
       );
 
       $gRecaptchaResponse = $request->get_param( 'g-recaptcha-response' );
-      $secret = 'TODO';
+      $secretFile = plugin_dir_path( __FILE__ ) . '../recaptcha-secret.env';
+      $secret = file_get_contents( $secretFile );
 
-      $recaptcha = new \ReCaptcha\ReCaptcha($secret);
-      $resp = $recaptcha->verify($gRecaptchaResponse);
+      $recaptcha = new \ReCaptcha\ReCaptcha( $secret );
+      $resp = $recaptcha->verify( $gRecaptchaResponse );
 
       if ($resp->isSuccess()) {
-        $var_dump('success');
         wp_insert_post( $args );
       } else {
-        $errors = $resp->getErrorCodes();
-        var_dump($errors);
+        /* $errors = $resp->getErrorCodes(); */
       }
-
 		};
 
 		register_rest_route( 'jr/v1', '/salaries/', array(

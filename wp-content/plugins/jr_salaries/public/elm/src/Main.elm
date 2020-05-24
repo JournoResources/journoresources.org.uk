@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Decode exposing (decodeCategories, decodeSalaries)
@@ -40,6 +40,7 @@ init flags =
             , part_time = False
             , extra_salary_info = ""
             , year = ""
+            , gRecaptchaResponseToken = ""
             }
       , listFilters =
             { searchText = ""
@@ -81,6 +82,7 @@ loadCategories host =
         }
 
 
+port recaptchaSubmit : (String -> msg) -> Sub msg
 
 ---- UPDATE ----
 
@@ -157,6 +159,11 @@ update msg model =
             in
             ( { model | listFilters = filters_ }, Cmd.none )
 
+        RecaptchaSubmit token ->
+          let
+              formContents = model.formContents
+          in
+            ({model | formContents = {formContents | gRecaptchaResponseToken = token }},Cmd.none)
 
 
 ---- PROGRAM ----
@@ -178,5 +185,5 @@ main =
                         text "Invalid view type"
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \_ -> recaptchaSubmit RecaptchaSubmit
         }

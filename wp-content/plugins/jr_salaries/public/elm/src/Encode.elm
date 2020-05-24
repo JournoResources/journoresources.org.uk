@@ -5,7 +5,7 @@ import Types exposing (..)
 
 
 encodeFormContents : FormContents -> Json.Value
-encodeFormContents { name, email, company_name, anonymise_company, location, job_title, salary, part_time, extra_salary_info, year } =
+encodeFormContents { name, email, company_name, anonymise_company, location, job_title, salary, part_time, extra_salary_info, year, gRecaptchaResponseToken } =
     Json.object
         [ ( "name", Json.string name )
         , ( "email", Json.string email )
@@ -17,4 +17,5 @@ encodeFormContents { name, email, company_name, anonymise_company, location, job
         , ( "part_time", Json.bool part_time )
         , ( "extra_salary_info", Json.string extra_salary_info )
         , ( "year", Json.string year )
+        , ( "g-recaptcha-response", Json.string gRecaptchaResponseToken )
         ]

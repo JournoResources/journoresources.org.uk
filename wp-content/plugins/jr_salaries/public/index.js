@@ -10,4 +10,16 @@ if (container) {
       viewType: container.dataset.view
     }
   });
+
+  window.recaptchaOnloadCallback = () => {
+    grecaptcha.render(
+      document.querySelector('#jr-salaries-form .g-recaptcha'),
+      {
+        sitekey: "6LcoY_sUAAAAAHUNhCO0VriapB1OAQvAnbfWGN4O",
+        callback: token => {
+          app.ports.recaptchaSubmit.send(token)
+        }
+      }
+    );
+  }
 }

@@ -79,7 +79,7 @@ class JR_Salaries_Public {
 
 		wp_enqueue_script( $this->plugin_name, $path, array(), $this->version, true );
 
-		wp_enqueue_script( "recaptcha-api", "https://www.google.com/recaptcha/api.js", array(), null, true );
+		wp_enqueue_script( "recaptcha-api", "https://www.google.com/recaptcha/api.js?onload=recaptchaOnloadCallback&render=explicit", array(), null, true );
 	}
 	
 	/**
