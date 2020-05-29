@@ -34,11 +34,12 @@ type UpdateFilterMsg
 
 
 type Msg
-    = UpdateFormField UpdateFieldMsg
-    | SubmitForm
-    | SalariesLoaded (RD.WebData (List Salary))
+    = SalariesLoaded (RD.WebData (List Salary))
     | CategoriesLoaded (RD.WebData (List Category))
+    | UpdateFormField UpdateFieldMsg
+    | SubmitForm
     | FormSubmitted (RD.WebData ())
+    | ResetForm
     | UpdateFilters UpdateFilterMsg
     | RecaptchaSubmit String
 

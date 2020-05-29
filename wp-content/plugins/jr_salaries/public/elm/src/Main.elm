@@ -22,6 +22,22 @@ type alias Flags =
     }
 
 
+emptyForm : FormContents
+emptyForm =
+    { name = ""
+    , email = ""
+    , company_name = ""
+    , anonymise_company = False
+    , location = London
+    , job_title = ""
+    , salary = 0
+    , part_time = False
+    , extra_salary_info = ""
+    , year = ""
+    , gRecaptchaResponseToken = ""
+    }
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { host = flags.host
@@ -29,19 +45,7 @@ init flags =
       , salariesRequest = RD.NotAsked
       , categoriesRequest = RD.NotAsked
       , submitRequest = RD.NotAsked
-      , formContents =
-            { name = ""
-            , email = ""
-            , company_name = ""
-            , anonymise_company = False
-            , location = London
-            , job_title = ""
-            , salary = 0
-            , part_time = False
-            , extra_salary_info = ""
-            , year = ""
-            , gRecaptchaResponseToken = ""
-            }
+      , formContents = emptyForm
       , listFilters =
             { searchText = ""
             , category = Nothing
@@ -85,6 +89,9 @@ loadCategories host =
 port recaptchaSubmit : (String -> msg) -> Sub msg
 
 
+port recaptchaRefresh : () -> Cmd msg
+
+
 
 ---- UPDATE ----
 
@@ -94,6 +101,9 @@ update msg model =
     case msg of
         SubmitForm ->
             ( { model | submitRequest = RD.Loading }, postForm model.host model.formContents )
+
+        ResetForm ->
+            ( { model | submitRequest = RD.NotAsked, formContents = emptyForm }, recaptchaRefresh () )
 
         FormSubmitted webdata ->
             ( { model | submitRequest = webdata }, Cmd.none )
