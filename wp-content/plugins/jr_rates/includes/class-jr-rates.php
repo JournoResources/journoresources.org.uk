@@ -58,7 +58,7 @@ class JR_Rates {
 	 * Define the core functionality of the plugin.
 	 *
 	 * Set the plugin name and the plugin version that can be used throughout the plugin.
-	 * Load the dependencies, define the locale, and set the hooks for the admin area and
+	 * Load the dependencies and set the hooks for the admin area and
 	 * the public-facing side of the site.
 	 *
 	 * @since    1.0.0
@@ -82,7 +82,6 @@ class JR_Rates {
 		
 		$this->load_dependencies();
 		$this->load_vendor_dependencies();
-		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -93,7 +92,6 @@ class JR_Rates {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - JR_Rates_Loader. Orchestrates the hooks of the plugin.
-	 * - JR_Rates_i18n. Defines internationalization functionality.
 	 * - JR_Rates_Admin. Defines all hooks for the admin area.
 	 * - JR_Rates_Public. Defines all hooks for the public side of the site.
 	 *
@@ -110,12 +108,6 @@ class JR_Rates {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-jr-rates-loader.php';
 
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-jr-rates-i18n.php';
-		
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
@@ -152,20 +144,6 @@ class JR_Rates {
     include_once( plugin_dir_path( __FILE__ ) . '../vendor/recaptcha-1.2.4/src/autoload.php' );
 	}
     
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the JR_Rates_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale() {
-		$plugin_i18n = new JR_Rates_i18n();
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-	}
-
   /**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
@@ -201,9 +179,7 @@ class JR_Rates {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
-
-		/* $this->loader->add_filter( 'single_template', $plugin_public, 'register_custom_post_template' ); */
-    }
+  }
     
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
