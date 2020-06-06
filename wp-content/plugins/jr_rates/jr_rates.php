@@ -15,7 +15,7 @@
  * Plugin Name:       Journo Resources Freelance Rate Listings
  * Plugin URI:        https://github.com/JournoResources/journoresources.org.uk
  * Description:       Freelance rate listings for the Journo Resources website
- * Version:           1.0.0
+ * Version:           0.1.0
  * Author:            Elliot Davies
  * Author URI:        http://elliotdavies.co.uk
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version
  */
-define( 'JR_RATES_VERSION', '1.0.0' );
+define( 'JR_RATES_VERSION', '0.1.0' );
 
 /**
  * The code that runs during plugin activation.
