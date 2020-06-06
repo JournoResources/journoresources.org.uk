@@ -115,7 +115,7 @@ class JR_Rates_Admin {
 		);
 		$args = array(
 			'label'                 => __( 'Rate', 'text_domain' ),
-			'description'           => __( 'A Journo Resources rate listing', 'text_domain' ),
+			'description'           => __( 'A Journo Resources freelance rate listing', 'text_domain' ),
 			'labels'                => $labels,
 			'supports'              => array( 'title' ),
 			'hierarchical'          => false,
@@ -123,7 +123,7 @@ class JR_Rates_Admin {
 			'show_ui'               => true,
 			'show_in_menu'          => true,
 			'menu_position'         => 5,
-			'menu_icon'             => 'dashicons-cart',
+			'menu_icon'             => 'dashicons-clipboard',
 			'show_in_admin_bar'     => true,
 			'show_in_nav_menus'     => true,
 			'can_export'            => true,
@@ -139,7 +139,7 @@ class JR_Rates_Admin {
 	}
 
 	/**
-	 * Register the custom 'Category' taxonomy
+	 * Register the custom 'Rate Category' taxonomy
 	 *
 	 * @since    1.0.0
 	 */
@@ -191,7 +191,7 @@ class JR_Rates_Admin {
 			'show_ui'               => true,
 			'show_in_menu'          => 'edit.php?post_type=jr_rate',
 			'menu_position'         => 5,
-			'menu_icon'             => 'dashicons-carrot',
+			'menu_icon'             => 'dashicons-clipboard',
 			'show_in_admin_bar'     => true,
 			'show_in_nav_menus'     => true,
 			'can_export'            => true,
@@ -243,7 +243,7 @@ class JR_Rates_Admin {
 				'title' => 'Rates',
 				'fields' => array (
 					array (
-						'key' => 'field_f1fb5c4b-e471',
+						'key' => 'field_25e95688-1fd8',
 						'label' => 'Contact name',
 						'name' => 'name',
 						'type' => 'text',
@@ -257,7 +257,7 @@ class JR_Rates_Admin {
 					),
 
 					array (
-						'key' => 'field_1192881b-2b92',
+						'key' => 'field_91dcd965-ecb1',
 						'label' => 'Contact email',
 						'name' => 'email',
 						'type' => 'text',
@@ -271,7 +271,21 @@ class JR_Rates_Admin {
 					),
 
 					array (
-						'key' => 'field_236a1c13f7f2',
+						'key' => 'field_c8f31922-bf86',
+						'label' => 'Job description',
+						'name' => 'job_description',
+						'type' => 'text',
+						'required' => 1,
+						'default_value' => '',
+						'placeholder' => '',
+						'prepend' => '',
+						'append' => '',
+						'formatting' => 'html',
+						'maxlength' => '',
+					),
+
+					array (
+						'key' => 'field_91c3d318-0a2c',
 						'label' => 'Company name',
 						'name' => 'company_name',
 						'type' => 'text',
@@ -285,51 +299,7 @@ class JR_Rates_Admin {
 					),
 
 					array (
-						'key' => 'field_935b2f78-4d0g',
-						'label' => 'Anonymise company?',
-						'name' => 'anonymise_company',
-						'type' => 'true_false',
-						'message' => '',
-						'default_value' => 0,
-					),
-
-					array (
-						'key' => 'field_935b2f78-4d0h',
-						'label' => 'Anonymised company name',
-						'name' => 'company_name_anonymised',
-						'type' => 'text',
-						'instructions' => '',
-						'required' => 1,
-						'conditional_logic' => array (
-							'status' => 1,
-							'rules' => array (
-								array (
-									'field' => 'field_935b2f78-4d0g',
-									'operator' => '==',
-									'value' => '1',
-								),
-							),
-							'allorany' => 'all',
-						),
-						'default_value' => '',
-					),
-
-					array (
-						'key' => 'field_8b5fc9d5-03be',
-						'label' => 'Location',
-						'name' => 'location',
-						'type' => 'radio',
-						'required' => 1,
-            'choices' => array (
-              'London' => 'London',
-              'City' => 'City',
-              'Rural' => 'Rural',
-            ),
-            'other_choice' => 0
-					),
-
-					array (
-						'key' => 'field_8crfc9d5-03be',
+						'key' => 'field_dcb72988-16ea',
 						'label' => 'Category',
 						'name' => 'rate_category',
 						'type' => 'taxonomy',
@@ -339,46 +309,16 @@ class JR_Rates_Admin {
 					),
 
 					array (
-						'key' => 'field_8b5fc8d5-03be',
-						'label' => 'Rate per annum',
+						'key' => 'field_33eae78a-0726',
+						'label' => 'Rate',
 						'name' => 'rate',
-						'type' => 'number',
+						'type' => 'text',
             'min' => 0,
 						'required' => 1,
           ),
 
 					array (
-						'key' => 'field_935b2f78-3d0g',
-						'label' => 'Part time?',
-						'name' => 'part_time',
-						'type' => 'true_false',
-						'message' => '',
-						'default_value' => 0,
-					),
-
-					array (
-						'key' => 'field_935b3f78-4d0h',
-						'label' => 'Extra rate information',
-						'name' => 'extra_rate_info',
-						'type' => 'text',
-						'instructions' => '',
-						'required' => 1,
-						'conditional_logic' => array (
-							'status' => 1,
-							'rules' => array (
-								array (
-									'field' => 'field_935b2f78-3d0g',
-									'operator' => '==',
-									'value' => '1',
-								),
-							),
-							'allorany' => 'all',
-						),
-						'default_value' => '',
-					),
-
-					array (
-						'key' => 'field_5b75c9d38f5bb',
+						'key' => 'field_172406fb-1eb4',
 						'label' => 'Year',
 						'name' => 'year',
 						'type' => 'text',
@@ -430,77 +370,7 @@ class JR_Rates_Admin {
 	{
 		if(function_exists("register_field_group"))
 		{
-			register_field_group(array (
-				'id' => 'acf_ratecategory',
-				'title' => 'Category',
-				'fields' => array (
-					array (
-						'key' => 'field_6d85c99d8f5b8',
-						'label' => 'Recommendation (London)',
-						'name' => 'recommended_london',
-						'type' => 'number',
-						'required' => 1,
-						'default_value' => '',
-						'prepend' => '',
-						'append' => '',
-						'maxlength' => '',
-					),
-					array (
-						'key' => 'field_6d85c99d8f5b9',
-						'label' => 'Recommendation (outside London - rural)',
-						'name' => 'recommended_rural',
-						'type' => 'number',
-						'required' => 1,
-						'default_value' => '',
-						'prepend' => '',
-						'append' => '',
-						'maxlength' => '',
-					),
-					array (
-						'key' => 'field_6d85c99d8f5b7',
-						'label' => 'Recommendation (outside London - city)',
-						'name' => 'recommended_city',
-						'type' => 'number',
-						'required' => 1,
-						'default_value' => '',
-						'prepend' => '',
-						'append' => '',
-						'maxlength' => '',
-					),
-				),
-
-				'location' => array (
-					array (
-						array (
-							'param' => 'ef_taxonomy',
-							'operator' => '==',
-							'value' => 'jr_ratecategory',
-							'order_no' => 0,
-							'group_no' => 0,
-						),
-					),
-				),
-
-				'options' => array (
-					'position' => 'normal',
-					'layout' => 'no_box',
-					'hide_on_screen' => array (
-						0 => 'permalink',
-						1 => 'the_content',
-						2 => 'excerpt',
-						3 => 'custom_fields',
-						4 => 'discussion',
-						5 => 'comments',
-						6 => 'revisions',
-						7 => 'format',
-						8 => 'featured_image',
-						9 => 'categories',
-						10 => 'tags',
-						11 => 'send-trackbacks',
-					),
-				),
-				'menu_order' => 0,
-			));
+      // No ACF fields for rates categories
 		}
 	}
 
@@ -514,9 +384,9 @@ class JR_Rates_Admin {
 			'cb' => $columns['cb'],
 			'title' => $columns['title'],
       'company_name' => __('Company'),
-      'location' => __('Location'),
       'rate' => __('Rate'),
       'year' => __('Year'),
+      'rate_category' => __('Rate Category'),
 		);
 
 	}
@@ -532,9 +402,6 @@ class JR_Rates_Admin {
     switch ( $column ) {
 			case 'company_name' :
 				echo $fields['company_name'];
-				break;
-			case 'location' :
-				echo $fields['location'];
 				break;
 			case 'rate_category' :
 				echo $fields['rate_category'];
@@ -585,39 +452,22 @@ class JR_Rates_Admin {
 
 				// ... so we pick the ones we want
 				$rate = array(
-					'job_title' => $rateData->post_title,
-					// 'link' => get_permalink( $rateID ),
 					'params' => $params
 				);
 
 				$customFieldsData = get_fields( $rateID );
 
 				$customFieldsToInclude = array(
-          'anonymise_company',
-          'location',
+          'company_name',
+          'job_description',
           'rate_category',
           'rate',
-          'part_time',
-          'extra_rate_info',
           'year',
 				);
 
         foreach ( $customFieldsToInclude as $cf ) {
-          $fieldData = $customFieldsData[$cf];
-					$rate[$cf] = $fieldData;
-
-          if ($cf == 'anonymise_company') {
-            if ($fieldData == true) {
-              $rate['company_name'] = $customFieldsData['company_name_anonymised'];
-            } else {
-              $rate['company_name'] = $customFieldsData['company_name'];
-            }
-          }
-
-          if ($cf == 'rate') {
-            $rate[$cf] = intval($fieldData);
-          }
-				};
+            $rate[$cf] = $customFieldsData[$cf];				
+        };
 
 				$rates[$key] = $rate;
 			}
@@ -640,21 +490,18 @@ class JR_Rates_Admin {
 
 		$jr_rates_endpoint = function ( $request ) {
 
-      $job_title = $request->get_param( 'job_title' );
+      $job_description = $request->get_param( 'job_description' );
 
 			$args = array(
         'post_type'  => 'jr_rate',
-        'post_title' => $job_title,
+        'post_title' => $job_description,
         'meta_input' => array(
-				  'name'              => $request->get_param( 'name' ),
-					'email'             => $request->get_param( 'email' ),
-					'company_name'      => $request->get_param( 'company_name' ),
-					'anonymise_company' => $request->get_param( 'anonymise_company' ),
-					'location'          => $request->get_param( 'location' ),
+				  'name'            => $request->get_param( 'name' ),
+					'email'           => $request->get_param( 'email' ),
+					'company_name'    => $request->get_param( 'company_name' ),
+					'job_description' => $request->get_param( 'job_description' ),
 					'rate'            => $request->get_param( 'rate' ),
-					'part_time'         => $request->get_param( 'part_time' ),
-					'extra_rate_info' => $request->get_param( 'extra_rate_info' ),
-					'year'              => $request->get_param( 'year' ),
+					'year'            => $request->get_param( 'year' ),
         ),
       );
 
@@ -697,25 +544,10 @@ class JR_Rates_Admin {
       $categories = array();
 
       foreach ( $categoriesData as $key => $categoryData ) {
-
-        $taxonomyWithId = $categoryData->taxonomy . '_' . $categoryData->term_id;
-        $customFieldsData = get_fields($taxonomyWithId);
-
         $category = array(
           'id' => $categoryData->term_id,
           'text' => $categoryData->name,
         );
-
-        $customFieldsToInclude = array(
-          'recommended_london',
-          'recommended_rural',
-          'recommended_city',
-        );
-
-        foreach ( $customFieldsToInclude as $cf ) {
-          $fieldData = $customFieldsData[$cf];
-          $category[$cf] = $fieldData;
-        };
 
         $categories[$key] = $category;
       }

@@ -27,12 +27,8 @@ emptyForm =
     { name = ""
     , email = ""
     , company_name = ""
-    , anonymise_company = False
-    , location = London
-    , job_title = ""
-    , rate = 0
-    , part_time = False
-    , extra_rate_info = ""
+    , job_description = ""
+    , rate = ""
     , year = ""
     , gRecaptchaResponseToken = ""
     }
@@ -49,7 +45,6 @@ init flags =
       , listFilters =
             { searchText = ""
             , category = Nothing
-            , hideLondon = False
             }
       }
     , Cmd.batch [ loadRates flags.host, loadCategories flags.host ]
@@ -130,23 +125,11 @@ update msg model =
                         UpdateCompany company_name ->
                             { formContents | company_name = company_name }
 
-                        UpdateAnonymise anonymise_company ->
-                            { formContents | anonymise_company = anonymise_company }
-
-                        UpdateLocation location ->
-                            { formContents | location = location }
-
-                        UpdateJobTitle job_title ->
-                            { formContents | job_title = job_title }
+                        UpdateJobDescription job_description ->
+                            { formContents | job_description = job_description }
 
                         UpdateRate rate ->
                             { formContents | rate = rate }
-
-                        UpdatePartTime part_time ->
-                            { formContents | part_time = part_time }
-
-                        UpdateRateInfo info ->
-                            { formContents | extra_rate_info = info }
 
                         UpdateYear year ->
                             { formContents | year = year }
@@ -165,9 +148,6 @@ update msg model =
 
                         UpdateCategory category ->
                             { filters | category = category }
-
-                        UpdateHideLondon hideLondon ->
-                            { filters | hideLondon = hideLondon }
             in
             ( { model | listFilters = filters_ }, Cmd.none )
 

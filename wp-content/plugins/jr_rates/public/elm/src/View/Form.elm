@@ -6,7 +6,7 @@ import Html.Events exposing (onCheck, onClick, onInput, onSubmit)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
-import Utils exposing (prettyPrintLocation, printHttpError)
+import Utils exposing (printHttpError)
 
 
 view : Model -> Html Msg
@@ -64,11 +64,11 @@ formView formContents =
                 []
             ]
         , label []
-            [ span [] [ text "What is the job title?" ]
+            [ span [] [ text "What sort of work did you do?" ]
             , input
                 [ type_ "text"
-                , onInput (UpdateFormField << UpdateJobTitle)
-                , value formContents.job_title
+                , onInput (UpdateFormField << UpdateJobDescription)
+                , value formContents.job_description
                 , required True
                 ]
                 []
@@ -84,36 +84,14 @@ formView formContents =
                 []
             ]
         , label []
-            [ span [] [ text "Would you like us to anonymise the company?" ]
+            [ span [] [ text "How much were you paid?" ]
             , input
-                [ type_ "checkbox"
-                , onCheck (UpdateFormField << UpdateAnonymise)
-                , checked formContents.anonymise_company
-                ]
-                []
-            ]
-        , label []
-            [ span [] [ text "How much were you paid (£ per annum)?" ]
-            , input
-                [ type_ "number"
-                , onInput (UpdateFormField << UpdateRate << Maybe.withDefault 0 << toInt)
-                , value <| fromInt formContents.rate
+                [ type_ "text"
+                , onInput (UpdateFormField << UpdateRate)
+                , value formContents.rate
                 , required True
                 ]
                 []
-            ]
-        , label []
-            [ span [] [ text "Was the job part-time?" ]
-            , input
-                [ type_ "checkbox"
-                , onCheck (UpdateFormField << UpdatePartTime)
-                , checked formContents.part_time
-                ]
-                []
-            ]
-        , label []
-            [ span [] [ text "Where was the job located?" ]
-            , locationSelect
             ]
         , label []
             [ span [] [ text "When was this (year)?" ]
@@ -125,46 +103,8 @@ formView formContents =
                 ]
                 []
             ]
-        , if formContents.part_time then
-            label []
-                [ span [] [ text "Any further information?" ]
-                , input
-                    [ type_ "text"
-                    , onInput (UpdateFormField << UpdateRateInfo)
-                    , value formContents.extra_rate_info
-                    ]
-                    []
-                ]
-
-          else
-            text ""
         , div [ class "g-recaptcha" ] []
         , button []
             [ text "Submit"
             ]
         ]
-
-
-locationSelect : Html Msg
-locationSelect =
-    let
-        options =
-            [ ( London, prettyPrintLocation London )
-            , ( Rural, prettyPrintLocation Rural )
-            , ( City, prettyPrintLocation City )
-            ]
-
-        elemAt n =
-            Maybe.withDefault London << Maybe.map Tuple.first << List.head <| List.drop n options
-    in
-    select
-        [ onInput (UpdateFormField << UpdateLocation << elemAt << Maybe.withDefault 0 << toInt)
-        ]
-        (List.indexedMap
-            (\i ( _, s ) ->
-                option
-                    [ value <| fromInt i ]
-                    [ text s ]
-            )
-            options
-        )

@@ -6,7 +6,7 @@ import Html.Events exposing (onCheck, onInput)
 import RemoteData as RD
 import String exposing (fromInt, toInt)
 import Types exposing (..)
-import Utils exposing (formatRate, matchesSearch, prettyPrintLocation, printHttpError)
+import Utils exposing (formatRate, matchesSearch, printHttpError)
 
 
 view : Model -> Html Msg
@@ -37,94 +37,39 @@ view { listFilters, ratesRequest, categoriesRequest } =
             listView rates categories listFilters
 
 
-type alias LocationDetails =
-    { name : String
-    , recommendedRate : Int
-    , averageRate : Float
+type alias CategoryGrouping =
+    { id : Int
+    , text : String
     , rates : List Rate
     }
 
 
-type alias CategoryGrouping =
-    { id : Int
-    , text : String
-    , london : LocationDetails
-    , rural : LocationDetails
-    , city : LocationDetails
-    }
-
-
 emptyLocationGrouping : Category -> CategoryGrouping
-emptyLocationGrouping { id, text, recommendedLondon, recommendedRural, recommendedCity } =
+emptyLocationGrouping { id, text } =
     { id = id
     , text = text
-    , london = LocationDetails (prettyPrintLocation London) recommendedLondon 0 []
-    , rural = LocationDetails (prettyPrintLocation Rural) recommendedRural 0 []
-    , city = LocationDetails (prettyPrintLocation City) recommendedCity 0 []
+    , rates = []
     }
 
 
 insertIntoGrouping : Rate -> CategoryGrouping -> CategoryGrouping
 insertIntoGrouping rate grouping =
-    let
-        average rates =
-            (toFloat <| List.sum <| List.map .rate rates) / (toFloat <| List.length rates)
-
-        update x details =
-            let
-                rates_ =
-                    x :: details.rates
-            in
-            { details | averageRate = average rates_, rates = rates_ }
-    in
-    case rate.location of
-        London ->
-            { grouping | london = update rate grouping.london }
-
-        Rural ->
-            { grouping | rural = update rate grouping.rural }
-
-        City ->
-            { grouping | city = update rate grouping.city }
+    { grouping | rates = rate :: grouping.rates }
 
 
 filterGroupingBySearchText : String -> CategoryGrouping -> CategoryGrouping
 filterGroupingBySearchText text grouping =
-    let
-        filter details =
-            { details
-                | rates =
-                    List.filter
-                        (\x -> List.any (matchesSearch text) [ x.company_name, x.job_title ])
-                        details.rates
-            }
-    in
     { grouping
-        | london = filter grouping.london
-        , rural = filter grouping.rural
-        , city = filter grouping.city
+        | rates =
+            List.filter
+                (\x -> List.any (matchesSearch text) [ x.company_name, x.job_description ])
+                grouping.rates
     }
-
-
-hideLondonInGrouping : CategoryGrouping -> CategoryGrouping
-hideLondonInGrouping grouping =
-    let
-        details =
-            grouping.london
-    in
-    { grouping | london = { details | rates = [] } }
-
-
-locationNotEmpty : LocationDetails -> Bool
-locationNotEmpty { rates } =
-    List.length rates > 0
 
 
 groupingNotEmpty : CategoryGrouping -> Bool
 groupingNotEmpty grouping =
-    locationNotEmpty grouping.london
-        || locationNotEmpty grouping.rural
-        || locationNotEmpty grouping.city
+    List.length grouping.rates > 0
 
 
 listView : List Rate -> List Category -> Filters -> Html Msg
@@ -153,19 +98,11 @@ listView rates categories filters =
                 Nothing ->
                     subgrouped
 
-        filteredByLocation : List CategoryGrouping
-        filteredByLocation =
-            if filters.hideLondon then
-                List.map hideLondonInGrouping filteredByCategory
-
-            else
-                filteredByCategory
-
         filteredBySearchText : List CategoryGrouping
         filteredBySearchText =
             List.map
                 (filterGroupingBySearchText filters.searchText)
-                filteredByLocation
+                filteredByCategory
 
         filteredByEmpty : List CategoryGrouping
         filteredByEmpty =
@@ -185,7 +122,7 @@ listView rates categories filters =
 
 
 viewListFilters : List Category -> Filters -> Html UpdateFilterMsg
-viewListFilters categories { searchText, category, hideLondon } =
+viewListFilters categories { searchText, category } =
     let
         options =
             option [ value "", selected True ] [ text "All categories" ]
@@ -208,40 +145,13 @@ viewListFilters categories { searchText, category, hideLondon } =
                 ]
                 options
             ]
-        , label []
-            [ span [] [ text "Hide jobs in London" ]
-            , input
-                [ type_ "checkbox"
-                , onCheck UpdateHideLondon
-                , checked hideLondon
-                ]
-                []
-            ]
         ]
 
 
 viewCategoryGrouping : CategoryGrouping -> Html a
 viewCategoryGrouping grouping =
-    let
-        nonEmptyLocations =
-            List.filter locationNotEmpty
-                [ grouping.london
-                , grouping.rural
-                , grouping.city
-                ]
-    in
     section []
         [ h2 [] [ text grouping.text ]
-        , div [] (List.map viewLocationGroup nonEmptyLocations)
-        ]
-
-
-viewLocationGroup : LocationDetails -> Html a
-viewLocationGroup { name, recommendedRate, averageRate, rates } =
-    div []
-        [ h4 [] [ text name ]
-        , p [] [ text <| "Average rate: " ++ formatRate (round averageRate) ]
-        , p [] [ text <| "We recommend asking for: " ++ formatRate recommendedRate ]
         , table [] <|
             [ tr []
                 [ th [] [ text "Job title" ]
@@ -249,18 +159,18 @@ viewLocationGroup { name, recommendedRate, averageRate, rates } =
                 , th [] [ text "Date recorded" ]
                 ]
             ]
-                ++ (List.map viewRate <| List.reverse <| List.sortBy .rate rates)
+                ++ List.map viewRate grouping.rates
         ]
 
 
 viewRate : Rate -> Html a
-viewRate { job_title, location, part_time, rate, year, company_name, extra_rate_info } =
+viewRate { job_description, rate, year, company_name } =
     tr []
         [ td []
-            [ text job_title
+            [ text job_description
             , text " at "
             , text company_name
             ]
-        , td [] [ text <| formatRate rate ]
+        , td [] [ text rate ]
         , td [] [ text year ]
         ]

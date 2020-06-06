@@ -1,4 +1,4 @@
-module Types exposing (Category, Filters, FormContents, Location(..), Model, Msg(..), Rate, UpdateFieldMsg(..), UpdateFilterMsg(..), Url, readLocation, showLocation)
+module Types exposing (Category, Filters, FormContents, Model, Msg(..), Rate, UpdateFieldMsg(..), UpdateFilterMsg(..), Url)
 
 import RemoteData as RD
 
@@ -18,19 +18,14 @@ type UpdateFieldMsg
     = UpdateName String
     | UpdateEmail String
     | UpdateCompany String
-    | UpdateAnonymise Bool
-    | UpdateLocation Location
-    | UpdateJobTitle String
-    | UpdateRate Int
-    | UpdatePartTime Bool
-    | UpdateRateInfo String
+    | UpdateJobDescription String
+    | UpdateRate String
     | UpdateYear String
 
 
 type UpdateFilterMsg
     = UpdateSearchText String
     | UpdateCategory (Maybe Int)
-    | UpdateHideLondon Bool
 
 
 type Msg
@@ -48,64 +43,21 @@ type alias Url =
     String
 
 
-type Location
-    = London
-    | Rural
-    | City
-
-
-showLocation : Location -> String
-showLocation location =
-    case location of
-        London ->
-            "London"
-
-        Rural ->
-            "Rural"
-
-        City ->
-            "City"
-
-
-readLocation : String -> Maybe Location
-readLocation location =
-    case location of
-        "London" ->
-            Just London
-
-        "Rural" ->
-            Just Rural
-
-        "City" ->
-            Just City
-
-        _ ->
-            Nothing
-
-
 type alias FormContents =
     { name : String
     , email : String
     , company_name : String
-    , anonymise_company : Bool
-    , location : Location
-    , job_title : String
-    , rate : Int
-    , part_time : Bool
-    , extra_rate_info : String
+    , job_description : String
+    , rate : String
     , year : String
     , gRecaptchaResponseToken : String
     }
 
 
 type alias Rate =
-    { anonymise_company : Bool
-    , company_name : String
-    , extra_rate_info : Maybe String
-    , job_title : String
-    , location : Location
-    , part_time : Bool
-    , rate : Int
+    { company_name : String
+    , job_description : String
+    , rate : String
     , rate_category : Int
     , year : String
     }
@@ -114,14 +66,10 @@ type alias Rate =
 type alias Category =
     { id : Int
     , text : String
-    , recommendedLondon : Int
-    , recommendedRural : Int
-    , recommendedCity : Int
     }
 
 
 type alias Filters =
     { searchText : String
     , category : Maybe Int
-    , hideLondon : Bool
     }
