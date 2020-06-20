@@ -89,14 +89,20 @@ listView rates categories filters =
                 )
                 grouped
 
+        orderedByCompany : List CategoryGrouping
+        orderedByCompany =
+            List.map
+                (\group -> { group | rates = List.sortBy .company_name group.rates })
+                subgrouped
+
         filteredByCategory : List CategoryGrouping
         filteredByCategory =
             case filters.category of
                 Just catId ->
-                    List.filter (\{ id } -> id == catId) subgrouped
+                    List.filter (\{ id } -> id == catId) orderedByCompany
 
                 Nothing ->
-                    subgrouped
+                    orderedByCompany
 
         filteredBySearchText : List CategoryGrouping
         filteredBySearchText =
@@ -154,7 +160,8 @@ viewCategoryGrouping grouping =
         [ h2 [] [ text grouping.text ]
         , table [] <|
             [ tr []
-                [ th [] [ text "Job title" ]
+                [ th [] [ text "Outlet" ]
+                , th [] [ text "Type of work" ]
                 , th [] [ text "Rate" ]
                 , th [] [ text "Date recorded" ]
                 ]
@@ -166,11 +173,8 @@ viewCategoryGrouping grouping =
 viewRate : Rate -> Html a
 viewRate { job_description, rate, year, company_name } =
     tr []
-        [ td []
-            [ text job_description
-            , text " at "
-            , text company_name
-            ]
+        [ td [] [ text company_name ]
+        , td [] [ text job_description ]
         , td [] [ text rate ]
         , td [] [ text year ]
         ]
