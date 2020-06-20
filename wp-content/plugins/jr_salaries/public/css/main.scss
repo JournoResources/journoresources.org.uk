@@ -1,6 +1,10 @@
 @import "variables";
 
 #jr-salaries-list {
+  h2 {
+    font-weight: bold;
+  }
+
   label {
     display: flex;
     align-items: center;
