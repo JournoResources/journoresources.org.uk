@@ -242,14 +242,16 @@ viewLocationGroup { name, recommendedSalary, averageSalary, salaries } =
         [ h4 [] [ text name ]
         , p [] [ text <| "Average salary: " ++ formatSalary (round averageSalary) ]
         , p [] [ text <| "We recommend asking for: " ++ formatSalary recommendedSalary ]
-        , table [] <|
-            [ tr []
-                [ th [] [ text "Job title" ]
-                , th [] [ text "Salary" ]
-                , th [] [ text "Date recorded" ]
+        , div [ class "table-wrapper" ]
+            [ table [] <|
+                [ tr []
+                    [ th [] [ text "Job title" ]
+                    , th [] [ text "Salary" ]
+                    , th [] [ text "Date recorded" ]
+                    ]
                 ]
+                    ++ (List.map viewSalary <| List.reverse <| List.sortBy .salary salaries)
             ]
-                ++ (List.map viewSalary <| List.reverse <| List.sortBy .salary salaries)
         ]
 
 

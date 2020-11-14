@@ -15,7 +15,7 @@
  * Plugin Name:       Journo Resources Salary Listings
  * Plugin URI:        https://github.com/JournoResources/journoresources.org.uk
  * Description:       Salary listings for the Journo Resources website salaries page
- * Version:           1.1.2
+ * Version:           1.1.3
  * Author:            Elliot Davies
  * Author URI:        http://elliotdavies.co.uk
  * License:           GPL-2.0+
@@ -32,7 +32,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version
  */
-define( 'JR_SALARIES_VERSION', '1.1.2' );
+define( 'JR_SALARIES_VERSION', '1.1.3' );
 
 /**
  * The code that runs during plugin activation.
