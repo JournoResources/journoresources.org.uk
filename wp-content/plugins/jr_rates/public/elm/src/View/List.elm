@@ -158,15 +158,17 @@ viewCategoryGrouping : CategoryGrouping -> Html a
 viewCategoryGrouping grouping =
     section []
         [ h2 [] [ text grouping.text ]
-        , table [] <|
-            [ tr []
-                [ th [] [ text "Outlet" ]
-                , th [] [ text "Type of work" ]
-                , th [] [ text "Rate" ]
-                , th [] [ text "Date recorded" ]
+        , div [ class "table-wrapper" ]
+            [ table [] <|
+                [ tr []
+                    [ th [] [ text "Outlet" ]
+                    , th [] [ text "Type of work" ]
+                    , th [] [ text "Rate" ]
+                    , th [] [ text "Date recorded" ]
+                    ]
                 ]
+                    ++ List.map viewRate grouping.rates
             ]
-                ++ List.map viewRate grouping.rates
         ]
 
 
